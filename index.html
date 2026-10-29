@@ -239,7 +239,14 @@ header.hero{padding:28px 0 20px}
 .timer button{border:0;background:transparent;color:inherit;cursor:pointer;font-weight:700;padding:2px 8px}
 .cook-main{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;padding:12px 0}
 .cook-step{font-size:clamp(1.65rem,5.6vw,2.7rem);line-height:1.22;font-weight:600;letter-spacing:-.01em;margin:0}
-.cook-timer-btn{align-self:flex-start;font-size:1.1rem;padding:14px 20px}
+.cook-timer-btn{font-size:1.1rem;padding:14px 20px}
+.cook-actions{display:flex;flex-wrap:wrap;gap:12px}
+.cook-how{font-size:1.1rem;padding:14px 20px}
+.cook-how{flex-direction:column;align-items:flex-start;gap:2px}
+.cook-how small{font-weight:600;opacity:.9;font-size:.85rem}
+.step-emo{display:inline-grid;place-items:center;width:96px;height:96px;border-radius:28px;background:var(--cbg);font-size:3.4rem;line-height:1}
+.cook-yt{padding:8px 12px;font-size:.9rem;white-space:nowrap}
+
 .cook-ings summary{cursor:pointer;font-weight:600;color:var(--muted);padding:6px 0}
 .cook-ings ul{margin:8px 0 0;padding-left:1.2em}
 .cook-wake{font-size:.9rem;color:var(--muted);margin:0}
@@ -870,6 +877,71 @@ function closeCook(){
   renderBar(); renderTimers();
   if (mode === "fav" || mode === "recent") renderSaved();
 }
+/* Adımdaki tekniği bulur: simge + YouTube'da aranacak "nasıl yapılır" sorgusu */
+const W = "(?=[\\s.,;!]|$)"; // kelime sonu (Türkçe harflerle de çalışır)
+const TECHNIQUES = [
+  // [adımda aranan ifade, simge, arama ifadesi, kısa ad]
+  [/alacalı/, "🔪", "alacalı nasıl soyulur", "alacalı soyma"],
+  [/piyazlık/, "🔪", "piyazlık nasıl doğranır", "piyazlık doğrama"],
+  [/parmak doğra/, "🔪", "parmak nasıl doğranır", "parmak doğrama"],
+  [/halka doğra/, "🔪", "halka nasıl doğranır", "halka doğrama"],
+  [/küp doğra/, "🔪", "küp nasıl doğranır", "küp doğrama"],
+  [/ince kıy|kıyılmış/, "🔪", "nasıl ince kıyılır", "ince kıyma"],
+  [/doğra/, "🔪", "nasıl doğranır", "doğrama"],
+  [/rendele/, "🧀", "nasıl rendelenir", "rendeleme"],
+  [/ayıkla/, "🔪", "nasıl ayıklanır", "ayıklama"],
+  [new RegExp("(^|\\s)soy(up|ulmuş)?" + W), "🔪", "nasıl soyulur", "soyma"],
+  [/ılıştır/, "🥣", "terbiye nasıl ılıştırılır", "ılıştırma"],
+  [new RegExp("(^|\\s)yoğur(up)?" + W), "🙌", "nasıl yoğrulur", "yoğurma"],
+  [/çırp/, "🥄", "nasıl çırpılır", "çırpma"],
+  [new RegExp("(^|\\s)sar(ıp|ar|ın)?" + W), "🌯", "nasıl sarılır", "sarma"],
+  [/doldur/, "🥄", "nasıl doldurulur", "doldurma"],
+  [/didikle/, "🍗", "nasıl didiklenir", "didikleme"],
+  [/haşla/, "💧", "nasıl haşlanır", "haşlama"],
+  [/kızart/, "🍳", "nasıl kızartılır", "kızartma"],
+  [/sotele/, "🍳", "nasıl sotelenir", "sote"],
+  [/kavur/, "🍳", "nasıl kavrulur", "kavurma"],
+  [/demlen/, "⏳", "pilav nasıl demlendirilir", "demlendirme"],
+  [/ıslat/, "💧", "nasıl ıslatılır", "ıslatma"]
+];
+const BASIC_INGS = new Set(["tuz","su","karabiber","sıvı yağ","zeytinyağı","yağ"]);
+function stepTechnique(r, step){
+  const t = norm(step);
+  let best = null, at = Infinity;
+  for (const tech of TECHNIQUES){
+    const i = t.search(tech[0]);
+    if (i >= 0 && i < at){ best = tech; at = i; }
+  }
+  let emoji = best ? best[1] : "👩‍🍳";
+  if (!best){
+    if (/fırın/.test(t)) emoji = "🔥";
+    else if (/beklet|dinlendir|soğut/.test(t)) emoji = "⏳";
+    else if (/servis/.test(t)) emoji = "🍽️";
+    else if (/pişir|kaynat/.test(t)) emoji = "🍲";
+    else if (/ekle|karıştır/.test(t)) emoji = "🥄";
+    return {emoji, query:"", label:""};
+  }
+  // İlgili malzemeyi bul. Türkçede nesne fiilden önce gelir ("patlıcanları soy");
+  // "kıyılmış maydanoz" gibi sıfat hâlinde ise malzeme sonra gelir.
+  const word = t.slice(at).trim().split(/\s/)[0];
+  const participle = /(mış|miş|muş|müş)$/.test(word.replace(/[.,;!]$/, ""));
+  let before = {ing:"", d:Infinity}, after = {ing:"", d:Infinity};
+  r.malzemeler.forEach(m => {
+    if (BASIC_INGS.has(norm(m.ad))) return;
+    const n = norm(m.ad).split(" ").pop();
+    const stem = n.length > 4 ? n.slice(0, n.length - 1) : n;
+    let i = t.indexOf(stem);
+    while (i >= 0){
+      if (i < at && at - i < before.d) before = {ing:n, d:at - i};
+      if (i > at && i - at < after.d) after = {ing:n, d:i - at};
+      i = t.indexOf(stem, i + 1);
+    }
+  });
+  const ing = participle ? (after.ing || before.ing) : (before.ing || after.ing);
+  const subject = ing || (best[3] === "demlendirme" ? "" : norm(r.ad));
+  return {emoji, query:`${subject} ${best[2]}`.trim(), label:`${ing ? ing + " " : ""}${best[3]}`};
+}
+
 function renderCook(){
   const r = REG.get(cook.key); if (!r) return;
   const n = r.adimlar.length;
@@ -881,7 +953,8 @@ function renderCook(){
   if (cook.step < n){
     const s = r.adimlar[cook.step];
     const min = stepMinutes(s);
-    h += `<div class="cook-main"><p class="cook-step">${esc(s)}</p>${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}</div>
+    const tech = stepTechnique(r, s);
+    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p><div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a></div></div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
       <p class="cook-wake" id="cookWake">${wakeText()}</p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
