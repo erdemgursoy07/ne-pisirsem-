@@ -798,7 +798,7 @@ const errMsg = e => ({
   unreachable:"Yapay zekâ servisine şu an ulaşılamıyor. Biraz sonra tekrar dene; hazır tarifler çalışmaya devam ediyor.",
   server:"Yapay zekâ servisi şu an cevap veremedi. Biraz sonra tekrar dene.",
   offline:"İnternet bağlantısı yok. Yapay zekâ özellikleri internet ister, hazır tarifler ise çalışmaya devam eder."
-}[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.");
+}[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.") + (e && e.detail ? " (Ayrıntı: " + String(e.detail).slice(0, 200) + ")" : "");
 const FORMAT = `{"ad": "yemeğin Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etsiz", "corba", "tatli" değerlerinden yemeğe uyanlar], "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
 
 async function runDishAI(){
@@ -1029,8 +1029,10 @@ async function aiCall(prompt, wantJson){
   try {
     res = await fetch(AI_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({prompt, json:!!wantJson})});
   } catch(e){ throw {code: navigator.onLine ? "unreachable" : "offline"}; }
-  if (res.status === 429) throw {code:"rate_limited"};
-  if (!res.ok) throw {code:"server"};
+  if (!res.ok){
+    const d = await res.json().catch(() => null);
+    throw {code: res.status === 429 ? "rate_limited" : "server", detail: d && (d.detail || d.error)};
+  }
   const data = await res.json().catch(() => null);
   if (!data || typeof data.text !== "string") throw {code:"server"};
   // Yalnızca başarılı istekler günlük hakkından düşülür
