@@ -112,6 +112,16 @@ button:disabled{opacity:.45;cursor:default}
 .detail .bd-zor,.daily .bd-zor{background:#FFE3E3;border-color:transparent}
 .nut{background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin:0 0 22px;max-width:560px}
 .nut-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.nut-row + .nut-row{margin-top:12px}
+.nut-label{display:block;font-size:.85rem;font-weight:700;color:var(--muted);margin-bottom:6px}
+.menu-list{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:6px}
+.menu-list button{width:100%;display:flex;align-items:center;gap:10px;background:var(--surface);border:0;border-radius:14px;padding:9px 12px;cursor:pointer;text-align:left;color:var(--ink)}
+.ml-e{font-size:1.4rem}
+.ml-t{flex:1;display:flex;flex-direction:column;line-height:1.25}
+.ml-t small{color:var(--muted);font-size:.78rem;font-weight:600}
+.ml-k{font-size:.82rem;font-weight:700;color:var(--muted);white-space:nowrap}
+.menu-total{margin:2px 0 0;font-size:.95rem}
+.voice-kind{font-weight:700}
 .nut-head span{color:var(--muted);font-size:.85rem}
 .nut-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
 .nut-grid div{background:var(--surface);border-radius:12px;padding:8px 4px}
@@ -861,11 +871,16 @@ function nutrition(r){
 }
 
 const BUILTIN = [...REG.values()];
-// Protein oranı yüksek tarifler otomatik olarak "Sporcu yemekleri"ne girer
+// Sporcu yemekleri: yüksek proteinli, az yağlı, kızartma ve hamur işi olmayan tarifler
+const isFried = r => /kızart|kızgın yağ/.test(norm(r.adimlar.join(" "))) || r.malzemeler.some(m => (m.id === "yag" || m.id === "zeytinyagi") && (gramsOf(m) || 0) > 100);
+const NOT_FIT = new Set(["sucuk","pastirma","mayonez","krema","yufka","baklava_yufkasi","lavas","hamburger_ekmegi","kadayif","tereyagi","kasar","mozzarella","labne","cikolata","seker"]);
 BUILTIN.forEach(r => {
-  if (r.etiketler.includes("tatli") || r.etiketler.includes("kahve") || r.etiketler.includes("spor")) return;
+  const t = r.etiketler;
+  if (t.includes("spor")) return; // özel sporcu tarifleri
+  if (["tatli","kahve","atistirmalik","kahvalti"].some(x => t.includes(x))) return;
+  if (isFried(r) || r.malzemeler.some(m => NOT_FIT.has(m.id))) return;
   const n = nutrition(r);
-  if (n && (n.p >= 25 || (n.p >= 15 && n.p * 4 >= n.kcal * 0.3))) r.etiketler.push("spor");
+  if (n && n.p >= 20 && n.p * 4 >= n.kcal * 0.3 && n.f <= 15 && n.kcal <= 550) t.push("spor");
 });
 
 function fromAI(o){
@@ -1204,7 +1219,10 @@ function badgesHTML(r){
 }
 function nutHTML(r){
   const n = nutrition(r); if (!n || !n.kcal) return "";
-  return `<div class="nut"><div class="nut-head"><b>Besin değerleri</b><span>1 porsiyon, yaklaşık</span></div><div class="nut-grid"><div><strong>${n.kcal}</strong><span>kcal</span></div><div><strong>${n.p} g</strong><span>protein</span></div><div><strong>${n.c} g</strong><span>karbonhidrat</span></div><div><strong>${n.f} g</strong><span>yağ</span></div></div></div>`;
+  const serv = getServ(r);
+  const fmtN = x => Math.round(x).toLocaleString("tr-TR");
+  const row = (title, m) => `<div class="nut-row"><span class="nut-label">${title}</span><div class="nut-grid"><div><strong>${fmtN(n.kcal * m)}</strong><span>kcal</span></div><div><strong>${fmtN(n.p * m)} g</strong><span>protein</span></div><div><strong>${fmtN(n.c * m)} g</strong><span>karbonhidrat</span></div><div><strong>${fmtN(n.f * m)} g</strong><span>yağ</span></div></div></div>`;
+  return `<div class="nut"><div class="nut-head"><b>Besin değerleri</b><span>yaklaşık</span></div>${row("1 porsiyon", 1)}${serv > 1 ? row(`Toplam · ${serv} kişilik`, serv) : ""}</div>`;
 }
 
 /* ---------- Dolabım: sade düzen ---------- */
@@ -1401,23 +1419,37 @@ function renderBar(){
   $("barText").textContent = `${n} malzeme seçili`;
 }
 
-function dailyRecipe(){
-  const pool = sortRecipes(BUILTIN.filter(r => !catMatch(r, "kahve") && !catMatch(r, "atistirmalik")));
+/* ---------- Günün menüsü: her gün değişen çorba + ana yemek + yanında + tatlı ---------- */
+function daySeed(n, salt){
   const d = new Date();
   const day = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
-  return pool[(day * 7919) % pool.length];
+  return (day * 7919 + salt * 104729) % n;
+}
+function dailyMenu(){
+  const tr = r => !catMatch(r, "dunya");
+  const pick = (list, salt) => list.length ? list[daySeed(list.length, salt)] : null;
+  const corba = sortRecipes(BUILTIN.filter(r => recipeCat(r) === "corba" && tr(r)));
+  const ana = sortRecipes(BUILTIN.filter(r => ["etli", "sebze"].includes(recipeCat(r)) && tr(r)));
+  const yan = sortRecipes(BUILTIN.filter(r => tr(r) && /pilav|salata|cacık|piyaz|haydari|kısır/.test(norm(r.ad)) && !/tavuklu|kinoa|ton|patates salatası/.test(norm(r.ad)) && !catMatch(r, "tatli")));
+  const tatli = sortRecipes(BUILTIN.filter(r => recipeCat(r) === "tatli" && tr(r)));
+  return [["🍲", "Çorba", pick(corba, 1)], ["🍽️", "Ana yemek", pick(ana, 2)], ["🥗", "Yanında", pick(yan, 3)], ["🍰", "Tatlı", pick(tatli, 4)]].filter(x => x[2]);
 }
 function renderDaily(){
   const box = $("daily");
   const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
   box.hidden = !show; if (!show) return;
-  const r = dailyRecipe(), wi = wikiInfo(r);
-  box.innerHTML = `<div class="daily cat-${recipeCat(r)}">
-    <div class="daily-media">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span class="daily-emo" aria-hidden="true">${recipeEmoji(r)}</span>`}</div>
-    <div class="daily-body"><span class="daily-tag">🌟 Günün tarifi</span><h2>${esc(r.ad)}</h2>${badgesHTML(r)}
-      <div class="daily-actions"><button type="button" class="ai-btn" data-act="cook" data-key="${esc(r.key)}">Pişirmeye başla</button><button type="button" class="fav" data-act="openSaved" data-key="${esc(r.key)}">Tarife bak</button></div></div>
+  const menu = dailyMenu();
+  const main = (menu.find(x => x[1] === "Ana yemek") || menu[0])[2];
+  const wi = wikiInfo(main);
+  const total = menu.reduce((sum, [, , r]) => sum + ((nutrition(r) || {}).kcal || 0), 0);
+  box.innerHTML = `<div class="daily cat-${recipeCat(main)}">
+    <div class="daily-media">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span class="daily-emo" aria-hidden="true">${recipeEmoji(main)}</span>`}</div>
+    <div class="daily-body"><span class="daily-tag">🌟 Günün menüsü</span><h2>Bugünün sofrası</h2>
+      <ul class="menu-list">${menu.map(([e, l, r]) => `<li><button type="button" data-act="openSaved" data-key="${esc(r.key)}"><span class="ml-e" aria-hidden="true">${e}</span><span class="ml-t"><small>${l}</small><b>${esc(r.ad)}</b></span><span class="ml-k">${(nutrition(r) || {}).kcal || ""} kcal</span></button></li>`).join("")}</ul>
+      <p class="menu-total">Kişi başı toplam yaklaşık <b>${total.toLocaleString("tr-TR")} kcal</b></p>
+      <div class="daily-actions"><button type="button" class="ai-btn" data-act="cook" data-key="${esc(main.key)}">Ana yemeği pişir</button><button type="button" class="fav" data-act="menuToPlan">📅 Bugünün menüsüne ekle</button></div></div>
   </div>`;
-  if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (v) renderDaily(); });
+  if (!wi && needsWiki(main)) getWikiImage(main).then(v => { if (v) renderDaily(); });
 }
 
 function renderAll(){
@@ -1469,7 +1501,7 @@ function openCook(key, resume){
   const nx = $("cookNext"); if (nx) nx.focus();
 }
 function closeCook(){
-  if (canSpeak()) try { speechSynthesis.cancel(); } catch(e) {}
+  stopSpeech();
   lastSpoken = "";
   cook.open = false;
   $("cook").hidden = true;
@@ -1478,24 +1510,84 @@ function closeCook(){
   renderBar(); renderTimers();
   if (mode === "fav" || mode === "recent") renderSaved();
 }
-/* ---------- Sesli pişirme modu: telefonun kendi Türkçe sesiyle ---------- */
+/* ---------- Sesli pişirme modu: önce yapay zekâ sesi, olmazsa telefonun Türkçe sesi ---------- */
 let voiceOn = (() => { try { return localStorage.getItem("pisir-ses") === "1"; } catch(e){ return false; } })();
 let lastSpoken = "";
 const canSpeak = () => "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
 function trVoice(){
   const vs = speechSynthesis.getVoices().filter(v => /^tr/i.test(v.lang));
-  return vs.find(v => /natural|neural|premium|enhanced|google|yelda/i.test(v.name)) || vs[0] || null;
+  return vs.find(v => /premium|enhanced|gelişmiş|natural|neural|siri/i.test(v.name)) || vs.find(v => /google|yelda/i.test(v.name)) || vs[0] || null;
 }
-function speak(text){
-  if (!voiceOn || !canSpeak()) return;
+/* Adımı bir insan anlatıyormuş gibi konuşma diline çevir */
+function spokenStep(r, i){
+  const n = r.adimlar.length;
+  let t = r.adimlar[i]
+    .replace(/(\d+)\s*°\s*C/g, "$1 derece")
+    .replace(/(\d+)\s*[–-]\s*(\d+)/g, "$1 ile $2")
+    .replace(/(\d+),5(?!\d)/g, "$1 buçuk")
+    .replace(/;/g, ",");
+  t = t.charAt(0).toLocaleLowerCase("tr") + t.slice(1);
+  if (i === 0) return `Hadi başlayalım. ${r.ad} için önce ${t}`;
+  if (i === n - 1 && n > 2) return `Ve son olarak, ${t}`;
+  return ["Şimdi ", "Sonra ", "Ardından ", "Güzel, şimdi "][(i - 1) % 4] + t;
+}
+const player = typeof Audio === "function" ? new Audio() : null;
+const SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+const audioCache = new Map();
+let aiVoiceFails = 0, speakSeq = 0, voiceKind = "";
+function pcmToWav(b64, rate){
+  const bin = atob(b64), len = bin.length, buf = new ArrayBuffer(44 + len), v = new DataView(buf);
+  const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
+  w(0, "RIFF"); v.setUint32(4, 36 + len, true); w(8, "WAVE"); w(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, "data"); v.setUint32(40, len, true);
+  for (let i = 0; i < len; i++) v.setUint8(44 + i, bin.charCodeAt(i));
+  return new Blob([buf], {type:"audio/wav"});
+}
+function aiVoice(text){
+  if (!TTS_URL || aiVoiceFails >= 2 || !navigator.onLine) return Promise.resolve(null);
+  if (audioCache.has(text)) return audioCache.get(text);
+  const p = fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text})})
+    .then(res => res.ok ? res.json() : null)
+    .then(d => {
+      if (!d || !d.audio){ aiVoiceFails++; return null; }
+      aiVoiceFails = 0;
+      const m = /rate=(\d+)/.exec(d.mime || "");
+      const blob = /wav|mpeg|mp3|ogg/.test(d.mime || "") ? new Blob([Uint8Array.from(atob(d.audio), c => c.charCodeAt(0))], {type:d.mime}) : pcmToWav(d.audio, m ? Number(m[1]) : 24000);
+      return URL.createObjectURL(blob);
+    })
+    .catch(() => { aiVoiceFails++; return null; });
+  audioCache.set(text, p);
+  p.then(u => { if (!u) audioCache.delete(text); });
+  return p;
+}
+function deviceSpeak(text){
+  if (!canSpeak()) return;
   try {
-    speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = "tr-TR"; u.rate = 0.95;
+    u.lang = "tr-TR"; u.rate = 1; u.pitch = 1;
     const v = trVoice(); if (v) u.voice = v;
     speechSynthesis.speak(u);
+    voiceKind = "device";
   } catch(e) {}
 }
+function stopSpeech(){
+  speakSeq++;
+  if (player){ try { player.pause(); } catch(e) {} }
+  if (canSpeak()) try { speechSynthesis.cancel(); } catch(e) {}
+}
+async function speak(text){
+  if (!voiceOn) return;
+  stopSpeech();
+  const seq = speakSeq;
+  const url = await Promise.race([aiVoice(text), new Promise(res => setTimeout(() => res("bekleme"), 7000))]);
+  if (seq !== speakSeq) return; // bu arada başka adıma geçildi
+  if (url && url !== "bekleme" && player){
+    player.src = url;
+    try { await player.play(); voiceKind = "ai"; updateVoiceLabel(); return; } catch(e) {}
+  }
+  deviceSpeak(text); updateVoiceLabel();
+}
+function updateVoiceLabel(){ const el = $("voiceKind"); if (el) el.textContent = voiceOn ? (voiceKind === "ai" ? "🤖 Yapay zekâ sesi" : voiceKind === "device" ? "📱 Telefonun sesi" : "") : ""; }
 function confetti(){
   if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const box = document.createElement("div"); box.className = "confetti"; box.setAttribute("aria-hidden", "true");
@@ -1681,7 +1773,7 @@ function renderCook(){
     const tech = stepTechnique(r, s);
     h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}</div></div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
-      <p class="cook-wake" id="cookWake">${wakeText()}</p>
+      <p class="cook-wake"><span id="cookWake">${wakeText()}</span> <span id="voiceKind" class="voice-kind"></span></p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
   } else {
     if (!cook.counted){ // tarif sonuna kadar pişirildi: kişisel sayaca ekle
@@ -1699,7 +1791,8 @@ function renderCook(){
   const sayKey = cook.key + "|" + cook.step;
   if (voiceOn && sayKey !== lastSpoken){
     lastSpoken = sayKey;
-    speak(cook.step < n ? `Adım ${cook.step + 1}. ${r.adimlar[cook.step]}` : `Afiyet olsun! ${r.ad} hazır.`);
+    speak(cook.step < n ? spokenStep(r, cook.step) : `Afiyet olsun! ${r.ad} hazır, ellerine sağlık.`);
+    if (cook.step + 1 < n) aiVoice(spokenStep(r, cook.step + 1)); // sıradaki adımı önceden hazırla
   }
   renderTimers();
 }
@@ -1938,9 +2031,15 @@ document.addEventListener("click", e => {
     case "theme": theme = theme === "dark" ? "light" : "dark"; try { localStorage.setItem("pisir-tema", theme); } catch(e) {} applyTheme(); break;
     case "voice":
       voiceOn = !voiceOn; try { localStorage.setItem("pisir-ses", voiceOn ? "1" : "0"); } catch(e) {}
-      if (!voiceOn && canSpeak()) speechSynthesis.cancel();
+      if (voiceOn && player){ player.src = SILENT; player.play().catch(() => {}); } // telefonda sesi çalmaya izin ver
+      if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
+    case "menuToPlan": {
+      const di = (new Date().getDay() + 6) % 7;
+      dailyMenu().forEach(([, , r]) => { if (!plan[di].includes(r.key)) plan[di].push(r.key); });
+      save(); renderHero(); el.textContent = `✓ ${DAYS[di]} menüsüne eklendi`; break;
+    }
     case "toggleGroup": { const gi = Number(el.dataset.g); openGroups.has(gi) ? openGroups.delete(gi) : openGroups.add(gi); renderGroups(); break; }
     case "selectGroup": { const g = GROUPS[Number(el.dataset.g)]; const all = g.items.every(([id]) => selected.has(id)); g.items.forEach(([id]) => all ? selected.delete(id) : selected.add(id)); save(); renderAll(); break; }
     case "subst": if (r) runSubst(r, r.malzemeler[Number(el.dataset.idx)]); break;
@@ -2043,6 +2142,7 @@ if (AI_URL){
 
 /* ---------- Ortak sayaç: uygulamada en çok pişirilenler (Cloudflare KV) ---------- */
 const STATS_URL = AI_URL ? AI_URL.replace(/\/$/, "") + "/sayac" : "";
+const TTS_URL = AI_URL ? AI_URL.replace(/\/$/, "") + "/ses" : "";
 const statsState = {top:null, at:0};
 function loadStats(){
   if (!STATS_URL || Date.now() - statsState.at < 5 * 60 * 1000) return;
