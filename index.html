@@ -425,7 +425,14 @@ plan = Array.from({length:7}, (_, i) => (Array.isArray(plan) && Array.isArray(pl
 let illus = load("pisir-gorsel", {}); if (!illus || typeof illus !== "object") illus = {};
 Object.keys(illus).forEach(k => { if (typeof illus[k] !== "string" || !illus[k].trim().startsWith("<svg")) delete illus[k]; });
 const illusState = {};
-const subs = {};
+const subs = (() => { const v = load("pisir-ikame", {}); const o = {}; if (v && typeof v === "object") Object.keys(v).forEach(k => { const x = v[k]; if (x && x.state === "done" && Array.isArray(x.items)) o[k] = x; }); return o; })();
+function saveSubs(){
+  try {
+    const done = Object.keys(subs).filter(k => subs[k].state === "done").slice(-150);
+    const o = {}; done.forEach(k => o[k] = subs[k]);
+    localStorage.setItem("pisir-ikame", JSON.stringify(o));
+  } catch(e) {}
+}
 let planTarget = null;
 let lastPlanMsg = null;
 
@@ -883,6 +890,7 @@ async function runSubst(r, m){
     const out = await sampleFn.json(prompt, {modelTier:"quick"});
     const items = (out && Array.isArray(out.oneriler) ? out.oneriler : []).filter(x => x && typeof x.ne === "string").slice(0, 3).map(x => ({ne:x.ne, nasil:str(x.nasil)}));
     subs[k] = {state:"done", items, note:str(out && out.not)};
+    saveSubs();
   } catch(e){ subs[k] = {state:"error", msg:errMsg(e).replace("Tarif oluşturulamadı", "Öneri alınamadı")}; }
   renderAll();
 }
@@ -1022,23 +1030,37 @@ function aiQuota(){
   const q = load("pisir-ai-kota-v2", null);
   return q && q.day === today && typeof q.count === "number" ? q : {day:today, count:0};
 }
+/* Aynı anda en fazla 2 yapay zekâ isteği gönderilir; fazlası sırada bekler (ücretsiz kotayı korur). */
+const AI_PARALLEL = 2;
+let aiActive = 0;
+const aiWaiting = [];
+const aiSlot = () => new Promise(res => { if (aiActive < AI_PARALLEL){ aiActive++; res(); } else aiWaiting.push(res); });
+const aiRelease = () => { const next = aiWaiting.shift(); if (next) next(); else aiActive--; };
+
 async function aiCall(prompt, wantJson){
   if (!navigator.onLine) throw {code:"offline"};
   if (AI_DAILY_LIMIT > 0 && aiQuota().count >= AI_DAILY_LIMIT) throw {code:"daily_limit"};
-  let res;
+  await aiSlot();
   try {
-    res = await fetch(AI_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({prompt, json:!!wantJson})});
-  } catch(e){ throw {code: navigator.onLine ? "unreachable" : "offline"}; }
-  if (!res.ok){
-    const d = await res.json().catch(() => null);
-    throw {code: res.status === 429 ? "rate_limited" : "server", detail: d && (d.detail || d.error)};
-  }
-  const data = await res.json().catch(() => null);
-  if (!data || typeof data.text !== "string") throw {code:"server"};
-  // Yalnızca başarılı istekler günlük hakkından düşülür
-  const q = aiQuota(); q.count += 1;
-  try { localStorage.setItem("pisir-ai-kota-v2", JSON.stringify(q)); } catch(e) {}
-  return data.text;
+    for (let attempt = 0; ; attempt++){
+      let res;
+      try {
+        res = await fetch(AI_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({prompt, json:!!wantJson})});
+      } catch(e){ throw {code: navigator.onLine ? "unreachable" : "offline"}; }
+      if (!res.ok){
+        const d = await res.json().catch(() => null);
+        // Yoğunlukta bir kez birkaç saniye bekleyip yeniden dene
+        if (res.status === 429 && attempt === 0){ await new Promise(r => setTimeout(r, 4000)); continue; }
+        throw {code: res.status === 429 ? "rate_limited" : "server", detail: d && (d.detail || d.error)};
+      }
+      const data = await res.json().catch(() => null);
+      if (!data || typeof data.text !== "string") throw {code:"server"};
+      // Yalnızca başarılı istekler günlük hakkından düşülür
+      const q = aiQuota(); q.count += 1;
+      try { localStorage.setItem("pisir-ai-kota-v2", JSON.stringify(q)); } catch(e) {}
+      return data.text;
+    }
+  } finally { aiRelease(); }
 }
 if (AI_URL){
   sampleFn = async (prompt) => ({text: await aiCall(prompt, false)});
