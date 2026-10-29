@@ -288,7 +288,6 @@ header.hero{padding:28px 0 20px}
 </style>
 </head>
 <body>
-<div class="band" aria-hidden="true"></div>
 <div class="wrap">
   <header class="hero">
     <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
@@ -705,7 +704,7 @@ function renderHero(){
   $("planMode").hidden = mode !== "plan";
   $("savedMode").hidden = !listMode;
   $("status").hidden = mode !== "pantry";
-  $("filters").hidden = listMode || mode === "plan";
+  $("filters").hidden = false; // kategoriler her sekmede görünür
   $("filters").innerHTML = CATS.map(([id, l, emo]) => `<button type="button" class="cat cat-${id}" data-act="filter" data-f="${id}" aria-pressed="${filters.has(id)}"><span class="cat-emo" aria-hidden="true">${emo}</span><span class="cat-name">${l}</span></button>`).join("");
 }
 
@@ -1258,8 +1257,19 @@ document.addEventListener("click", e => {
   const key = el.dataset.key;
   const r = key ? REG.get(key) : null;
   switch (act){
-    case "tab": mode = el.dataset.mode; if (mode !== "dish") planTarget = null; renderAll(); break;
-    case "filter": { const f = el.dataset.f; filters = (filters.has(f) && filters.size === 1) ? new Set() : new Set([f]); renderAll(); break; } // tek seçim: yeni kategori eskisinin yerine geçer
+    case "tab": mode = el.dataset.mode; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
+    case "filter": {
+      const f = el.dataset.f;
+      if (mode !== "dish"){
+        // başka bir sekmedeyken kategoriye basılırsa "Yemek ara"da o kategoriyi aç
+        mode = "dish"; planTarget = null; filters = new Set([f]); $("dishSearch").value = "";
+        renderAll(); $("filters").scrollIntoView({block:"start"});
+      } else {
+        filters = (filters.has(f) && filters.size === 1) ? new Set() : new Set([f]); // tek seçim
+        renderAll();
+      }
+      break;
+    }
     case "ing": { const id = el.dataset.id; selected.has(id) ? selected.delete(id) : selected.add(id); save(); renderAll(); break; }
     case "addExtra": addExtra(); break;
     case "rmExtra": extras.delete(el.dataset.name); save(); renderAll(); break;
