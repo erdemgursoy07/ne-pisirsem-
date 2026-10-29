@@ -1,0 +1,16 @@
+{
+  "name": "Bugün ne pişirsem?",
+  "short_name": "Ne pişirsem?",
+  "description": "Evdeki malzemelerden yemek önerisi, alışveriş listesi, pişirme modu ve haftalık menü.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F3F6FA",
+  "theme_color": "#1E4FA8",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
