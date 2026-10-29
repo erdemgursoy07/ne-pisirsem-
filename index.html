@@ -1097,7 +1097,7 @@ document.addEventListener("click", e => {
   const r = key ? REG.get(key) : null;
   switch (act){
     case "tab": mode = el.dataset.mode; if (mode !== "dish") planTarget = null; renderAll(); break;
-    case "filter": { const f = el.dataset.f; filters.has(f) ? filters.delete(f) : filters.add(f); renderAll(); break; }
+    case "filter": { const f = el.dataset.f; filters = (filters.has(f) && filters.size === 1) ? new Set() : new Set([f]); renderAll(); break; } // tek seçim: yeni kategori eskisinin yerine geçer
     case "ing": { const id = el.dataset.id; selected.has(id) ? selected.delete(id) : selected.add(id); save(); renderAll(); break; }
     case "addExtra": addExtra(); break;
     case "rmExtra": extras.delete(el.dataset.name); save(); renderAll(); break;
