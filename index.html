@@ -95,6 +95,21 @@ button:disabled{opacity:.45;cursor:default}
 .cat-meze{--c:#5A7A12;--cbg:#EEF6DF}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
+.pantry .search{font-size:1.05rem;padding:14px 16px}
+.mybox{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:20px}
+.mybox-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;font-size:1.05rem}
+.chip.on{background:var(--cobalt);border-color:var(--cobalt);color:var(--cobalt-ink)}
+.basic-note{margin:10px 0 0;font-size:.88rem;color:var(--muted)}
+.search-hits{margin-bottom:18px}
+.all-title{font-size:1rem;font-weight:700;color:var(--muted);margin:24px 0 10px}
+.acc{border:1.5px solid var(--line);border-radius:16px;margin-bottom:10px;background:var(--surface);overflow:hidden}
+.acc-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:none;border:0;cursor:pointer;font-weight:700;font-size:1rem;text-align:left}
+.acc-meta{color:var(--muted);font-weight:600;font-size:.9rem;white-space:nowrap}
+.acc-meta b{color:var(--cobalt)}
+.acc-arrow{display:inline-block;transition:transform .15s}
+.acc.open .acc-arrow{transform:rotate(180deg)}
+.acc-body{padding:0 16px 16px}
+.acc-body .link-btn{margin-bottom:8px}
 .dish-card{padding:10px 10px 14px;gap:8px}
 .dc-media{position:relative;width:100%;aspect-ratio:4/3;border-radius:14px;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.6)}
 .dc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -998,20 +1013,54 @@ function renderHero(){
   $("filters").innerHTML = CATS.map(([id, l, emo]) => `<button type="button" class="cat cat-${id}" data-act="filter" data-f="${id}" aria-pressed="${filters.has(id)}"><span class="cat-emo" aria-hidden="true">${emo}</span><span class="cat-name">${l}</span></button>`).join("");
 }
 
+/* ---------- Dolabım: sade düzen ---------- */
+const ING_EMOJI = {tuz:"🧂",karabiber:"⚫",yag:"🌻",zeytinyagi:"🫒",su:"💧",domates:"🍅",sogan:"🧅",sarimsak:"🧄",biber:"🌶️",kapya:"🫑",patates:"🥔",patlican:"🍆",kabak:"🥒",havuc:"🥕",ispanak:"🥬",taze_fasulye:"🌱",salatalik:"🥒",maydanoz:"🌿",dereotu:"🌿",marul:"🥬",limon:"🍋",mantar:"🍄",bezelye:"🌱",lahana:"🥬",pirasa:"🥬",balkabagi:"🎃",asma_yapragi:"🍃",semizotu:"🌿",pancar:"🥗",elma:"🍎",muz:"🍌",cilek:"🍓",avokado:"🥑",kusbasi:"🥩",kiyma:"🥩",tavuk:"🍗",sucuk:"🌭",pastirma:"🥓",balik:"🐟",pirinc:"🍚",bulgur:"🌾",mercimek:"🥣",yesil_mercimek:"🥣",nohut:"🥣",kuru_fasulye:"🥣",fava:"🥣",makarna:"🍝",lazanya:"🍝",pirinc_eriste:"🍜",sehriye:"🍜",un:"🌾",irmik:"🌾",ekmek:"🍞",hamburger_ekmegi:"🍔",lavas:"🌯",yufka:"🥟",baklava_yufkasi:"🥟",kadayif:"🍯",gullac:"🥛",galeta_unu:"🍞",nori:"🍣",misir_tanesi:"🍿",yumurta:"🥚",sut:"🥛",yogurt:"🥛",peynir:"🧀",kasar:"🧀",mozzarella:"🧀",labne:"🧀",krema:"🥛",tereyagi:"🧈",dondurma:"🍨",kunefe_peyniri:"🧀",turk_kahvesi:"☕️",espresso:"☕️",filtre_kahve:"☕️",granul_kahve:"☕️",buz:"🧊",menengic:"☕️",dibek:"☕️",seker:"🍬",kakao:"🍫",cikolata:"🍫",vanilin:"🌼",tarcin:"🍂",bal:"🍯",nisasta:"🌽",biskuvi:"🍪",ceviz:"🌰",fistik:"🥜",maya:"🍞",kabartma_tozu:"🧁",salca:"🍅",nane:"🌿",pul_biber:"🌶️",kori:"🍛",tahin:"🥣",nar_eksisi:"🍶",soya_sosu:"🍶",mayonez:"🥚",tursu:"🥒",zeytin:"🫒",sirke:"🍶",misir:"🌽"};
+// İnsanların en sık seçtiği malzemeler: açılışta sadece bunlar görünür
+const QUICK = ["sogan","domates","yumurta","patates","biber","sarimsak","kiyma","tavuk","pirinc","makarna","yogurt","peynir","sut","tereyagi","salca","un","havuc","limon"];
+const openGroups = new Set();
+const chipHTML = (id, l) => `<button type="button" class="chip" data-act="ing" data-id="${id}" aria-pressed="${selected.has(id)}"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${l}</button>`;
+
 function renderGroups(){
   const raw = $("search").value.trim();
   const q = norm(raw);
+  const basics = GROUPS[0].items.map(([id]) => id);
+  const mine = [...selected].filter(id => !basics.includes(id));
+  const basicN = basics.filter(id => selected.has(id)).length;
+  const total = mine.length + extras.size;
   let html = "";
-  const ex = [...extras].filter(x => !q || norm(x).includes(q));
-  if (ex.length) html += `<div class="group"><h2>Senin eklediklerin</h2><div class="chips">${ex.map(x => `<button type="button" class="chip" data-act="rmExtra" data-name="${esc(x)}" aria-pressed="true" title="Kaldırmak için dokun">${esc(x)} ✕</button>`).join("")}</div></div>`;
-  const exact = raw && (Object.values(LABEL).some(l => norm(l) === q) || [...extras].some(x => norm(x) === q));
-  if (raw && !exact && sampleFn) html += `<div class="add-row"><p class="sub">Aradığın malzeme listede yoksa kendin ekleyebilirsin.</p><button type="button" class="ai-btn" data-act="addExtra" id="addExtra">“${esc(raw)}” malzemesini ekle</button></div>`;
-  html += GROUPS.map(g => {
-    const items = g.items.filter(([, l]) => !q || norm(l).includes(q));
-    if (!items.length) return "";
-    return `<div class="group"><div class="group-head"><h2>${g.title}</h2>${g.all ? `<button type="button" class="link-btn" data-act="selectGroup" data-g="${GROUPS.indexOf(g)}">${g.items.every(([id]) => selected.has(id)) ? "Hiçbirini seçme" : "Hepsini seç"}</button>` : ""}</div><div class="chips">${items.map(([id, l]) => `<button type="button" class="chip" data-act="ing" data-id="${id}" aria-pressed="${selected.has(id)}">${l}</button>`).join("")}</div></div>`;
+
+  // 1) Dolabındakiler: seçtiklerin tek bakışta, ✕ ile çıkar
+  html += `<div class="mybox"><div class="mybox-head"><b>🧺 Dolabındakiler</b><span class="sec-count">${total} malzeme</span></div>`;
+  html += total
+    ? `<div class="chips">${mine.map(id => `<button type="button" class="chip on" data-act="ing" data-id="${id}" aria-label="${LABEL[id]} malzemesini çıkar"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]} ✕</button>`).join("")}${[...extras].map(x => `<button type="button" class="chip on" data-act="rmExtra" data-name="${esc(x)}" aria-label="${esc(x)} malzemesini çıkar">${esc(x)} ✕</button>`).join("")}</div>`
+    : `<p class="sub" style="margin:0">Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.</p>`;
+  html += `<p class="basic-note">🧂 Temel malzemeler (tuz, yağ, su…): ${basicN}/${basics.length} seçili</p></div>`;
+
+  // 2) Arama varsa: tüm gruplardan eşleşenler düz bir liste hâlinde
+  if (q){
+    const hits = [];
+    GROUPS.forEach(g => g.items.forEach(([id, l]) => { if (norm(l).includes(q)) hits.push([id, l]); }));
+    if (hits.length) html += `<div class="chips search-hits">${hits.map(([id, l]) => chipHTML(id, l)).join("")}</div>`;
+    const exact = Object.values(LABEL).some(l => norm(l) === q) || [...extras].some(x => norm(x) === q);
+    if (!exact && sampleFn) html += `<div class="add-row"><p class="sub">Aradığın malzeme listede yoksa kendin ekleyebilirsin.</p><button type="button" class="ai-btn" data-act="addExtra" id="addExtra">“${esc(raw)}” malzemesini ekle</button></div>`;
+    else if (!hits.length) html += `<p class="empty">“${esc(raw)}” listemizde yok. Başka bir yazımla dene.</p>`;
+    $("groups").innerHTML = html;
+    return;
+  }
+
+  // 3) En çok kullanılanlar
+  html += `<div class="group"><div class="group-head"><h2>⭐ En çok kullanılanlar</h2></div><div class="chips">${QUICK.map(id => chipHTML(id, LABEL[id])).join("")}</div></div>`;
+
+  // 4) Tüm malzemeler: kapanır gruplar
+  html += `<h2 class="all-title">Tüm malzemeler</h2>`;
+  html += GROUPS.map((g, gi) => {
+    const n = g.items.filter(([id]) => selected.has(id)).length;
+    const isOpen = openGroups.has(gi);
+    return `<div class="acc${isOpen ? " open" : ""}">
+      <button type="button" class="acc-head" data-act="toggleGroup" data-g="${gi}" aria-expanded="${isOpen}"><span>${g.title}</span><span class="acc-meta">${n ? `<b>${n} seçili</b>` : `${g.items.length} malzeme`} <span class="acc-arrow" aria-hidden="true">▾</span></span></button>
+      ${isOpen ? `<div class="acc-body">${g.all ? `<button type="button" class="link-btn" data-act="selectGroup" data-g="${gi}">${g.items.every(([id]) => selected.has(id)) ? "Hiçbirini seçme" : "Hepsini seç"}</button>` : ""}<div class="chips">${g.items.map(([id, l]) => chipHTML(id, l)).join("")}</div></div>` : ""}
+    </div>`;
   }).join("");
-  if (!html) html = `<p class="empty">“${esc(raw)}” listemizde yok. Başka bir yazımla dene.</p>`;
   $("groups").innerHTML = html;
 }
 
@@ -1618,6 +1667,7 @@ document.addEventListener("click", e => {
     case "servMinus": case "servPlus": if (r){ servMap[key] = Math.min(12, Math.max(1, getServ(r) + (act === "servPlus" ? 1 : -1))); save(); renderAll(); } break;
     case "copy": if (r) copyText(shopText(r), el); break;
     case "openSaved": mode = "dish"; $("dishSearch").value = ""; dishState = null; currentKey = key; addRecent(key); renderAll(); window.scrollTo(0, 0); break;
+    case "toggleGroup": { const gi = Number(el.dataset.g); openGroups.has(gi) ? openGroups.delete(gi) : openGroups.add(gi); renderGroups(); break; }
     case "selectGroup": { const g = GROUPS[Number(el.dataset.g)]; const all = g.items.every(([id]) => selected.has(id)); g.items.forEach(([id]) => all ? selected.delete(id) : selected.add(id)); save(); renderAll(); break; }
     case "subst": if (r) runSubst(r, r.malzemeler[Number(el.dataset.idx)]); break;
     case "illus": runIllus(key); break;
