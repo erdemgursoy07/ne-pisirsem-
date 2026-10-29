@@ -241,6 +241,14 @@ header.hero{padding:28px 0 20px}
 .cook-step{font-size:clamp(1.65rem,5.6vw,2.7rem);line-height:1.22;font-weight:600;letter-spacing:-.01em;margin:0}
 .cook-timer-btn{font-size:1.1rem;padding:14px 20px}
 .cook-actions{display:flex;flex-wrap:wrap;gap:12px}
+.tip{background:var(--cbg);border-radius:18px;padding:16px 18px;font-size:1.02rem;line-height:1.55}
+.tip p{margin:0 0 8px}
+.tip p:last-child{margin-bottom:0}
+.tip b{color:var(--c)}
+.tip .gl{font-size:.95rem}
+.tip ul{margin:4px 0 8px;padding-left:1.2em}
+.tip li{margin-bottom:4px}
+.explain-btn{border:0;background:var(--surface);color:var(--c);border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;margin-top:4px}
 .cook-how{font-size:1.1rem;padding:14px 20px}
 .cook-how{flex-direction:column;align-items:flex-start;gap:2px}
 .cook-how small{font-weight:600;opacity:.9;font-size:.85rem}
@@ -919,7 +927,7 @@ function stepTechnique(r, step){
     else if (/servis/.test(t)) emoji = "🍽️";
     else if (/pişir|kaynat/.test(t)) emoji = "🍲";
     else if (/ekle|karıştır/.test(t)) emoji = "🥄";
-    return {emoji, query:"", label:""};
+    return {emoji, query:"", label:"", kind:""};
   }
   // İlgili malzemeyi bul. Türkçede nesne fiilden önce gelir ("patlıcanları soy");
   // "kıyılmış maydanoz" gibi sıfat hâlinde ise malzeme sonra gelir.
@@ -939,7 +947,88 @@ function stepTechnique(r, step){
   });
   const ing = participle ? (after.ing || before.ing) : (before.ing || after.ing);
   const subject = ing || (best[3] === "demlendirme" ? "" : norm(r.ad));
-  return {emoji, query:`${subject} ${best[2]}`.trim(), label:`${ing ? ing + " " : ""}${best[3]}`};
+  return {emoji, query:`${subject} ${best[2]}`.trim(), label:`${ing ? ing + " " : ""}${best[3]}`, kind:best[3]};
+}
+
+/* Yeni başlayanlar için teknik açıklamaları */
+const HOWTO = {
+  "alacalı soyma": "Patlıcanın kabuğunu boydan boya bir şerit soyup bir şerit bırakarak soy. Zebra gibi çizgili görünür ve pişerken dağılmaz.",
+  "piyazlık doğrama": "Soğanı ikiye kes, sonra kesik yüzü tahtaya gelecek şekilde koyup ince ince yarım ay dilimler hâlinde doğra.",
+  "parmak doğrama": "Önce yaklaşık 1 cm kalınlığında dilimle, sonra dilimleri parmak kalınlığında çubuklar hâlinde kes.",
+  "halka doğrama": "Sebzeyi enine, yaklaşık 1 cm kalınlığında yuvarlak dilimler hâlinde kes.",
+  "küp doğrama": "Önce dilimle, dilimleri şeritlere, şeritleri de zar büyüklüğünde küplere kes.",
+  "ince kıyma": "Yeşillikleri bir araya topla, bıçağın ucunu tahtadan kaldırmadan sallayarak çok küçük parçalar olana kadar doğra.",
+  "doğrama": "Malzemeyi kesme tahtasında tut; parmak uçlarını içe kıvır ki bıçak değmesin. Boyut yazmıyorsa yaklaşık 1 cm’lik parçalar uygundur.",
+  "rendeleme": "Rendeyi bir kabın üstünde sabit tut, malzemeyi dişlere bastırarak yukarıdan aşağı sür. Malzeme küçülünce parmaklarını korumak için bırak.",
+  "ayıklama": "Uçlarını kes, sert lifleri ve bozuk kısımları ayır. Taze fasulyede iki ucu koparıp yandaki ipi çek.",
+  "soyma": "Soyacak ya da küçük bir bıçakla kabuğu ince ince, bıçağı kendinden dışarı doğru hareket ettirerek soy.",
+  "ılıştırma": "Kaynayan çorbadan bir kepçe alıp yoğurtlu karışıma yavaşça, sürekli çırparak ekle. Bunu 3–4 kez tekrarla, sonra karışımı tencereye dök. Böylece yoğurt kesilmez.",
+  "yoğurma": "Malzemeleri bir kaba koy, elinle sıkıp bırakarak 3–5 dakika karıştır. Harç bir bütün olup ele yapışmaz hâle gelince hazırdır.",
+  "çırpma": "Çatal ya da çırpma teliyle hızlı ve dairesel hareketlerle, karışım pürüzsüz olana kadar karıştır.",
+  "sarma": "Harcı yufkanın geniş kenarına ince bir şerit hâlinde koy, yanları içe katla ve sıkıca rulo yap.",
+  "doldurma": "Ortasını açtığın sebzeye harcı kaşıkla bastırarak yerleştir. Çok taşırma; pişerken biraz kabarır.",
+  "didikleme": "Haşlanmış eti biraz soğut, sonra iki çatal ya da parmaklarınla liflerine ayırarak küçük parçalara böl.",
+  "haşlama": "Malzemeyi kaynayan, hafif tuzlu suya at ve yumuşayana kadar pişir. Çatal kolayca batıyorsa olmuştur.",
+  "kızartma": "Tavada yağı iyice ısıt; attığın küçük bir parça hemen cızırdıyorsa hazırdır. Altı kızarınca çevir, sonra kâğıt havluya alıp yağını süz.",
+  "sote": "Yüksek ateşte, az yağda ve sık sık karıştırarak hızlıca pişir. Malzeme suyunu salıp sonra çekince olmuştur.",
+  "kavurma": "Orta ateşte, az yağda ara sıra karıştırarak pişir. Soğan şeffaflaşıp hafif pembeleşince, et de suyunu çekip rengi dönünce kavrulmuştur.",
+  "demlendirme": "Ocağı kapat, tencerenin ağzına bir kâğıt havlu koy ve kapağı üstüne kapat. Pilav bu sürede buharla pişmeyi tamamlar ve tane tane olur.",
+  "ıslatma": "Malzemeyi su dolu bir kaba koy, tarifte yazan süre kadar beklet, sonra suyunu süz ya da elinle sık."
+};
+/* Mutfak terimleri sözlüğü */
+const GLOSSARY = [
+  [/kısık ateş/, "Kısık ateş", "ocağın en düşük ayarına yakın. Yemek hafifçe fokurdamalı, taşmamalı."],
+  [/orta ateş/, "Orta ateş", "ocak düğmesinin ortası."],
+  [/yüksek ateş/, "Yüksek ateş", "ocağın en güçlü ayarı; sürekli karıştırman gerekir."],
+  [/suyunu çek/, "Suyunu çekene kadar", "tencerenin dibinde sıvı kalmayana kadar. Kaşıkla kenarı araladığında su görmemelisin."],
+  [/pembeleş/, "Pembeleşene kadar", "soğan hafif altın-pembe renge dönene kadar, yaklaşık 3–5 dakika."],
+  [/şeffaflaş/, "Şeffaflaşana kadar", "beyaz pirinç yarı saydam görünene kadar, yaklaşık 3–4 dakika."],
+  [/sönene kadar/, "Sönene kadar", "yeşillik pişip hacmi küçülene kadar."],
+  [/taşım/, "Bir taşım kaynatmak", "kaynamaya başlar başlamaz ocaktan almak."],
+  [/kızgın yağ/, "Kızgın yağ", "iyice ısınmış yağ; içine attığın küçük bir ekmek parçası hemen cızırdar."],
+  [/°c|fırında/, "Fırın", "pişirmeye başlamadan önce fırını yazan dereceye ısıt; yaklaşık 10 dakika sürer."],
+  [/koyulaş/, "Koyulaşana kadar", "kaşığı daldırıp çıkardığında üzerinde ince bir tabaka kalacak kıvama gelene kadar."],
+  [/blender/, "Blenderdan geçirmek", "el blenderını tencereye daldırıp pürüzsüz olana kadar çalıştırmak. Sıcak çorba sıçrayabilir, dikkat et."],
+  [/tatlandır|tuzunu ayarla/, "Tatlandırmak", "tadına bakıp tuz ve baharatı kendi zevkine göre ayarlamak."],
+  [/su bardağı/, "Su bardağı", "yaklaşık 200 ml’lik bardak."],
+  [/(^|\s)süz/, "Süzmek", "suyunu kevgir ya da süzgeçten geçirerek ayırmak."],
+  [/kaynat|kaynayınca/, "Kaynamak", "yüzeyde büyük kabarcıklar çıkması."]
+];
+const explains = (() => { const v = load("pisir-aciklama", {}); return v && typeof v === "object" ? v : {}; })();
+const explainState = {};
+function tipHTML(r, step, tech){
+  const t = norm(step);
+  const how = tech.kind && HOWTO[tech.kind];
+  const terms = GLOSSARY.filter(([re]) => re.test(t)).slice(0, 3);
+  const key = r.key + "|" + cook.step;
+  const ex = explains[key];
+  const st = explainState[key];
+  let h = `<div class="tip cat-${recipeCat(r)}">`;
+  if (how) h += `<p><b>💡 Nasıl yapılır?</b> ${esc(how)}</p>`;
+  if (terms.length) h += terms.map(([, a, b]) => `<p class="gl"><b>${esc(a)}:</b> ${esc(b)}</p>`).join("");
+  if (!how && !terms.length && !ex) h += `<p class="gl">Bu adım basit; yazılanı sırayla yapman yeterli.</p>`;
+  if (Array.isArray(ex) && ex.length) h += `<p><b>🤖 Ayrıntılı anlatım</b></p><ul>${ex.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+  if (sampleFn && !ex){
+    h += st === "loading" ? `<p class="gl">Ayrıntılı anlatım hazırlanıyor…</p>`
+       : `<button type="button" class="explain-btn" data-act="explainStep">🤖 Daha ayrıntılı anlat</button>${st && st !== "loading" ? `<p class="gl">${esc(st)}</p>` : ""}`;
+  }
+  return h + `</div>`;
+}
+async function runExplain(){
+  const r = REG.get(cook.key); if (!r || !sampleFn) return;
+  const stepNo = cook.step, step = r.adimlar[stepNo];
+  const key = r.key + "|" + stepNo;
+  if (explainState[key] === "loading") return;
+  explainState[key] = "loading"; renderCook();
+  const prompt = `"${r.ad}" tarifinin şu adımını mutfağa yeni başlayan birine anlatır gibi, sade Türkçeyle açıkla: "${step}"\nHangi ateşte ve ne kadar süre yapılacağını, nelere dikkat edileceğini ve işin bittiğinin nasıl anlaşılacağını söyle. En fazla 5 kısa madde yaz.\nYalnızca şu JSON'u döndür: {"maddeler": ["..."]}`;
+  try {
+    const out = await sampleFn.json(prompt);
+    const items = (out && Array.isArray(out.maddeler) ? out.maddeler : []).filter(x => typeof x === "string").slice(0, 6);
+    if (!items.length) throw {code:"server"};
+    explains[key] = items; delete explainState[key];
+    try { const keys = Object.keys(explains).slice(-200); const o = {}; keys.forEach(k => o[k] = explains[k]); localStorage.setItem("pisir-aciklama", JSON.stringify(o)); } catch(e) {}
+  } catch(e){ explainState[key] = errMsg(e); }
+  if (cook.open) renderCook();
 }
 
 function renderCook(){
@@ -954,7 +1043,7 @@ function renderCook(){
     const s = r.adimlar[cook.step];
     const min = stepMinutes(s);
     const tech = stepTechnique(r, s);
-    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p><div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a></div></div>
+    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a></div></div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
       <p class="cook-wake" id="cookWake">${wakeText()}</p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
@@ -1196,6 +1285,7 @@ document.addEventListener("click", e => {
     case "planClear": plan = plan.map(() => []); save(); renderAll(); break;
     case "bought": { const it = planShopping().find(x => x.id === el.dataset.k); if (it){ if (it.m.id) selected.add(it.m.id); if (LABEL[it.id]) selected.add(it.id); manual[norm(it.ad)] = true; save(); renderAll(); } break; }
     case "copyPlan": copyText(planShopText(), el); break;
+    case "explainStep": runExplain(); break;
     case "clearRecent": recents = []; save(); renderAll(); break;
     case "cook": openCook(key, false); break;
     case "cookOpen": if (cook.key) openCook(cook.key, true); break;
