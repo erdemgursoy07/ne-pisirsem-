@@ -99,6 +99,50 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+/* Üst çubuk ve karşılama kartı */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0 16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.01em}
+.brand-logo{width:42px;height:42px;border-radius:13px;background:var(--cobalt);display:grid;place-items:center;font-size:1.35rem;box-shadow:0 4px 12px rgba(30,79,168,.25)}
+.hero-card{position:relative;border-radius:28px;padding:30px 30px 20px;background:linear-gradient(135deg,#E8F0FF 0%,#FFF4E3 100%);overflow:hidden}
+.hero-card h1{font-size:clamp(2.1rem,5.2vw,3.6rem);max-width:none;margin:0 0 10px}
+.hero-card .marquee{margin:20px 0 0;flex:none}
+.greet{margin:0 0 6px;font-weight:800;color:var(--cobalt);font-size:1.05rem}
+:root[data-theme="dark"] .hero-card{background:linear-gradient(135deg,#16244A 0%,#2B2216 100%)}
+/* Dolabım'daki kısa menü şeridi */
+.daily-mini{width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 22px;padding:14px 18px;border-radius:18px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left}
+.daily-mini:hover{border-color:var(--cobalt)}
+.dm-tag{font-weight:800;color:#C2255C}
+.dm-items{display:flex;flex-wrap:wrap;gap:6px 14px;flex:1;min-width:0;font-weight:600}
+.dm-go{font-weight:800;color:var(--cobalt);white-space:nowrap}
+.dm-items span{white-space:nowrap}
+.brand{min-width:0}
+.brand span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:699px){
+  .daily-mini{flex-direction:column;align-items:flex-start;gap:6px}
+  .dm-items{gap:4px 12px;font-size:.92rem}
+  .brand{font-size:.95rem;gap:8px}
+  .theme-btn{padding:0 10px;font-size:.8rem}
+}
+/* Canlı öneriler */
+.sug-list{display:grid;gap:8px}
+.sug{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border:0;border-radius:16px;background:var(--cbg);color:var(--ink);cursor:pointer;text-align:left}
+.sug-img{flex:0 0 auto;width:62px;height:62px;border-radius:12px;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.65);font-size:1.8rem}
+.sug-img img{width:100%;height:100%;object-fit:cover}
+.sug-t{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sug-t b{font-size:1rem}
+.sug-t small{font-size:.82rem;font-weight:700}
+.sug-ok{color:#2B8A3E}
+.sug-miss{color:#C92A2A}
+.suggest-strip:empty{display:none}
+.suggest-strip{margin:0 0 20px}
+.sug-head{font-weight:800;margin:0 0 8px}
+.sug-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.sug-row .sug{flex:0 0 240px}
+@media (min-width:900px){.suggest-strip{display:none}}
+:root[data-theme="dark"] .sug-img{background:rgba(255,255,255,.08)}
+:root[data-theme="dark"] .sug-ok{color:#8CE99A}
+:root[data-theme="dark"] .sug-miss{color:#FF8787}
+@media (max-width:699px){.hero-card{padding:20px 18px 14px;border-radius:22px}.hero-card h1{font-size:2rem}.brand{font-size:1rem}.brand-logo{width:36px;height:36px;font-size:1.15rem}}
 .photos{margin-top:30px;padding-top:20px;border-top:1.5px solid var(--line);max-width:760px}
 .photos-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0 14px}
@@ -266,7 +310,7 @@ header.hero{padding:28px 0 20px}
   .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;font-size:.68rem;line-height:1.1;white-space:normal;text-align:center;border-radius:12px}
   .tab-i{margin:0;font-size:1.35rem}
   .wrap{padding-bottom:92px}
-  .bar{bottom:calc(64px + env(safe-area-inset-bottom,0px));padding-bottom:12px}
+  .bar{bottom:calc(80px + env(safe-area-inset-bottom,0px));padding-bottom:12px;left:10px;right:10px;border-radius:18px;border:1.5px solid var(--line);box-shadow:0 6px 20px rgba(13,21,40,.12)}
   header.hero{padding-top:14px}
   .hero h1{font-size:2.4rem;margin-bottom:8px}
   .hero p{font-size:.98rem}
@@ -277,7 +321,8 @@ header.hero{padding:28px 0 20px}
 .chip.filter{padding:7px 13px;font-size:.95rem}
 .chip.filter[aria-pressed="true"]{background:var(--turq);border-color:var(--turq);color:var(--surface)}
 
-.layout{display:grid;gap:32px;padding-bottom:120px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;padding-bottom:120px}
+.pantry,.results{min-width:0}
 @media (min-width:900px){
   .layout{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start;padding-bottom:64px}
   .results{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);max-height:calc(100vh - 32px);overflow:auto;padding-right:4px}
@@ -422,9 +467,13 @@ header.hero{padding:28px 0 20px}
 <body>
 <div class="wrap">
   <header class="hero">
-    <div class="hero-top"><div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık mod</button></div>
-    <h1 id="heroTitle">Dolabında ne var?</h1>
-    <p id="heroText"></p>
+    <div class="topbar"><div class="brand"><span class="brand-logo" aria-hidden="true">🍳</span><span>Bugün ne pişirsem?</span></div><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div>
+    <div class="hero-card">
+      <p class="greet" id="greet"></p>
+      <h1 id="heroTitle">Dolabında ne var?</h1>
+      <p id="heroText"></p>
+      <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
+    </div>
     <div class="tabs" role="tablist" aria-label="Görünüm">
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="pantry" id="tab-pantry"><span class="tab-i" aria-hidden="true">🧺</span><span class="tab-t">Dolabım</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="dish" id="tab-dish"><span class="tab-i" aria-hidden="true">🔎</span><span class="tab-t">Yemek ara</span></button>
@@ -1214,13 +1263,18 @@ function hydrateImages(root){
 
 /* ---------- Bölümler ---------- */
 const HERO = {
-  pantry:["Dolabında ne var?","Malzemeleri seç, yemekleri gör."],
+  pantry:["Dolabında ne var?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim."],
   dish:["Ne pişirelim?","Bir kategori seç ya da yemek ara."],
   plan:["Haftalık menü","Günlere yemek ekle, alışveriş listen hazır."],
   fav:["En sevilenler","Türk ve dünya mutfağının en sevilenleri, senin favorilerin."],
   recent:["Son baktıkların","En son açtığın tarifler."]
 };
+function greeting(){
+  const h = new Date().getHours();
+  return (h < 5 ? "İyi geceler" : h < 12 ? "Günaydın" : h < 18 ? "İyi günler" : h < 22 ? "İyi akşamlar" : "İyi geceler") + " 👋";
+}
 function renderHero(){
+  $("greet").textContent = greeting();
   $("heroTitle").textContent = HERO[mode][0];
   $("heroText").textContent = HERO[mode][1];
   const listMode = mode === "fav" || mode === "recent";
@@ -1335,7 +1389,7 @@ function applyTheme(){
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = theme === "dark" ? "#0D1528" : "#1E4FA8";
-  const b = $("themeBtn"); if (b){ b.textContent = theme === "dark" ? "☀️ Aydınlık mod" : "🌙 Karanlık mod"; b.setAttribute("aria-label", theme === "dark" ? "Aydınlık moda geç" : "Karanlık moda geç"); }
+  const b = $("themeBtn"); if (b){ b.textContent = theme === "dark" ? "☀️ Aydınlık" : "🌙 Karanlık"; b.setAttribute("aria-label", theme === "dark" ? "Aydınlık moda geç" : "Karanlık moda geç"); }
 }
 applyTheme();
 const chipHTML = (id, l) => `<button type="button" class="chip" data-act="ing" data-id="${id}" aria-pressed="${selected.has(id)}"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${l}</button>`;
@@ -1355,6 +1409,7 @@ function renderGroups(){
     ? `<div class="chips">${mine.map(id => `<button type="button" class="chip on" data-act="ing" data-id="${id}" aria-label="${LABEL[id]} malzemesini çıkar"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]} ✕</button>`).join("")}${[...extras].map(x => `<button type="button" class="chip on" data-act="rmExtra" data-name="${esc(x)}" aria-label="${esc(x)} malzemesini çıkar">${esc(x)} ✕</button>`).join("")}</div>`
     : `<p class="sub" style="margin:0">Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.</p>`;
   html += `<p class="basic-note">🧂 Temel malzemeler (tuz, yağ, su…): ${basicN}/${basics.length} seçili</p></div>`;
+  html += `<div class="suggest-strip" id="sugStrip"></div>`;
 
   // 2) Arama varsa: tüm gruplardan eşleşenler düz bir liste hâlinde
   if (q){
@@ -1402,6 +1457,14 @@ function renderResults(){
   // "Bir iki eksik": seçtiklerinden en az 2'sini ve asıl malzemelerinin en az yarısını içerenler
   const near = ev.filter(x => x.miss > 0 && x.miss <= 2 && x.have >= 2 && x.have * 2 >= x.main).sort((a, b) => a.miss - b.miss || b.have - a.have).slice(0, 12);
 
+  // Canlı öneriler: önce hepsi evde olanlar, sonra 1-2 malzemesi eksik olanlar
+  const sugg = [...ready, ...near].slice(0, 8);
+  const sugCard = x => {
+    const r = x.r, wi = wikiInfo(r);
+    const missNames = r.malzemeler.filter(m => !owned(m)).map(m => m.ad);
+    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b><small class="${missNames.length ? "sug-miss" : "sug-ok"}">${missNames.length ? `Eksik: ${esc(missNames.join(", "))}` : "✓ Hepsi evde var"}</small></span></button>`;
+  };
+  const strip = $("sugStrip");
   const status = $("status");
   const mainSel = [...selected].some(id => !BASIC.has(id)) || extras.size > 0;
   if (!any || !mainSel) status.textContent = "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.";
@@ -1409,7 +1472,9 @@ function renderResults(){
   else if (ready.length) status.innerHTML = `Seçtiklerinle <strong>${ready.length} yemek</strong> hemen yapılır.`;
   else status.innerHTML = `Henüz tam eşleşme yok, ama <strong>${near.length} yemeğe</strong> çok yakınsın.`;
 
+  if (strip) strip.innerHTML = mainSel && sugg.length ? `<div class="sug-head">💡 Bu malzemelerle yapabileceklerin</div><div class="sug-row">${sugg.map(sugCard).join("")}</div>` : "";
   let html = "";
+  if (mainSel && sugg.length) html += `<div class="section sug-sec"><h2>💡 Bu malzemelerle yapabileceklerin</h2><div class="sug-list">${sugg.map(sugCard).join("")}</div></div>`;
   if (!any){
     html = `<div class="empty">Malzeme seçtikçe yapabileceğin yemekler burada belirecek. Başlamak için yumurta, domates ve biberi seçmeyi dene.</div>`;
   } else {
@@ -1565,6 +1630,10 @@ function renderDaily(){
   const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
   box.hidden = !show; if (!show) return;
   const menu = dailyMenu(); if (!menu.length){ box.hidden = true; return; }
+  if (mode === "pantry"){ // Dolabım'da asıl iş malzeme seçmek: menü kısa bir şerit olarak
+    box.innerHTML = `<button type="button" class="daily-mini" data-act="goDaily"><span class="dm-tag">🌟 Bugünün sofrası</span><span class="dm-items">${menu.map(([e, , r]) => `<span>${e} ${esc(r.ad)}</span>`).join("")}</span><span class="dm-go">Menüyü gör →</span></button>`;
+    return;
+  }
   if (dailySel >= menu.length) dailySel = 0;
   const sel = menu[dailySel][2];
   const wi = wikiInfo(sel);
@@ -2164,6 +2233,7 @@ document.addEventListener("click", e => {
       if (voiceOn && player){ player.src = SILENT; player.play().catch(() => {}); } // telefonda sesi çalmaya izin ver
       if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
+    case "goDaily": mode = "dish"; filters = new Set(); $("dishSearch").value = ""; dishState = null; currentKey = null; renderAll(); $("daily").scrollIntoView({block:"start"}); break;
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
     case "menuToPlan": {
