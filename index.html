@@ -10,6 +10,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ne pişirsem?">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://upload.wikimedia.org">
+<link rel="preconnect" href="https://tr.wikipedia.org">
+<link rel="preconnect" href="https://en.wikipedia.org">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Bugün ne pişirsem?</title>
@@ -95,17 +98,73 @@ button:disabled{opacity:.45;cursor:default}
 .cat-meze{--c:#5A7A12;--cbg:#EEF6DF}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
+.cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+.badges{display:flex;flex-wrap:wrap;gap:4px;padding:0 4px}
+.bd{font-size:.74rem;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.8);color:var(--ink);white-space:nowrap}
+.bd-kolay{background:#D3F9D8;color:#2B8A3E}
+.bd-orta{background:#FFF3BF;color:#8A5A00}
+.bd-zor{background:#FFE3E3;color:#C92A2A}
+.dc-note{font-size:.8rem;color:var(--c);font-weight:700;padding:0 4px}
+.detail .badges{padding:0;margin:0 0 14px}
+.detail .bd{font-size:.85rem;padding:5px 10px;background:var(--bg);border:1px solid var(--line)}
+.detail .bd-kolay,.daily .bd-kolay{background:#D3F9D8;border-color:transparent}
+.detail .bd-orta,.daily .bd-orta{background:#FFF3BF;border-color:transparent}
+.detail .bd-zor,.daily .bd-zor{background:#FFE3E3;border-color:transparent}
+.nut{background:var(--bg);border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;margin:0 0 22px;max-width:560px}
+.nut-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px}
+.nut-head span{color:var(--muted);font-size:.85rem}
+.nut-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.nut-grid div{background:var(--surface);border-radius:12px;padding:8px 4px}
+.nut-grid strong{display:block;font-size:1.1rem}
+.nut-grid span{font-size:.78rem;color:var(--muted)}
+header.hero{position:relative}
+.theme-btn{position:absolute;top:22px;right:0;width:44px;height:44px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-size:1.3rem;cursor:pointer;z-index:2}
+.daily{display:grid;grid-template-columns:1fr;gap:0;border-radius:24px;overflow:hidden;background:var(--cbg);margin:0 0 24px}
+@media (min-width:700px){.daily{grid-template-columns:1.1fr 1fr}}
+.daily-media{position:relative;aspect-ratio:16/10;display:grid;place-items:center;background:rgba(255,255,255,.5)}
+.daily-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.daily-emo{font-size:5rem}
+.daily-body{padding:18px 20px 22px;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.daily-tag{font-weight:800;color:var(--c);font-size:.95rem}
+.daily-body h2{margin:0;font-size:clamp(1.6rem,5vw,2.3rem);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.daily .badges{padding:0}
+.daily .bd{font-size:.85rem;padding:5px 10px}
+.daily-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.voice-btn{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:9px 12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.voice-btn[aria-pressed="true"]{background:#2B8A3E;border-color:#2B8A3E;color:#fff}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.confetti i{position:absolute;top:-16px;width:9px;height:15px;border-radius:2px;animation-name:konfeti;animation-timing-function:linear;animation-fill-mode:forwards}
+@keyframes konfeti{to{transform:translateY(110vh) rotate(760deg)}}
+.dc-media img,.daily-media img,.detail-img img{animation:gorsel .35s ease}
+@keyframes gorsel{from{opacity:0}to{opacity:1}}
+/* Karanlık modda sabit renkli parçalar */
+:root[data-theme="dark"] .cat-populer{--c:#74A7FF;--cbg:#18243D}
+:root[data-theme="dark"] .cat-kahve{--c:#E0B48A;--cbg:#33261B}
+:root[data-theme="dark"] .cat-meze{--c:#B5D96B;--cbg:#26301A}
+:root[data-theme="dark"] .cat-dunya{--c:#5CC8E0;--cbg:#122E36}
+:root[data-theme="dark"] .cat-atistirmalik{--c:#A9BED6;--cbg:#1F2A38}
+:root[data-theme="dark"] .cat-spor{--c:#91A7FF;--cbg:#1C2340}
+:root[data-theme="dark"] .dc-media,:root[data-theme="dark"] .daily-media{background:rgba(255,255,255,.06)}
+:root[data-theme="dark"] .dish-card.has-img .dc-emo{background:var(--surface)}
+:root[data-theme="dark"] .bd{background:rgba(255,255,255,.1)}
+:root[data-theme="dark"] .bd-kolay,:root[data-theme="dark"] .detail .bd-kolay,:root[data-theme="dark"] .daily .bd-kolay{background:#1F3A26;color:#8CE99A}
+:root[data-theme="dark"] .bd-orta,:root[data-theme="dark"] .detail .bd-orta,:root[data-theme="dark"] .daily .bd-orta{background:#3A3115;color:#FFD43B}
+:root[data-theme="dark"] .bd-zor,:root[data-theme="dark"] .detail .bd-zor,:root[data-theme="dark"] .daily .bd-zor{background:#3B1F22;color:#FF8787}
+:root[data-theme="dark"] .yt-btn.yt-alt:hover{background:#3A1A1A}
+:root[data-theme="dark"] .marquee{opacity:.9}
 .pantry .search{font-size:1.05rem;padding:14px 16px}
 .mybox{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:20px}
 .mybox-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;font-size:1.05rem}
-.chip.on{background:var(--cobalt);border-color:var(--cobalt);color:var(--cobalt-ink)}
+/* Seçili malzemeler yeşil: "evde var" anlamı */
+#groups .chip[aria-pressed="true"],.chip.on{background:#2B8A3E;border-color:#2B8A3E;color:#fff}
+#groups .chip[aria-pressed="true"]:hover,.chip.on:hover{background:#237032;border-color:#237032}
 .basic-note{margin:10px 0 0;font-size:.88rem;color:var(--muted)}
 .search-hits{margin-bottom:18px}
 .all-title{font-size:1rem;font-weight:700;color:var(--muted);margin:24px 0 10px}
 .acc{border:1.5px solid var(--line);border-radius:16px;margin-bottom:10px;background:var(--surface);overflow:hidden}
 .acc-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:none;border:0;cursor:pointer;font-weight:700;font-size:1rem;text-align:left}
 .acc-meta{color:var(--muted);font-weight:600;font-size:.9rem;white-space:nowrap}
-.acc-meta b{color:var(--cobalt)}
+.acc-meta b{color:#2B8A3E}
 .acc-arrow{display:inline-block;transition:transform .15s}
 .acc.open .acc-arrow{transform:rotate(180deg)}
 .acc-body{padding:0 16px 16px}
@@ -325,6 +384,7 @@ header.hero{padding:28px 0 20px}
 <body>
 <div class="wrap">
   <header class="hero">
+    <button type="button" class="theme-btn" data-act="theme" id="themeBtn" aria-label="Karanlık modu aç">🌙</button>
     <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
     <h1 id="heroTitle">Dolabında ne var?</h1>
     <p id="heroText"></p>
@@ -338,6 +398,7 @@ header.hero{padding:28px 0 20px}
     <div class="filters cats" id="filters" role="group" aria-label="Kategoriler"></div>
     <div class="status" id="status" aria-live="polite"></div>
   </header>
+  <div id="daily"></div>
 
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
@@ -375,14 +436,14 @@ header.hero{padding:28px 0 20px}
 /* ---------- Veri ---------- */
 const GROUPS = [
   {title:"🧂 Temel malzemeler", all:true, items:[["tuz","Tuz"],["karabiber","Karabiber"],["yag","Sıvı yağ"],["zeytinyagi","Zeytinyağı"],["su","Su"]]},
-  {title:"🥕 Sebze ve yeşillik", items:[["domates","Domates"],["sogan","Soğan"],["sarimsak","Sarımsak"],["biber","Biber"],["kapya","Kapya biber"],["patates","Patates"],["patlican","Patlıcan"],["kabak","Kabak"],["havuc","Havuç"],["ispanak","Ispanak"],["taze_fasulye","Taze fasulye"],["salatalik","Salatalık"],["maydanoz","Maydanoz"],["dereotu","Dereotu"],["marul","Marul"],["limon","Limon"],["mantar","Mantar"],["bezelye","Bezelye"],["lahana","Lahana"],["pirasa","Pırasa"],["balkabagi","Bal kabağı"],["asma_yapragi","Asma yaprağı"],["semizotu","Semizotu"],["pancar","Pancar"]]},
+  {title:"🥕 Sebze ve yeşillik", items:[["domates","Domates"],["sogan","Soğan"],["sarimsak","Sarımsak"],["biber","Biber"],["kapya","Kapya biber"],["patates","Patates"],["patlican","Patlıcan"],["kabak","Kabak"],["havuc","Havuç"],["ispanak","Ispanak"],["taze_fasulye","Taze fasulye"],["salatalik","Salatalık"],["maydanoz","Maydanoz"],["dereotu","Dereotu"],["marul","Marul"],["limon","Limon"],["mantar","Mantar"],["bezelye","Bezelye"],["lahana","Lahana"],["pirasa","Pırasa"],["balkabagi","Bal kabağı"],["asma_yapragi","Asma yaprağı"],["semizotu","Semizotu"],["pancar","Pancar"],["brokoli","Brokoli"]]},
   {title:"🍎 Meyve", items:[["elma","Elma"],["muz","Muz"],["cilek","Çilek"],["avokado","Avokado"]]},
-  {title:"🍗 Et, tavuk ve balık", items:[["kusbasi","Kuşbaşı et"],["kiyma","Kıyma"],["tavuk","Tavuk"],["sucuk","Sucuk"],["pastirma","Pastırma"],["balik","Balık"]]},
-  {title:"🌾 Bakliyat, tahıl ve hamur", items:[["pirinc","Pirinç"],["bulgur","Bulgur"],["mercimek","Kırmızı mercimek"],["yesil_mercimek","Yeşil mercimek"],["nohut","Nohut"],["kuru_fasulye","Kuru fasulye"],["fava","Kuru bakla"],["makarna","Makarna"],["lazanya","Lazanya yaprağı"],["pirinc_eriste","Pirinç eriştesi"],["sehriye","Şehriye"],["un","Un"],["irmik","İrmik"],["ekmek","Ekmek"],["hamburger_ekmegi","Hamburger ekmeği"],["lavas","Lavaş / tortilla"],["yufka","Yufka"],["baklava_yufkasi","Baklavalık yufka"],["kadayif","Tel kadayıf"],["gullac","Güllaç yaprağı"],["galeta_unu","Galeta unu"],["nori","Nori yaprağı"],["misir_tanesi","Patlamış mısırlık mısır"]]},
-  {title:"🧀 Süt ürünleri ve yumurta", items:[["yumurta","Yumurta"],["sut","Süt"],["yogurt","Yoğurt"],["peynir","Beyaz peynir"],["kasar","Kaşar"],["mozzarella","Mozzarella"],["labne","Labne peyniri"],["krema","Sıvı krema"],["tereyagi","Tereyağı"],["dondurma","Vanilyalı dondurma"],["kunefe_peyniri","Künefe peyniri"]]},
+  {title:"🍗 Et, tavuk ve balık", items:[["kusbasi","Kuşbaşı et"],["kiyma","Kıyma"],["tavuk","Tavuk"],["sucuk","Sucuk"],["pastirma","Pastırma"],["balik","Balık"],["ton_baligi","Ton balığı"]]},
+  {title:"🌾 Bakliyat, tahıl ve hamur", items:[["pirinc","Pirinç"],["bulgur","Bulgur"],["mercimek","Kırmızı mercimek"],["yesil_mercimek","Yeşil mercimek"],["yulaf","Yulaf"],["kinoa","Kinoa"],["nohut","Nohut"],["kuru_fasulye","Kuru fasulye"],["fava","Kuru bakla"],["makarna","Makarna"],["lazanya","Lazanya yaprağı"],["pirinc_eriste","Pirinç eriştesi"],["sehriye","Şehriye"],["un","Un"],["irmik","İrmik"],["ekmek","Ekmek"],["hamburger_ekmegi","Hamburger ekmeği"],["lavas","Lavaş / tortilla"],["yufka","Yufka"],["baklava_yufkasi","Baklavalık yufka"],["kadayif","Tel kadayıf"],["gullac","Güllaç yaprağı"],["galeta_unu","Galeta unu"],["nori","Nori yaprağı"],["misir_tanesi","Patlamış mısırlık mısır"]]},
+  {title:"🧀 Süt ürünleri ve yumurta", items:[["yumurta","Yumurta"],["sut","Süt"],["yogurt","Yoğurt"],["peynir","Beyaz peynir"],["kasar","Kaşar"],["mozzarella","Mozzarella"],["labne","Labne peyniri"],["krema","Sıvı krema"],["tereyagi","Tereyağı"],["dondurma","Vanilyalı dondurma"],["kunefe_peyniri","Künefe peyniri"],["lor","Lor peyniri"]]},
   {title:"☕️ Kahve", items:[["turk_kahvesi","Türk kahvesi"],["espresso","Espresso kahvesi"],["filtre_kahve","Filtre kahve"],["granul_kahve","Granül kahve"],["buz","Buz"],["menengic","Menengiç kahvesi"],["dibek","Dibek kahvesi"]]},
   {title:"🍫 Tatlı malzemeleri", items:[["seker","Şeker"],["kakao","Kakao"],["cikolata","Bitter çikolata"],["vanilin","Vanilin"],["tarcin","Tarçın"],["bal","Bal"],["nisasta","Nişasta"],["biskuvi","Bisküvi"],["ceviz","Ceviz"],["fistik","Yer fıstığı"],["maya","Kuru maya"],["kabartma_tozu","Kabartma tozu"]]},
-  {title:"🥫 Dolap", items:[["salca","Salça"],["nane","Kuru nane"],["pul_biber","Pul biber"],["kori","Köri baharatı"],["tahin","Tahin"],["nar_eksisi","Nar ekşisi"],["soya_sosu","Soya sosu"],["mayonez","Mayonez"],["tursu","Kornişon turşu"],["zeytin","Zeytin"],["sirke","Sirke"],["misir","Mısır (konserve)"]]}
+  {title:"🥫 Dolap", items:[["salca","Salça"],["nane","Kuru nane"],["pul_biber","Pul biber"],["kori","Köri baharatı"],["tahin","Tahin"],["nar_eksisi","Nar ekşisi"],["soya_sosu","Soya sosu"],["mayonez","Mayonez"],["tursu","Kornişon turşu"],["fistik_ezmesi","Fıstık ezmesi"],["zeytin","Zeytin"],["sirke","Sirke"],["misir","Mısır (konserve)"]]}
 ];
 const LABEL = {};
 GROUPS.forEach(g => g.items.forEach(([id,l]) => LABEL[id] = l));
@@ -600,7 +661,16 @@ const RAW = [
   {n:"Bruschetta", m:"İtalyan mutfağı", t:15, p:4, tag:["atistirmalik"], k:["ekmek:6 dilim","domates:3 adet","sarimsak:2 diş","zeytinyagi:4 yemek kaşığı","tuz:1 çay kaşığı"], s:["Ekmek dilimlerini fırında ya da tavada kıtırlaşana kadar kızart.","Sıcak ekmeklere yarım sarımsak sür.","Küçük doğranmış domatesi zeytinyağı ve tuzla karıştır.","Domatesleri ekmeklerin üzerine koyup hemen servis et."], note:"Taze fesleğen eklersen tam İtalyan usulü olur."},
   {n:"Fırında patates cipsi", t:35, p:4, tag:["atistirmalik"], k:["patates:3 adet","zeytinyagi:2 yemek kaşığı","tuz:1 tatlı kaşığı","pul_biber:1 çay kaşığı"], s:["Patatesleri kabuklarıyla çok ince dilimle, soğuk suda 10 dakika bekletip kurula.","Zeytinyağı, tuz ve pul biberle karıştır.","Yağlı kâğıt serili tepsiye birbirine değmeyecek şekilde diz.","200 °C fırında kenarları kızarana kadar 20–25 dakika pişir."]},
   {n:"Kavrulmuş nohut", t:45, p:4, tag:["atistirmalik"], k:["nohut:2 su bardağı","zeytinyagi:2 yemek kaşığı","tuz:1 tatlı kaşığı","pul_biber:1 tatlı kaşığı"], s:["Haşlanmış nohutları süzüp havluyla iyice kurula.","Zeytinyağı, tuz ve pul biberle karıştır.","Tepsiye yayıp 200 °C fırında ara sıra karıştırarak çıtırlaşana kadar 30–35 dakika pişir."]},
-  {n:"Mini pizza", t:25, p:4, tag:["atistirmalik"], k:["ekmek:6 dilim","salca:2 yemek kaşığı","domates:1 adet","kasar:100 g","sucuk:50 g","zeytinyagi:1 yemek kaşığı","pul_biber:1 çay kaşığı"], s:["Salçayı zeytinyağı ve pul biberle karıştırıp ekmek dilimlerine sür.","Üzerine ince doğranmış domates ve sucuk koy.","Rendelenmiş kaşar serp.","200 °C fırında peynir eriyene kadar 10 dakika pişir."]}
+  {n:"Mini pizza", t:25, p:4, tag:["atistirmalik"], k:["ekmek:6 dilim","salca:2 yemek kaşığı","domates:1 adet","kasar:100 g","sucuk:50 g","zeytinyagi:1 yemek kaşığı","pul_biber:1 çay kaşığı"], s:["Salçayı zeytinyağı ve pul biberle karıştırıp ekmek dilimlerine sür.","Üzerine ince doğranmış domates ve sucuk koy.","Rendelenmiş kaşar serp.","200 °C fırında peynir eriyene kadar 10 dakika pişir."]},
+  {n:"Izgara tavuk göğsü", t:30, p:4, tag:["spor"], k:["tavuk:600 g","zeytinyagi:2 yemek kaşığı","limon:1 adet","sarimsak:2 diş","pul_biber:1 çay kaşığı","tuz:1 tatlı kaşığı","karabiber:1 çay kaşığı"], s:["Tavuk göğsünü kalın yerlerinden hafifçe açarak eşit kalınlığa getir.","Zeytinyağı, limon suyu, ezilmiş sarımsak ve baharatlarla karıştırıp 20 dakika beklet.","Izgara tavayı iyice ısıt, tavukları her yüzü 5–6 dakika pişir.","5 dakika dinlendirip dilimle, salatayla servis et."]},
+  {n:"Tavuklu kinoa salatası", t:35, p:4, tag:["spor"], k:["kinoa:1 su bardağı","tavuk:300 g","salatalik:1 adet","domates:2 adet","maydanoz:0.5 demet","limon:1 adet","zeytinyagi:3 yemek kaşığı","tuz:1 tatlı kaşığı","su:2 su bardağı"], s:["Kinoayı iyice yıkayıp 2 su bardağı suyla kısık ateşte 15 dakika pişir ve soğut.","Tavuğu tuzla tavada pişirip küp doğra.","Doğranmış salatalık, domates ve maydanozu kinoa ve tavukla karıştır.","Limon suyu ve zeytinyağıyla tatlandır."]},
+  {n:"Ton balıklı salata", t:10, p:2, tag:["spor"], k:["ton_baligi:2 kutu","marul:0.5 adet","misir:0.5 su bardağı","domates:1 adet","salatalik:1 adet","limon:0.5 adet","zeytinyagi:2 yemek kaşığı","tuz:1 çay kaşığı"], s:["Marulu doğrayıp geniş bir kaba al.","Domates, salatalık ve mısırı ekle.","Süzülmüş ton balığını üzerine yay.","Limon suyu, zeytinyağı ve tuzla karıştırıp servis et."]},
+  {n:"Yulaf lapası", t:10, p:2, tag:["spor","kahvalti"], k:["yulaf:1 su bardağı","sut:2 su bardağı","muz:1 adet","bal:1 yemek kaşığı","tarcin:1 çay kaşığı"], s:["Yulaf ve sütü tencerede karıştır.","Orta ateşte, karıştırarak koyulaşana kadar 5 dakika pişir.","Kaselere al; dilimlenmiş muz, bal ve tarçınla servis et."]},
+  {n:"Protein pankek", t:20, p:2, tag:["spor","kahvalti"], k:["yulaf:1 su bardağı","yumurta:2 adet","muz:1 adet","lor:100 g","sut:0.5 su bardağı","kabartma_tozu:1 çay kaşığı"], s:["Tüm malzemeleri blenderdan geçirip pürüzsüz bir hamur yap.","Yapışmaz tavayı çok az yağla ısıt.","Birer kepçe hamur dök, yüzeyinde kabarcıklar çıkınca çevir.","Meyve ve biraz balla servis et."]},
+  {n:"Fıstık ezmeli muz smoothie", t:5, p:1, tag:["spor","kahvalti"], k:["muz:1 adet","fistik_ezmesi:1 yemek kaşığı","sut:1 su bardağı","yulaf:2 yemek kaşığı","bal:1 tatlı kaşığı"], s:["Tüm malzemeleri blendera koy.","Pürüzsüz olana kadar 1 dakika çek.","Bardağa dökerek hemen servis et."]},
+  {n:"Fırında brokolili balık", t:30, p:2, tag:["spor"], k:["balik:2 adet","brokoli:300 g","limon:1 adet","sarimsak:2 diş","zeytinyagi:3 yemek kaşığı","tuz:1 tatlı kaşığı","karabiber:1 çay kaşığı"], s:["Brokoliyi küçük çiçeklere ayır.","Balık filetolarını ve brokoliyi fırın kabına diz.","Zeytinyağı, limon suyu, ezilmiş sarımsak, tuz ve karabiberi karıştırıp üzerine gezdir.","200 °C fırında 20 dakika pişir."]},
+  {n:"Lorlu ıspanaklı omlet", t:15, p:1, tag:["spor","kahvalti"], k:["yumurta:3 adet","lor:50 g","ispanak:100 g","zeytinyagi:1 tatlı kaşığı","tuz:1 tutam"], s:["Ispanağı doğrayıp zeytinyağında 2 dakika söndür.","Yumurtaları tuzla çırpıp ıspanağın üzerine dök.","Üzerine lor serpip kısık ateşte pişir, ikiye katlayarak servis et."]},
+  {n:"Yeşil mercimek salatası", t:30, p:4, tag:["spor"], k:["yesil_mercimek:1 su bardağı","domates:2 adet","sogan:1 adet","maydanoz:0.5 demet","limon:1 adet","zeytinyagi:3 yemek kaşığı","pul_biber:1 çay kaşığı","tuz:1 tatlı kaşığı","su:4 su bardağı"], s:["Yeşil mercimeği 4 su bardağı suda dağılmadan yumuşayana kadar 20 dakika haşla, süzüp soğut.","Domates, soğan ve maydanozu ince doğra.","Hepsini mercimekle karıştır.","Limon suyu, zeytinyağı, tuz ve pul biberle tatlandır."]}
 ];
 
 /* Kategoriler: [kimlik, ad, simge, arama ipuçları] */
@@ -609,6 +679,7 @@ const CATS = [
   ["etli","Etli yemekler","🥩",["et","etli","kıyma","tavuk","köfte","kebap","kebab","kuşbaşı","balık"]],
   ["sebze","Sebze yemekleri","🥦",["sebze","zeytinyağlı"]],
   ["etsiz","Etsiz yemekler","🥗",["etsiz","vejetaryen","vegan"]],
+  ["spor","Sporcu yemekleri","💪",["spor","sporcu","protein","fit","diyet"]],
   ["dunya","Dünya mutfağı","🌍",["dünya","italyan","meksika","pizza","hamburger","asya","uzak doğu","japon","çin"]],
   ["meze","Mezeler","🫒",["meze","başlangıç","ara sıcak"]],
   ["kahvalti","Kahvaltılık","🍳",["kahvaltı"]],
@@ -619,8 +690,8 @@ const CATS = [
 ];
 const FILTERS = CATS.map(c => [c[0], c[1]]);
 const CAT_BY_ID = Object.fromEntries(CATS.map(c => [c[0], c]));
-const FILTER_PROMPT = {atistirmalik:"atıştırmalık olan", populer:"Türkiye'de çok sevilen klasik", kahve:"kahve içeceği olan", meze:"meze ya da başlangıç olan", dunya:"dünya mutfağından olan", hizli:"en fazla 15 dakikada hazırlanabilen", kahvalti:"kahvaltıda yenebilecek", etsiz:"et, tavuk ya da balık içermeyen", etli:"et, tavuk ya da balık içeren", sebze:"sebze yemeği olan", corba:"çorba olan", tatli:"tatlı olan"};
-const TAGS_OK = ["kahvalti","etsiz","etli","sebze","corba","tatli","meze","kahve","dunya","atistirmalik"];
+const FILTER_PROMPT = {spor:"yüksek proteinli, sporculara uygun", atistirmalik:"atıştırmalık olan", populer:"Türkiye'de çok sevilen klasik", kahve:"kahve içeceği olan", meze:"meze ya da başlangıç olan", dunya:"dünya mutfağından olan", hizli:"en fazla 15 dakikada hazırlanabilen", kahvalti:"kahvaltıda yenebilecek", etsiz:"et, tavuk ya da balık içermeyen", etli:"et, tavuk ya da balık içeren", sebze:"sebze yemeği olan", corba:"çorba olan", tatli:"tatlı olan"};
+const TAGS_OK = ["kahvalti","etsiz","etli","sebze","corba","tatli","meze","kahve","dunya","atistirmalik","spor"];
 const MEAT = new Set(["kiyma","tavuk","sucuk","kusbasi","balik","pastirma"]);
 const ATIS = new Set(["Patates kızartması"]);
 const MEZE = new Set(["Cacık","Haydari","Acılı ezme","Havuç tarator","Piyaz","Sigara böreği","Patates salatası"]);
@@ -629,6 +700,8 @@ const SEBZE = new Set(["Karnıyarık","Musakka","Kabak mücveri","Patates yemeğ
 const TOP_TR = ["Mercimek çorbası","Kuru fasulye","Lahmacun","Mantı","Karnıyarık","Tavuk döner","Adana kebap","Kıymalı pide","İzmir köfte","Menemen","Pirinç pilavı","Ezogelin çorbası","Mercimek köftesi","Çiğ köfte","Hünkar beğendi","Baklava","Sütlaç","Künefe","Türk kahvesi"];
 const TOP_WORLD = ["Pizza margherita","Hamburger","Spagetti bolonez","Kaliforniya rulosu","Tacos","Karbonara","Lazanya","Pad Thai","Tavuk köri","Kızarmış pilav","Burrito","Fish and chips","Paella","Falafel","Fettuccine Alfredo","Tiramisu","Cheesecake","Latte"];
 const TOP_RANK = new Map([...TOP_TR, ...TOP_WORLD].map((n, i) => ["b:" + n, i]));
+const byProtein = list => list.slice().sort((a, b) => ((nutrition(b) || {}).p || 0) - ((nutrition(a) || {}).p || 0));
+const proteinNote = r => { const n = nutrition(r); return n ? `💪 ${n.p} g protein` : ""; };
 const sortRecipes = list => list.slice().sort((a, b) => ((TOP_RANK.has(a.key) ? TOP_RANK.get(a.key) : 999) - (TOP_RANK.has(b.key) ? TOP_RANK.get(b.key) : 999)) || a.ad.localeCompare(b.ad, "tr"));
 // Türkiye'de çok sevilen klasikler (editör seçimi; kullanım verisine dayanmaz)
 const POPULAR = new Set(["Mercimek çorbası","Ezogelin çorbası","Menemen","Karnıyarık","Kuru fasulye","Pirinç pilavı","İzmir köfte","Tavuk sote","Zeytinyağlı taze fasulye","Mercimek köftesi","Kısır","Hünkar beğendi","Tas kebabı","Sütlaç","Revani","Çoban salatası","Fırında tavuk ve patates"]);
@@ -717,7 +790,83 @@ RAW.forEach(r => {
   const key = "b:" + r.n;
   REG.set(key, {key, src:"b", ad:r.n, orijinal:r.o || "", mutfak:r.m || "Türk mutfağı", sure:r.t, kisi:r.p || 4, malzemeler:malz, adimlar:r.s, not:r.note || "", etiketler:tags});
 });
+/* ---------- Besin değerleri (yaklaşık, 100 g / 100 ml için: kcal, protein, karbonhidrat, yağ) ---------- */
+const NUT = {
+  tuz:[0,0,0,0], karabiber:[251,10,64,3], yag:[884,0,0,100], zeytinyagi:[884,0,0,100], su:[0,0,0,0],
+  domates:[18,0.9,3.9,0.2], sogan:[40,1.1,9.3,0.1], sarimsak:[149,6.4,33,0.5], biber:[20,0.9,4.6,0.2], kapya:[31,1,6,0.3],
+  patates:[77,2,17,0.1], patlican:[25,1,6,0.2], kabak:[17,1.2,3.1,0.3], havuc:[41,0.9,10,0.2], ispanak:[23,2.9,3.6,0.4],
+  taze_fasulye:[31,1.8,7,0.2], salatalik:[15,0.7,3.6,0.1], maydanoz:[36,3,6,0.8], dereotu:[43,3.5,7,1.1], marul:[15,1.4,2.9,0.2],
+  limon:[29,1.1,9,0.3], mantar:[22,3.1,3.3,0.3], bezelye:[81,5.4,14,0.4], lahana:[25,1.3,6,0.1], pirasa:[61,1.5,14,0.3],
+  balkabagi:[26,1,6.5,0.1], asma_yapragi:[93,5.6,17,2.1], semizotu:[20,2,3.4,0.4], pancar:[43,1.6,10,0.2], brokoli:[34,2.8,7,0.4],
+  elma:[52,0.3,14,0.2], muz:[89,1.1,23,0.3], cilek:[32,0.7,7.7,0.3], avokado:[160,2,8.5,15],
+  kusbasi:[217,26,0,12], kiyma:[250,26,0,17], tavuk:[172,29,0,6], sucuk:[450,20,2,40], pastirma:[250,30,1,13], balik:[150,22,0,7], ton_baligi:[130,26,0,3],
+  pirinc:[360,7,79,0.6], bulgur:[342,12,76,1.3], mercimek:[352,24,60,1], yesil_mercimek:[352,25,60,1], nohut:[164,8.9,27,2.6],
+  kuru_fasulye:[127,8.7,23,0.5], fava:[341,26,58,1.5], makarna:[371,13,75,1.5], lazanya:[371,13,75,1.5], pirinc_eriste:[364,6,80,0.6],
+  sehriye:[371,13,75,1.5], un:[364,10,76,1], irmik:[360,12.7,73,1], ekmek:[265,9,49,3.2], hamburger_ekmegi:[280,9,50,4],
+  lavas:[300,8,50,7], yufka:[300,9,62,1.5], baklava_yufkasi:[300,9,62,1.5], kadayif:[330,9,70,1.5], gullac:[350,9,78,1],
+  galeta_unu:[395,13,72,5], nori:[35,6,5,0.3], misir_tanesi:[387,12,78,4.5], yulaf:[389,17,66,7], kinoa:[368,14,64,6],
+  yumurta:[143,12.6,0.7,9.5], sut:[61,3.2,4.8,3.3], yogurt:[61,3.5,4.7,3.3], peynir:[264,14,4,21], kasar:[380,25,1,30],
+  mozzarella:[280,28,3,17], labne:[250,6,4,23], krema:[300,2,3,30], tereyagi:[717,0.9,0.1,81], dondurma:[207,3.5,24,11],
+  kunefe_peyniri:[300,20,3,24], lor:[98,11,3.4,4.3],
+  turk_kahvesi:[30,1,5,0], espresso:[5,0.6,0,0], filtre_kahve:[5,0.6,0,0], granul_kahve:[350,12,40,0.5], buz:[0,0,0,0],
+  menengic:[500,10,50,30], dibek:[30,1,5,0],
+  seker:[387,0,100,0], kakao:[228,20,58,14], cikolata:[546,5,60,31], vanilin:[0,0,0,0], tarcin:[247,4,81,1.2], bal:[304,0.3,82,0],
+  nisasta:[381,0.3,91,0.1], biskuvi:[480,7,70,20], ceviz:[654,15,14,65], fistik:[567,26,16,49], fistik_ezmesi:[588,25,20,50],
+  maya:[325,40,41,7.6], kabartma_tozu:[53,0,28,0],
+  salca:[82,4.3,19,0.5], nane:[285,20,52,6], pul_biber:[282,12,50,14], kori:[325,14,56,14], tahin:[595,17,21,54],
+  nar_eksisi:[250,0.5,62,0], soya_sosu:[53,8,5,0.6], mayonez:[680,1,0.6,75], tursu:[11,0.5,2,0.2], zeytin:[115,0.8,6,11],
+  sirke:[18,0,0.04,0], misir:[86,3.3,19,1.4]
+};
+// Ölçülerin gram karşılıkları (varsayılan) ve malzemeye özel değerler
+const UNIT_G = {"g":1,"gr":1,"kg":1000,"ml":1,"litre":1000,"su bardağı":200,"yemek kaşığı":15,"tatlı kaşığı":7,"çay kaşığı":3,"fincan":70,"tutam":0.5,"demet":50,"diş":5,"dilim":30,"paket":10,"adet":100,"shot":18,"top":60,"yaprak":10,"kutu":120};
+const UNIT_OV = {
+  domates:{"adet":150}, sogan:{"adet":110}, biber:{"adet":30}, kapya:{"adet":150}, patates:{"adet":170}, patlican:{"adet":250},
+  kabak:{"adet":200}, havuc:{"adet":70}, salatalik:{"adet":150}, marul:{"adet":300}, limon:{"adet":60}, mantar:{"adet":20,"su bardağı":70},
+  bezelye:{"su bardağı":145}, pancar:{"adet":120}, semizotu:{"demet":150}, dereotu:{"demet":30}, elma:{"adet":180}, muz:{"adet":120},
+  cilek:{"su bardağı":150}, avokado:{"adet":150}, balik:{"adet":200}, yumurta:{"adet":50},
+  pirinc:{"su bardağı":180,"yemek kaşığı":12}, bulgur:{"su bardağı":160,"yemek kaşığı":12}, mercimek:{"su bardağı":180}, yesil_mercimek:{"su bardağı":180},
+  nohut:{"su bardağı":165}, kuru_fasulye:{"su bardağı":180}, fava:{"su bardağı":180}, makarna:{"su bardağı":100}, sehriye:{"su bardağı":100,"yemek kaşığı":10},
+  un:{"su bardağı":120,"yemek kaşığı":8}, irmik:{"su bardağı":170,"yemek kaşığı":10}, galeta_unu:{"su bardağı":120}, misir_tanesi:{"su bardağı":200},
+  yulaf:{"su bardağı":90,"yemek kaşığı":10}, kinoa:{"su bardağı":170}, hamburger_ekmegi:{"adet":60}, lavas:{"adet":60}, yufka:{"adet":100},
+  gullac:{"yaprak":12}, nori:{"yaprak":3}, kasar:{"dilim":20}, ekmek:{"dilim":30}, dondurma:{"top":60},
+  seker:{"su bardağı":180,"yemek kaşığı":12,"tatlı kaşığı":5}, kakao:{"yemek kaşığı":8}, nisasta:{"yemek kaşığı":10}, bal:{"yemek kaşığı":21,"tatlı kaşığı":7},
+  biskuvi:{"adet":8}, ceviz:{"su bardağı":100}, fistik:{"su bardağı":140,"yemek kaşığı":9}, fistik_ezmesi:{"yemek kaşığı":16},
+  maya:{"paket":10}, kabartma_tozu:{"paket":10}, vanilin:{"paket":5}, granul_kahve:{"yemek kaşığı":5,"tatlı kaşığı":2},
+  turk_kahvesi:{"tatlı kaşığı":6}, dibek:{"tatlı kaşığı":6}, menengic:{"tatlı kaşığı":7},
+  yag:{"yemek kaşığı":13}, zeytinyagi:{"yemek kaşığı":13}, tereyagi:{"yemek kaşığı":14}, mayonez:{"yemek kaşığı":14}, salca:{"yemek kaşığı":17},
+  pul_biber:{"yemek kaşığı":6,"tatlı kaşığı":2.5}, zeytin:{"su bardağı":140}, misir:{"su bardağı":160}, ton_baligi:{"kutu":120}, buz:{"su bardağı":0}
+};
+function gramsOf(m){
+  if (m.qty == null) return null;
+  const u = norm(m.unit).replace(/\s*\(.*\)$/, "");
+  const ov = (UNIT_OV[m.id] || {})[u];
+  const base = ov != null ? ov : UNIT_G[u];
+  return base == null ? null : m.qty * base;
+}
+/* 1 porsiyonun yaklaşık besin değerleri */
+function nutrition(r){
+  if (r._nut !== undefined) return r._nut;
+  if (r.besin) return (r._nut = r.besin);
+  let k = 0, p = 0, c = 0, f = 0, known = 0;
+  for (const m of r.malzemeler){
+    if (!m.id || !NUT[m.id]) continue;
+    let g = gramsOf(m); if (g == null) continue;
+    if ((m.id === "yag" || m.id === "zeytinyagi") && g > 100) g *= 0.2; // kızartma yağının çoğu tavada kalır
+    const [kk, pp, cc, ff] = NUT[m.id];
+    k += kk * g / 100; p += pp * g / 100; c += cc * g / 100; f += ff * g / 100; known++;
+  }
+  if (!known) return (r._nut = null);
+  const s = r.kisi || 4;
+  return (r._nut = {kcal:Math.max(5, Math.round(k / s / 5) * 5), p:Math.round(p / s), c:Math.round(c / s), f:Math.round(f / s)});
+}
+
 const BUILTIN = [...REG.values()];
+// Protein oranı yüksek tarifler otomatik olarak "Sporcu yemekleri"ne girer
+BUILTIN.forEach(r => {
+  if (r.etiketler.includes("tatli") || r.etiketler.includes("kahve") || r.etiketler.includes("spor")) return;
+  const n = nutrition(r);
+  if (n && (n.p >= 25 || (n.p >= 15 && n.p * 4 >= n.kcal * 0.3))) r.etiketler.push("spor");
+});
 
 function fromAI(o){
   if (!o || typeof o !== "object" || typeof o.ad !== "string" || !Array.isArray(o.malzemeler) || !Array.isArray(o.adimlar)) return null;
@@ -728,6 +877,7 @@ function fromAI(o){
   const r = {
     key:"ai:" + norm(o.ad).slice(0, 80), src:"ai", ad:o.ad, orijinal:str(o.orijinal_ad).slice(0, 80), mutfak:str(o.mutfak),
     sure:Number(o.sure) || null, kisi:Math.min(12, Math.max(1, Math.round(Number(o.kisi) || 4))),
+    besin: Number(o.kalori) > 0 ? {kcal:Math.round(Number(o.kalori)), p:Math.round(Number(o.protein) || 0), c:Math.round(Number(o.karbonhidrat) || 0), f:Math.round(Number(o.yag) || 0)} : null,
     malzemeler:malz, adimlar:o.adimlar.filter(s => typeof s === "string"), not:str(o.not),
     etiketler:Array.isArray(o.etiketler) ? o.etiketler.filter(t => TAGS_OK.includes(t)) : []
   };
@@ -844,7 +994,7 @@ function detailHTML(r, compact){
     h += wi
       ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a></figcaption></figure>`
       : `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
-    h += `<h2>${esc(r.ad)}</h2>`;
+    h += `<h2>${esc(r.ad)}</h2>${badgesHTML(r)}`;
     if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (v && mode === "dish" && currentKey === r.key) renderDishDetail(); });
     const meta = [r.mutfak, r.sure ? r.sure + " dakika" : ""].filter(Boolean).join(", ");
     h += `<p class="sub">${esc(meta)}${meta ? ". " : ""}${r.malzemeler.length} malzemenin ${have} tanesi evde.</p>`;
@@ -861,6 +1011,7 @@ function detailHTML(r, compact){
       <button type="button" data-act="servPlus" data-key="${ek}" aria-label="Bir kişi artır" ${serv >= 12 ? "disabled" : ""}>+</button>
     </div>
   </div>`;
+  h += nutHTML(r);
   h += `<h3>Malzemeler</h3><p class="sub">Evde olanları işaretlemek için dokun.</p><ul class="need">${
     r.malzemeler.map((m, i) => {
       const o = owned(m); const a = amountText(m, f);
@@ -915,53 +1066,77 @@ function cardHTML(r){
 const WIKI_TR = {"Menemen":"Menemen (yemek)","Atom":"","Magnolia":"","Köpoğlu":"","Supangle":"","Mozaik pasta":"","Mini pizza":"","Tacos":"Taco","Kek":"Kek","Pişi":"Pişi"};
 const WIKI_EN = {"Menemen":"Menemen (food)","Kaliforniya rulosu":"California roll","Patlamış mısır":"Popcorn","Soğan halkası":"Onion ring","Çıtır tavuk":"Chicken fingers","Tavuk döner":"Doner kebab","Adana kebap":"Adana kebabı","Kıymalı pide":"Pide","Mantı":"Manti (food)","Peynirli poğaça":"Pogača","Kızarmış pilav":"Fried rice","Hünkar beğendi":"Hünkar beğendi","Sütlaç":"Rice pudding","Krep":"Crêpe","Kek":"Cake","Muhallebi":"Muhallebi","Patates kızartması":"French fries","Sahanda yumurta":"Fried egg","Türk kahvesi":"Turkish coffee","Espresso":"Espresso","Filtre kahve":"Drip coffee","Latte":"Latte","Cappuccino":"Cappuccino","Americano":"Caffè Americano","Macchiato":"Caffè macchiato","Mocha":"Caffè mocha","Cold brew":"Cold brew coffee","Dalgona kahve":"Dalgona coffee","Frappe":"Frappé coffee","Affogato":"Affogato","Flat white":"Flat white","Cortado":"Cortado","Ristretto":"Ristretto","Lungo":"Lungo","Brownie":"Chocolate brownie","Baklava":"Baklava","Lokma":"Lokma","Künefe":"Kanafeh","Kadayıf":"Kadayıf","Güllaç":"Güllaç","Kazandibi":"Kazandibi","Profiterol":"Profiterole","Churros":"Churro","Falafel":"Falafel","Humus":"Hummus","Babagannuş":"Baba ghanoush","Muhammara":"Muhammara","Tarator":"Tarator","Cacık":"Tzatziki","Haydari":"Haydari","Paella":"Paella","Ratatouille":"Ratatouille","Guacamole":"Guacamole","Hamburger":"Hamburger","Burrito":"Burrito","Nachos":"Nachos","Quesadilla":"Quesadilla","Bibimbap":"Bibimbap","Lazanya":"Lasagna","Bruschetta":"Bruschetta","Kumpir":"Kumpir","Lahmacun":"Lahmacun","Çiğ köfte":"Çiğ köfte","Karnıyarık":"Karnıyarık","İmam bayıldı":"İmam bayıldı","Mercimek köftesi":"Mercimek köftesi","Kuru fasulye":"Kuru fasulye","Mercimek çorbası":"Lentil soup","Ezogelin çorbası":"Ezogelin soup","Menengiç kahvesi":"Pistacia terebinthus","Dibek kahvesi":"Turkish coffee"};
 const FOOD_RE = /yemek|yemeği|tatlı|çorba|meze|kahve|içecek|mutfa|salata|pilav|ekmek|börek|hamur|kebap|köfte|sos|peynir|dish|food|cuisine|dessert|soup|salad|coffee|drink|beverage|sauce|bread|pastry|cake|cookie|biscuit|snack|cheese|meal|stew|kebab|pasta|noodle|rice|sandwich|pizza|confection|pudding|appetizer|espresso|fried|roll/i;
-let wikiImgs = load("pisir-wiki", {}); if (!wikiImgs || typeof wikiImgs !== "object") wikiImgs = {};
+let wikiImgs = load("pisir-wiki2", {}); if (!wikiImgs || typeof wikiImgs !== "object") wikiImgs = {};
 const WIKI_RETRY_MS = 7 * 24 * 3600 * 1000;
 const wikiPending = {};
-const wikiQueue = [];
-let wikiActive = 0;
 function wikiInfo(r){ const v = wikiImgs[r.ad]; return v && v.s ? v : null; }
 function needsWiki(r){ const v = wikiImgs[r.ad]; return !v || (!v.s && Date.now() - (v.n || 0) > WIKI_RETRY_MS); }
-function saveWiki(){ try { localStorage.setItem("pisir-wiki", JSON.stringify(wikiImgs)); } catch(e) {} }
-async function lookupWiki(r){
+let wikiSaveTimer = null;
+function saveWiki(){ clearTimeout(wikiSaveTimer); wikiSaveTimer = setTimeout(() => { try { localStorage.setItem("pisir-wiki2", JSON.stringify(wikiImgs)); } catch(e) {} }, 300); }
+const wikiTitles = r => {
   const tr = Object.prototype.hasOwnProperty.call(WIKI_TR, r.ad) ? WIKI_TR[r.ad] : r.ad;
-  if (tr === "") return null;
-  const en = WIKI_EN[r.ad] || r.orijinal || r.ad;
-  for (const [lang, title] of [["tr", tr], ["en", en]]){
-    const res = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`);
-    if (!res.ok) continue;
-    const j = await res.json().catch(() => null);
-    if (!j || j.type === "disambiguation") continue;
-    if (!FOOD_RE.test(`${j.description || ""} ${j.extract || ""}`)) continue; // ilçe, çiçek gibi yanlış sayfaları ele
-    const th = j.thumbnail && j.thumbnail.source;
-    const orig = j.originalimage && j.originalimage.source;
-    if (!th || !/\/wikipedia\/commons\//.test(th)) continue; // yalnızca özgür lisanslı Commons görselleri
-    const file = decodeURIComponent(String(orig || th).split("/").pop()).replace(/^\d+px-/, "");
-    return {s:th, f:file};
+  return tr === "" ? null : {tr, en: WIKI_EN[r.ad] || r.orijinal || r.ad};
+};
+/* Tek istekte 20 başlığa kadar sorgular (eskiden her yemek için ayrı istek gidiyordu) */
+async function wikiBatch(lang, titles){
+  const url = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=pageimages|description|extracts&piprop=thumbnail|name&pithumbsize=400&exintro=1&explaintext=1&exsentences=2&exlimit=20&titles=${encodeURIComponent(titles.join("|"))}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("wiki");
+  const j = await res.json();
+  const q = (j && j.query) || {};
+  const normMap = {}; (q.normalized || []).forEach(x => normMap[x.from] = x.to);
+  const redir = {}; (q.redirects || []).forEach(x => redir[x.from] = x.to);
+  const byTitle = {}; Object.values(q.pages || {}).forEach(pg => byTitle[pg.title] = pg);
+  const out = {};
+  titles.forEach(t => {
+    let x = normMap[t] || t; x = redir[x] || x;
+    const pg = byTitle[x];
+    if (!pg || pg.missing !== undefined) return;
+    const th = pg.thumbnail && pg.thumbnail.source;
+    if (!th || !/\/wikipedia\/commons\//.test(th)) return;                    // yalnızca özgür lisanslı Commons görselleri
+    if (!FOOD_RE.test(`${pg.description || ""} ${pg.extract || ""}`)) return;  // ilçe, çiçek gibi yanlış sayfaları ele
+    out[t] = {s:th, f:pg.pageimage || decodeURIComponent(th.split("/").pop()).replace(/^\d+px-/, "")};
+  });
+  return out;
+}
+/* Verilen tarifler için görselleri 20'şerli gruplar hâlinde getirir: önce Türkçe, bulunamayanlar için İngilizce Vikipedi */
+async function fetchWikiFor(list){
+  list = list.filter(r => wikiTitles(r));
+  for (const lang of ["tr", "en"]){
+    const todo = list.filter(r => !wikiInfo(r));
+    for (let i = 0; i < todo.length; i += 20){
+      const chunk = todo.slice(i, i + 20);
+      const names = [...new Set(chunk.map(r => wikiTitles(r)[lang]))];
+      let found;
+      try { found = await wikiBatch(lang, names); } catch(e){ return false; } // bağlantı sorunu: sonra tekrar dene
+      chunk.forEach(r => { const v = found[wikiTitles(r)[lang]]; if (v){ wikiImgs[r.ad] = v; showWiki(r); } });
+    }
   }
-  return null;
+  const now = Date.now();
+  list.forEach(r => { if (!wikiInfo(r)) wikiImgs[r.ad] = {n:now}; });
+  saveWiki();
+  return true;
+}
+function showWiki(r){
+  const v = wikiInfo(r); if (!v) return;
+  document.querySelectorAll(".dish-card[data-img]").forEach(c => { if (c.dataset.img === r.ad) applyImg(c, v); });
 }
 function getWikiImage(r){
   if (!needsWiki(r)) return Promise.resolve(wikiInfo(r));
-  if (wikiPending[r.ad]) return wikiPending[r.ad];
-  const p = new Promise(resolve => {
-    wikiQueue.push(async () => {
-      let out = null, failed = false;
-      try { out = await lookupWiki(r); } catch(e){ failed = true; } // bağlantı sorunu: sonra tekrar dene
-      if (!failed){ wikiImgs[r.ad] = out || {n:Date.now()}; saveWiki(); }
-      resolve(out);
-    });
-    pumpWiki();
-  });
-  wikiPending[r.ad] = p;
-  p.then(() => { delete wikiPending[r.ad]; });
-  return p;
+  if (!navigator.onLine) return Promise.resolve(null);
+  if (!wikiPending[r.ad]) wikiPending[r.ad] = fetchWikiFor([r]).then(() => { delete wikiPending[r.ad]; return wikiInfo(r); });
+  return wikiPending[r.ad];
 }
-function pumpWiki(){
-  while (wikiActive < 3 && wikiQueue.length){
-    const job = wikiQueue.shift(); wikiActive++;
-    job().finally(() => { wikiActive--; pumpWiki(); });
-  }
+/* Açılışta tüm tariflerin görsellerini arka planda hazırla */
+let wikiPrefetched = false;
+function prefetchImages(){
+  if (wikiPrefetched || !navigator.onLine) return;
+  wikiPrefetched = true;
+  const list = BUILTIN.filter(needsWiki);
+  if (!list.length) return;
+  const p = fetchWikiFor(list);
+  list.forEach(r => { if (!wikiPending[r.ad]) wikiPending[r.ad] = p.then(() => { delete wikiPending[r.ad]; return wikiInfo(r); }); });
+  p.then(ok => { if (!ok) wikiPrefetched = false; if (mode === "pantry" || mode === "dish") renderDaily(); });
 }
 function applyImg(card, v){
   if (card.classList.contains("has-img")) return;
@@ -1013,11 +1188,39 @@ function renderHero(){
   $("filters").innerHTML = CATS.map(([id, l, emo]) => `<button type="button" class="cat cat-${id}" data-act="filter" data-f="${id}" aria-pressed="${filters.has(id)}"><span class="cat-emo" aria-hidden="true">${emo}</span><span class="cat-name">${l}</span></button>`).join("");
 }
 
+/* ---------- Zorluk, süre ve kalori rozetleri ---------- */
+function difficulty(r){
+  const t = r.sure || 0, n = r.adimlar.length, txt = norm(r.adimlar.join(" "));
+  let p = t >= 75 ? 2 : t >= 45 ? 1 : 0;
+  if (n >= 5) p++;
+  if (/hamur|maya|şerbet|benmari|karameliz|sıkma torba|közle|kızgın yağ|sıkıca sar|doldur|alacalı|beşamel/.test(txt)) p++;
+  return p <= 1 ? ["kolay", "Kolay"] : p === 2 ? ["orta", "Orta"] : ["zor", "Zor"];
+}
+function fmtDur(t){ if (!t) return ""; if (t < 60) return t + " dk"; const h = Math.floor(t / 60), m = t % 60; return m ? `${h} sa ${m} dk` : `${h} saat`; }
+function badgesHTML(r){
+  const [k, l] = difficulty(r);
+  const n = nutrition(r);
+  return `<span class="badges"><span class="bd bd-${k}">${l}</span>${r.sure ? `<span class="bd">⏱️ ${fmtDur(r.sure)}</span>` : ""}${n && n.kcal ? `<span class="bd">🔥 ${n.kcal} kcal</span>` : ""}</span>`;
+}
+function nutHTML(r){
+  const n = nutrition(r); if (!n || !n.kcal) return "";
+  return `<div class="nut"><div class="nut-head"><b>Besin değerleri</b><span>1 porsiyon, yaklaşık</span></div><div class="nut-grid"><div><strong>${n.kcal}</strong><span>kcal</span></div><div><strong>${n.p} g</strong><span>protein</span></div><div><strong>${n.c} g</strong><span>karbonhidrat</span></div><div><strong>${n.f} g</strong><span>yağ</span></div></div></div>`;
+}
+
 /* ---------- Dolabım: sade düzen ---------- */
-const ING_EMOJI = {tuz:"🧂",karabiber:"⚫",yag:"🌻",zeytinyagi:"🫒",su:"💧",domates:"🍅",sogan:"🧅",sarimsak:"🧄",biber:"🌶️",kapya:"🫑",patates:"🥔",patlican:"🍆",kabak:"🥒",havuc:"🥕",ispanak:"🥬",taze_fasulye:"🌱",salatalik:"🥒",maydanoz:"🌿",dereotu:"🌿",marul:"🥬",limon:"🍋",mantar:"🍄",bezelye:"🌱",lahana:"🥬",pirasa:"🥬",balkabagi:"🎃",asma_yapragi:"🍃",semizotu:"🌿",pancar:"🥗",elma:"🍎",muz:"🍌",cilek:"🍓",avokado:"🥑",kusbasi:"🥩",kiyma:"🥩",tavuk:"🍗",sucuk:"🌭",pastirma:"🥓",balik:"🐟",pirinc:"🍚",bulgur:"🌾",mercimek:"🥣",yesil_mercimek:"🥣",nohut:"🥣",kuru_fasulye:"🥣",fava:"🥣",makarna:"🍝",lazanya:"🍝",pirinc_eriste:"🍜",sehriye:"🍜",un:"🌾",irmik:"🌾",ekmek:"🍞",hamburger_ekmegi:"🍔",lavas:"🌯",yufka:"🥟",baklava_yufkasi:"🥟",kadayif:"🍯",gullac:"🥛",galeta_unu:"🍞",nori:"🍣",misir_tanesi:"🍿",yumurta:"🥚",sut:"🥛",yogurt:"🥛",peynir:"🧀",kasar:"🧀",mozzarella:"🧀",labne:"🧀",krema:"🥛",tereyagi:"🧈",dondurma:"🍨",kunefe_peyniri:"🧀",turk_kahvesi:"☕️",espresso:"☕️",filtre_kahve:"☕️",granul_kahve:"☕️",buz:"🧊",menengic:"☕️",dibek:"☕️",seker:"🍬",kakao:"🍫",cikolata:"🍫",vanilin:"🌼",tarcin:"🍂",bal:"🍯",nisasta:"🌽",biskuvi:"🍪",ceviz:"🌰",fistik:"🥜",maya:"🍞",kabartma_tozu:"🧁",salca:"🍅",nane:"🌿",pul_biber:"🌶️",kori:"🍛",tahin:"🥣",nar_eksisi:"🍶",soya_sosu:"🍶",mayonez:"🥚",tursu:"🥒",zeytin:"🫒",sirke:"🍶",misir:"🌽"};
+const ING_EMOJI = {brokoli:"🥦",ton_baligi:"🐟",yulaf:"🥣",kinoa:"🌾",lor:"🧀",fistik_ezmesi:"🥜",tuz:"🧂",karabiber:"⚫",yag:"🌻",zeytinyagi:"🫒",su:"💧",domates:"🍅",sogan:"🧅",sarimsak:"🧄",biber:"🌶️",kapya:"🫑",patates:"🥔",patlican:"🍆",kabak:"🥒",havuc:"🥕",ispanak:"🥬",taze_fasulye:"🌱",salatalik:"🥒",maydanoz:"🌿",dereotu:"🌿",marul:"🥬",limon:"🍋",mantar:"🍄",bezelye:"🌱",lahana:"🥬",pirasa:"🥬",balkabagi:"🎃",asma_yapragi:"🍃",semizotu:"🌿",pancar:"🥗",elma:"🍎",muz:"🍌",cilek:"🍓",avokado:"🥑",kusbasi:"🥩",kiyma:"🥩",tavuk:"🍗",sucuk:"🌭",pastirma:"🥓",balik:"🐟",pirinc:"🍚",bulgur:"🌾",mercimek:"🥣",yesil_mercimek:"🥣",nohut:"🥣",kuru_fasulye:"🥣",fava:"🥣",makarna:"🍝",lazanya:"🍝",pirinc_eriste:"🍜",sehriye:"🍜",un:"🌾",irmik:"🌾",ekmek:"🍞",hamburger_ekmegi:"🍔",lavas:"🌯",yufka:"🥟",baklava_yufkasi:"🥟",kadayif:"🍯",gullac:"🥛",galeta_unu:"🍞",nori:"🍣",misir_tanesi:"🍿",yumurta:"🥚",sut:"🥛",yogurt:"🥛",peynir:"🧀",kasar:"🧀",mozzarella:"🧀",labne:"🧀",krema:"🥛",tereyagi:"🧈",dondurma:"🍨",kunefe_peyniri:"🧀",turk_kahvesi:"☕️",espresso:"☕️",filtre_kahve:"☕️",granul_kahve:"☕️",buz:"🧊",menengic:"☕️",dibek:"☕️",seker:"🍬",kakao:"🍫",cikolata:"🍫",vanilin:"🌼",tarcin:"🍂",bal:"🍯",nisasta:"🌽",biskuvi:"🍪",ceviz:"🌰",fistik:"🥜",maya:"🍞",kabartma_tozu:"🧁",salca:"🍅",nane:"🌿",pul_biber:"🌶️",kori:"🍛",tahin:"🥣",nar_eksisi:"🍶",soya_sosu:"🍶",mayonez:"🥚",tursu:"🥒",zeytin:"🫒",sirke:"🍶",misir:"🌽"};
 // İnsanların en sık seçtiği malzemeler: açılışta sadece bunlar görünür
-const QUICK = ["sogan","domates","yumurta","patates","biber","sarimsak","kiyma","tavuk","pirinc","makarna","yogurt","peynir","sut","tereyagi","salca","un","havuc","limon"];
+const QUICK = ["sogan","domates","yumurta","patates","biber","sarimsak","kiyma","tavuk","pirinc","makarna","yogurt","peynir","sut","tereyagi","salca","un","havuc","limon","salatalik"];
 const openGroups = new Set();
+/* Karanlık mod */
+let theme = (() => { try { return localStorage.getItem("pisir-tema") === "dark" ? "dark" : "light"; } catch(e){ return "light"; } })();
+function applyTheme(){
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = theme === "dark" ? "#0D1528" : "#1E4FA8";
+  const b = $("themeBtn"); if (b){ b.textContent = theme === "dark" ? "☀️" : "🌙"; b.setAttribute("aria-label", theme === "dark" ? "Aydınlık moda geç" : "Karanlık moda geç"); }
+}
+applyTheme();
 const chipHTML = (id, l) => `<button type="button" class="chip" data-act="ing" data-id="${id}" aria-pressed="${selected.has(id)}"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${l}</button>`;
 
 function renderGroups(){
@@ -1067,9 +1270,17 @@ function renderGroups(){
 function renderResults(){
   cardSeq = 0;
   const any = selected.size + extras.size > 0;
-  const ev = BUILTIN.filter(fpass).map(r => { const miss = r.malzemeler.filter(m => !selected.has(m.id)).length; return {r, miss, have:r.malzemeler.length - miss}; });
-  const ready = ev.filter(x => x.miss === 0).sort((a, b) => b.r.malzemeler.length - a.r.malzemeler.length);
-  const near = ev.filter(x => x.miss > 0 && x.miss <= 2 && x.have > 0).sort((a, b) => a.miss - b.miss || b.have - a.have).slice(0, 12);
+  // Tuz, yağ, su gibi temel malzemeler eşleşme sayılmaz; sadece asıl malzemelere bakılır
+  const BASIC = new Set(GROUPS[0].items.map(([id]) => id));
+  const ev = BUILTIN.filter(fpass).map(r => {
+    const main = r.malzemeler.filter(m => !BASIC.has(m.id));
+    const have = main.filter(m => selected.has(m.id)).length;
+    const miss = r.malzemeler.filter(m => !selected.has(m.id)).length;
+    return {r, miss, have, main:main.length};
+  });
+  const ready = ev.filter(x => x.miss === 0 && x.have > 0).sort((a, b) => b.have - a.have);
+  // "Bir iki eksik": seçtiklerinden en az 2'sini ve asıl malzemelerinin en az yarısını içerenler
+  const near = ev.filter(x => x.miss > 0 && x.miss <= 2 && x.have >= 2 && x.have * 2 >= x.main).sort((a, b) => a.miss - b.miss || b.have - a.have).slice(0, 12);
 
   const status = $("status");
   if (!any) status.textContent = "Malzemelerini seçmeye başla.";
@@ -1108,7 +1319,7 @@ function dishCard(r, act = "pickDish", note = ""){
   const cat = recipeCat(r);
   const wi = wikiInfo(r);
   const pressed = act === "pickDish" ? ` aria-pressed="${!dishState && currentKey === r.key}"` : "";
-  return `<button type="button" class="dish-card cat-${cat}${wi ? " has-img" : ""}" data-act="${act}" data-key="${esc(r.key)}" data-img="${esc(r.ad)}"${pressed}><span class="dc-media">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy" decoding="async">` : ""}<span class="dc-emo" aria-hidden="true">${recipeEmoji(r)}</span></span><span class="dc-name">${esc(r.ad)}</span><span class="dc-time">${note ? esc(note) + " · " : ""}⏱️ ${r.sure} dk</span></button>`;
+  return `<button type="button" class="dish-card cat-${cat}${wi ? " has-img" : ""}" data-act="${act}" data-key="${esc(r.key)}" data-img="${esc(r.ad)}"${pressed}><span class="dc-media">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy" decoding="async">` : ""}<span class="dc-emo" aria-hidden="true">${recipeEmoji(r)}</span></span><span class="dc-name">${esc(r.ad)}</span>${note ? `<span class="dc-note">${esc(note)}</span>` : ""}${badgesHTML(r)}</button>`;
 }
 function hintCats(q){
   if (q.length < 2) return [];
@@ -1129,15 +1340,16 @@ function renderDishList(){
   if (!q && !filters.size){
     // Her kategoriden en sevilen 8 tarif; tamamı için "Tümünü gör"
     html += CATS.filter(c => c[0] !== "hizli").map(([id, l, emo]) => {
-      const items = sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
+      const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
       if (!items.length) return "";
       const more = items.length > 8 ? `<button type="button" class="see-all cat-${id}" data-act="filter" data-f="${id}">Tümünü gör · ${items.length} tarif</button>` : "";
-      return `<section class="dish-sec"><div class="sec-head"><h2><span aria-hidden="true">${emo}</span> ${l}</h2><span class="sec-count">${items.length} tarif</span></div><div class="dish-grid">${items.slice(0, 8).map(r => dishCard(r)).join("")}</div>${more}</section>`;
+      return `<section class="dish-sec"><div class="sec-head"><h2><span aria-hidden="true">${emo}</span> ${l}</h2><span class="sec-count">${items.length} tarif</span></div><div class="dish-grid">${items.slice(0, 8).map(r => dishCard(r, "pickDish", id === "spor" ? proteinNote(r) : "")).join("")}</div>${more}</section>`;
     }).join("");
   } else if (list.length){
     const c = filters.size ? CAT_BY_ID[[...filters][0]] : null;
     if (c) html += `<div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${c[1]}</h2><span class="sec-count">${list.length} tarif</span></div>`;
-    html += `<div class="dish-grid">${list.map(r => dishCard(r)).join("")}</div>`;
+    const isSpor = filters.has("spor");
+    html += `<div class="dish-grid">${(isSpor ? byProtein(list) : list).map(r => dishCard(r, "pickDish", isSpor ? proteinNote(r) : "")).join("")}</div>`;
   } else if (!hints.length && !(raw && sampleFn)){
     html += raw ? `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>` : `<p class="empty">Bu kategoride yemek yok.</p>`;
   }
@@ -1189,8 +1401,28 @@ function renderBar(){
   $("barText").textContent = `${n} malzeme seçili`;
 }
 
+function dailyRecipe(){
+  const pool = sortRecipes(BUILTIN.filter(r => !catMatch(r, "kahve") && !catMatch(r, "atistirmalik")));
+  const d = new Date();
+  const day = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+  return pool[(day * 7919) % pool.length];
+}
+function renderDaily(){
+  const box = $("daily");
+  const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
+  box.hidden = !show; if (!show) return;
+  const r = dailyRecipe(), wi = wikiInfo(r);
+  box.innerHTML = `<div class="daily cat-${recipeCat(r)}">
+    <div class="daily-media">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span class="daily-emo" aria-hidden="true">${recipeEmoji(r)}</span>`}</div>
+    <div class="daily-body"><span class="daily-tag">🌟 Günün tarifi</span><h2>${esc(r.ad)}</h2>${badgesHTML(r)}
+      <div class="daily-actions"><button type="button" class="ai-btn" data-act="cook" data-key="${esc(r.key)}">Pişirmeye başla</button><button type="button" class="fav" data-act="openSaved" data-key="${esc(r.key)}">Tarife bak</button></div></div>
+  </div>`;
+  if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (v) renderDaily(); });
+}
+
 function renderAll(){
   renderHero();
+  renderDaily();
   if (mode === "pantry"){ renderGroups(); renderResults(); }
   if (mode === "dish"){ renderBanner(); renderDishList(); renderDishDetail(); }
   if (mode === "plan") renderPlan();
@@ -1237,6 +1469,8 @@ function openCook(key, resume){
   const nx = $("cookNext"); if (nx) nx.focus();
 }
 function closeCook(){
+  if (canSpeak()) try { speechSynthesis.cancel(); } catch(e) {}
+  lastSpoken = "";
   cook.open = false;
   $("cook").hidden = true;
   document.documentElement.style.overflow = "";
@@ -1244,6 +1478,34 @@ function closeCook(){
   renderBar(); renderTimers();
   if (mode === "fav" || mode === "recent") renderSaved();
 }
+/* ---------- Sesli pişirme modu: telefonun kendi Türkçe sesiyle ---------- */
+let voiceOn = (() => { try { return localStorage.getItem("pisir-ses") === "1"; } catch(e){ return false; } })();
+let lastSpoken = "";
+const canSpeak = () => "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
+function trVoice(){
+  const vs = speechSynthesis.getVoices().filter(v => /^tr/i.test(v.lang));
+  return vs.find(v => /natural|neural|premium|enhanced|google|yelda/i.test(v.name)) || vs[0] || null;
+}
+function speak(text){
+  if (!voiceOn || !canSpeak()) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "tr-TR"; u.rate = 0.95;
+    const v = trVoice(); if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch(e) {}
+}
+function confetti(){
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const box = document.createElement("div"); box.className = "confetti"; box.setAttribute("aria-hidden", "true");
+  const colors = ["#E03131","#F59F00","#2B8A3E","#1C7ED6","#AE3EC9","#F76707"];
+  let h = "";
+  for (let i = 0; i < 90; i++) h += `<i style="left:${Math.random() * 100}%;background:${colors[i % colors.length]};animation-duration:${2 + Math.random() * 1.6}s;animation-delay:${Math.random() * 0.6}s;transform:rotate(${Math.random() * 360}deg)"></i>`;
+  box.innerHTML = h; document.body.appendChild(box);
+  setTimeout(() => box.remove(), 4500);
+}
+
 /* Adımdaki tekniği bulur: simge + YouTube'da aranacak "nasıl yapılır" sorgusu */
 const W = "(?=[\\s.,;!]|$)"; // kelime sonu (Türkçe harflerle de çalışır)
 const TECHNIQUES = [
@@ -1410,14 +1672,14 @@ function renderCook(){
   const n = r.adimlar.length;
   const serv = getServ(r), f = serv / (r.kisi || 4);
   let h = `<div class="cook-inner">
-    <div class="cook-top"><button type="button" class="cook-close" data-act="cookClose">Kapat</button><div class="cook-title" id="cookTitle">${esc(r.ad)}</div><span class="cook-count">${cook.step < n ? `Adım ${cook.step + 1} / ${n}` : "Bitti"}</span></div>
+    <div class="cook-top"><button type="button" class="cook-close" data-act="cookClose">Kapat</button><div class="cook-title" id="cookTitle">${esc(r.ad)}</div>${canSpeak() ? `<button type="button" class="voice-btn" data-act="voice" aria-pressed="${voiceOn}">${voiceOn ? "🔊 Sesli" : "🔈 Sessiz"}</button>` : ""}<span class="cook-count">${cook.step < n ? `Adım ${cook.step + 1} / ${n}` : "Bitti"}</span></div>
     <div class="cook-progress" aria-hidden="true"><span style="width:${Math.min(100, (cook.step + 1) / n * 100)}%"></span></div>
     <div class="cook-timers" id="cookTimers" aria-live="polite"></div>`;
   if (cook.step < n){
     const s = r.adimlar[cook.step];
     const min = stepMinutes(s);
     const tech = stepTechnique(r, s);
-    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a></div></div>
+    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}</div></div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
       <p class="cook-wake" id="cookWake">${wakeText()}</p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
@@ -1427,12 +1689,18 @@ function renderCook(){
       cookCounts[r.key] = (cookCounts[r.key] || 0) + 1;
       try { localStorage.setItem("pisir-pisirilen", JSON.stringify(cookCounts)); } catch(e) {}
       if (STATS_URL && r.src === "b") fetch(STATS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({key:r.key})}).catch(() => {});
+      setTimeout(confetti, 50);
     }
     h += `<div class="cook-main"><p class="cook-finish">Afiyet olsun!</p><p class="sub">${esc(r.ad)} tarifinin tüm adımlarını tamamladın.</p></div>
       <div class="cook-nav"><button type="button" data-act="cookPrev">Geri</button><button type="button" class="primary" id="cookNext" data-act="cookClose">Kapat</button></div>`;
   }
   h += `</div>`;
   $("cook").innerHTML = h;
+  const sayKey = cook.key + "|" + cook.step;
+  if (voiceOn && sayKey !== lastSpoken){
+    lastSpoken = sayKey;
+    speak(cook.step < n ? `Adım ${cook.step + 1}. ${r.adimlar[cook.step]}` : `Afiyet olsun! ${r.ad} hazır.`);
+  }
   renderTimers();
 }
 
@@ -1459,7 +1727,7 @@ function beep(){
 }
 function tick(){
   const now = Date.now();
-  timers.forEach(t => { if (!t.done && now >= t.end){ t.done = true; beep(); } });
+  timers.forEach(t => { if (!t.done && now >= t.end){ t.done = true; beep(); speak(`${t.label} zamanlayıcısı doldu.`); } });
   if (!timers.some(t => !t.done)){ clearInterval(tickId); tickId = null; }
   renderTimers();
 }
@@ -1486,7 +1754,7 @@ const errMsg = e => ({
   server:"Yapay zekâ servisi şu an cevap veremedi. Biraz sonra tekrar dene.",
   offline:"İnternet bağlantısı yok. Yapay zekâ özellikleri internet ister, hazır tarifler ise çalışmaya devam eder."
 }[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.") + (e && e.detail ? " (Ayrıntı: " + String(e.detail).slice(0, 200) + ")" : "");
-const FORMAT = `{"ad": "yemeğin Türkçe adı", "orijinal_ad": "yemeğin kendi ülkesinde ya da dünyada bilinen adı, Latin harfleriyle (örneğin Pad Thai, Ratatouille); Türk yemeğiyse Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etli", "etsiz", "sebze", "corba", "tatli", "meze", "kahve", "dunya", "atistirmalik" değerlerinden yemeğe uyanlar], "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
+const FORMAT = `{"ad": "yemeğin Türkçe adı", "orijinal_ad": "yemeğin kendi ülkesinde ya da dünyada bilinen adı, Latin harfleriyle (örneğin Pad Thai, Ratatouille); Türk yemeğiyse Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etli", "etsiz", "sebze", "corba", "tatli", "meze", "kahve", "dunya", "atistirmalik", "spor" değerlerinden yemeğe uyanlar], "kalori": 1 porsiyonun yaklaşık kalorisi sayı olarak, "protein": 1 porsiyondaki protein gram olarak sayı, "karbonhidrat": gram olarak sayı, "yag": gram olarak sayı, "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
 
 async function runDishAI(){
   const q = $("dishSearch").value.trim();
@@ -1667,6 +1935,12 @@ document.addEventListener("click", e => {
     case "servMinus": case "servPlus": if (r){ servMap[key] = Math.min(12, Math.max(1, getServ(r) + (act === "servPlus" ? 1 : -1))); save(); renderAll(); } break;
     case "copy": if (r) copyText(shopText(r), el); break;
     case "openSaved": mode = "dish"; $("dishSearch").value = ""; dishState = null; currentKey = key; addRecent(key); renderAll(); window.scrollTo(0, 0); break;
+    case "theme": theme = theme === "dark" ? "light" : "dark"; try { localStorage.setItem("pisir-tema", theme); } catch(e) {} applyTheme(); break;
+    case "voice":
+      voiceOn = !voiceOn; try { localStorage.setItem("pisir-ses", voiceOn ? "1" : "0"); } catch(e) {}
+      if (!voiceOn && canSpeak()) speechSynthesis.cancel();
+      lastSpoken = ""; renderCook(); break;
+    case "speakAgain": lastSpoken = ""; renderCook(); break;
     case "toggleGroup": { const gi = Number(el.dataset.g); openGroups.has(gi) ? openGroups.delete(gi) : openGroups.add(gi); renderGroups(); break; }
     case "selectGroup": { const g = GROUPS[Number(el.dataset.g)]; const all = g.items.every(([id]) => selected.has(id)); g.items.forEach(([id]) => all ? selected.delete(id) : selected.add(id)); save(); renderAll(); break; }
     case "subst": if (r) runSubst(r, r.malzemeler[Number(el.dataset.idx)]); break;
@@ -1698,7 +1972,7 @@ document.addEventListener("change", e => {
 });
 $("search").addEventListener("input", renderGroups);
 $("search").addEventListener("keydown", e => { if (e.key === "Enter" && $("addExtra")) addExtra(); });
-$("dishSearch").addEventListener("input", renderDishList);
+$("dishSearch").addEventListener("input", () => { renderDishList(); renderDaily(); });
 $("dishSearch").addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
   const q = norm($("dishSearch").value); if (!q) return;
@@ -1787,6 +2061,9 @@ if ("serviceWorker" in navigator){
 }
 
 renderAll();
+// Görselleri arka planda hazırla (sayfa açıldıktan hemen sonra)
+setTimeout(prefetchImages, 600);
+window.addEventListener("online", prefetchImages);
 </script>
 </body>
 </html>
