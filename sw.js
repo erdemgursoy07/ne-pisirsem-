@@ -1,5 +1,5 @@
-/* Bugün ne pişirsem? çevrimdışı önbellek. Büyük bir güncellemede sürüm numarasını artır (v1 -> v2). */
-const CACHE = "pisir-v18";
+/* Bugün ne pişirsem? çevrimdışı önbellek. Büyük bir güncellemede sürüm numarasını artır. */
+const CACHE = "pisir-v19";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
@@ -13,12 +13,19 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const req = e.request;
   if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  // Canlı veriler (yapay zekâ, ortak sayaç): hiç önbelleğe alma
+  if (url.hostname.endsWith("workers.dev")) return;
   const save = res => { if (res && (res.ok || res.type === "opaque")) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; };
-  if (req.mode === "navigate"){
-    // Sayfa: önce internetten en güncelini dene, yoksa kayıtlı olanı aç
+  // Vikipedi bilgileri: önce internet, yoksa kayıtlı olan
+  if (url.hostname.endsWith("wikipedia.org")) {
+    e.respondWith(fetch(req).then(save).catch(() => caches.match(req)));
+    return;
+  }
+  if (req.mode === "navigate") {
     e.respondWith(fetch(req).then(save).catch(() => caches.match(req).then(hit => hit || caches.match("./index.html"))));
     return;
   }
-  // Simge, yazı tipi vb.: önce kayıtlı olanı kullan
+  // Görseller, yazı tipleri vb.: önce kayıtlı olan
   e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(save)));
 });

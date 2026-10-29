@@ -94,6 +94,22 @@ button:disabled{opacity:.45;cursor:default}
 .cat-kahve{--c:#7A4A1E;--cbg:#F6ECE1}
 .cat-meze{--c:#5A7A12;--cbg:#EEF6DF}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
+.cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
+.dish-card{padding:10px 10px 14px;gap:8px}
+.dc-media{position:relative;width:100%;aspect-ratio:4/3;border-radius:14px;overflow:hidden;display:grid;place-items:center;background:rgba(255,255,255,.6)}
+.dc-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dc-media .dc-emo{font-size:2.8rem;line-height:1}
+.dish-card.has-img .dc-emo{position:absolute;left:8px;bottom:8px;width:34px;height:34px;display:grid;place-items:center;font-size:1.15rem;background:#fff;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.18)}
+.dc-name,.dc-time{padding:0 4px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:26px 0 12px}
+.sec-head h2{font-size:1.3rem;font-weight:800;margin:0 !important;display:flex;gap:8px;align-items:center}
+.sec-count{color:var(--muted);font-weight:600;font-size:.95rem;white-space:nowrap}
+.see-all{margin-top:12px;width:100%;border:0;border-radius:14px;padding:13px;font-weight:700;font-size:1rem;background:var(--cbg);color:var(--c);cursor:pointer}
+.detail-img{margin:0 0 14px;max-width:560px}
+.detail-img img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;display:block;background:var(--line)}
+.detail-img figcaption{font-size:.82rem;margin-top:6px}
+.detail-img a{color:var(--muted)}
+.credits{color:var(--muted);font-size:.85rem;padding:24px 0 48px;border-top:1px solid var(--line);margin-top:24px}
 
 .marquee{overflow:hidden;margin:0 0 14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .marquee-track{display:flex;width:max-content;animation:kay 45s linear infinite}
@@ -301,7 +317,7 @@ header.hero{padding:28px 0 20px}
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="pantry" id="tab-pantry">🧺 Dolabım</button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="dish" id="tab-dish">🔎 Yemek ara</button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="plan" id="tab-plan">📅 Menü</button>
-      <button type="button" role="tab" class="tab" data-act="tab" data-mode="fav" id="tab-fav">❤️ Favoriler</button>
+      <button type="button" role="tab" class="tab" data-act="tab" data-mode="fav" id="tab-fav">🏆 En sevilenler</button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="recent" id="tab-recent">🕘 Geçmiş</button>
     </div>
     <div class="filters cats" id="filters" role="group" aria-label="Kategoriler"></div>
@@ -327,7 +343,8 @@ header.hero{padding:28px 0 20px}
   </section>
 
   <section class="plan" id="planMode" aria-label="Haftalık menü" hidden></section>
-  <section class="saved" id="savedMode" aria-label="Kaydettiklerim" hidden></section>
+  <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
+  <footer class="credits">Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
 </div>
 
 <div class="bar" id="bar">
@@ -343,14 +360,14 @@ header.hero{padding:28px 0 20px}
 /* ---------- Veri ---------- */
 const GROUPS = [
   {title:"🧂 Temel malzemeler", all:true, items:[["tuz","Tuz"],["karabiber","Karabiber"],["yag","Sıvı yağ"],["zeytinyagi","Zeytinyağı"],["su","Su"]]},
-  {title:"🥕 Sebze ve yeşillik", items:[["domates","Domates"],["sogan","Soğan"],["sarimsak","Sarımsak"],["biber","Biber"],["kapya","Kapya biber"],["patates","Patates"],["patlican","Patlıcan"],["kabak","Kabak"],["havuc","Havuç"],["ispanak","Ispanak"],["taze_fasulye","Taze fasulye"],["salatalik","Salatalık"],["maydanoz","Maydanoz"],["dereotu","Dereotu"],["marul","Marul"],["limon","Limon"],["mantar","Mantar"],["bezelye","Bezelye"],["lahana","Lahana"],["pirasa","Pırasa"],["balkabagi","Bal kabağı"],["asma_yapragi","Asma yaprağı"]]},
+  {title:"🥕 Sebze ve yeşillik", items:[["domates","Domates"],["sogan","Soğan"],["sarimsak","Sarımsak"],["biber","Biber"],["kapya","Kapya biber"],["patates","Patates"],["patlican","Patlıcan"],["kabak","Kabak"],["havuc","Havuç"],["ispanak","Ispanak"],["taze_fasulye","Taze fasulye"],["salatalik","Salatalık"],["maydanoz","Maydanoz"],["dereotu","Dereotu"],["marul","Marul"],["limon","Limon"],["mantar","Mantar"],["bezelye","Bezelye"],["lahana","Lahana"],["pirasa","Pırasa"],["balkabagi","Bal kabağı"],["asma_yapragi","Asma yaprağı"],["semizotu","Semizotu"],["pancar","Pancar"]]},
   {title:"🍎 Meyve", items:[["elma","Elma"],["muz","Muz"],["cilek","Çilek"],["avokado","Avokado"]]},
   {title:"🍗 Et, tavuk ve balık", items:[["kusbasi","Kuşbaşı et"],["kiyma","Kıyma"],["tavuk","Tavuk"],["sucuk","Sucuk"],["pastirma","Pastırma"],["balik","Balık"]]},
-  {title:"🌾 Bakliyat, tahıl ve hamur", items:[["pirinc","Pirinç"],["bulgur","Bulgur"],["mercimek","Kırmızı mercimek"],["yesil_mercimek","Yeşil mercimek"],["nohut","Nohut"],["kuru_fasulye","Kuru fasulye"],["fava","Kuru bakla"],["makarna","Makarna"],["lazanya","Lazanya yaprağı"],["pirinc_eriste","Pirinç eriştesi"],["sehriye","Şehriye"],["un","Un"],["irmik","İrmik"],["ekmek","Ekmek"],["hamburger_ekmegi","Hamburger ekmeği"],["lavas","Lavaş / tortilla"],["yufka","Yufka"],["baklava_yufkasi","Baklavalık yufka"]]},
-  {title:"🧀 Süt ürünleri ve yumurta", items:[["yumurta","Yumurta"],["sut","Süt"],["yogurt","Yoğurt"],["peynir","Beyaz peynir"],["kasar","Kaşar"],["mozzarella","Mozzarella"],["labne","Labne peyniri"],["krema","Sıvı krema"],["tereyagi","Tereyağı"],["dondurma","Vanilyalı dondurma"]]},
-  {title:"☕️ Kahve", items:[["turk_kahvesi","Türk kahvesi"],["espresso","Espresso kahvesi"],["filtre_kahve","Filtre kahve"],["granul_kahve","Granül kahve"],["buz","Buz"]]},
+  {title:"🌾 Bakliyat, tahıl ve hamur", items:[["pirinc","Pirinç"],["bulgur","Bulgur"],["mercimek","Kırmızı mercimek"],["yesil_mercimek","Yeşil mercimek"],["nohut","Nohut"],["kuru_fasulye","Kuru fasulye"],["fava","Kuru bakla"],["makarna","Makarna"],["lazanya","Lazanya yaprağı"],["pirinc_eriste","Pirinç eriştesi"],["sehriye","Şehriye"],["un","Un"],["irmik","İrmik"],["ekmek","Ekmek"],["hamburger_ekmegi","Hamburger ekmeği"],["lavas","Lavaş / tortilla"],["yufka","Yufka"],["baklava_yufkasi","Baklavalık yufka"],["kadayif","Tel kadayıf"],["gullac","Güllaç yaprağı"],["galeta_unu","Galeta unu"],["nori","Nori yaprağı"],["misir_tanesi","Patlamış mısırlık mısır"]]},
+  {title:"🧀 Süt ürünleri ve yumurta", items:[["yumurta","Yumurta"],["sut","Süt"],["yogurt","Yoğurt"],["peynir","Beyaz peynir"],["kasar","Kaşar"],["mozzarella","Mozzarella"],["labne","Labne peyniri"],["krema","Sıvı krema"],["tereyagi","Tereyağı"],["dondurma","Vanilyalı dondurma"],["kunefe_peyniri","Künefe peyniri"]]},
+  {title:"☕️ Kahve", items:[["turk_kahvesi","Türk kahvesi"],["espresso","Espresso kahvesi"],["filtre_kahve","Filtre kahve"],["granul_kahve","Granül kahve"],["buz","Buz"],["menengic","Menengiç kahvesi"],["dibek","Dibek kahvesi"]]},
   {title:"🍫 Tatlı malzemeleri", items:[["seker","Şeker"],["kakao","Kakao"],["cikolata","Bitter çikolata"],["vanilin","Vanilin"],["tarcin","Tarçın"],["bal","Bal"],["nisasta","Nişasta"],["biskuvi","Bisküvi"],["ceviz","Ceviz"],["fistik","Yer fıstığı"],["maya","Kuru maya"],["kabartma_tozu","Kabartma tozu"]]},
-  {title:"🥫 Dolap", items:[["salca","Salça"],["nane","Kuru nane"],["pul_biber","Pul biber"],["kori","Köri baharatı"],["tahin","Tahin"],["nar_eksisi","Nar ekşisi"],["soya_sosu","Soya sosu"],["mayonez","Mayonez"],["tursu","Kornişon turşu"],["zeytin","Zeytin"]]}
+  {title:"🥫 Dolap", items:[["salca","Salça"],["nane","Kuru nane"],["pul_biber","Pul biber"],["kori","Köri baharatı"],["tahin","Tahin"],["nar_eksisi","Nar ekşisi"],["soya_sosu","Soya sosu"],["mayonez","Mayonez"],["tursu","Kornişon turşu"],["zeytin","Zeytin"],["sirke","Sirke"],["misir","Mısır (konserve)"]]}
 ];
 const LABEL = {};
 GROUPS.forEach(g => g.items.forEach(([id,l]) => LABEL[id] = l));
@@ -508,30 +525,96 @@ const RAW = [
   {n:"Elmalı kurabiye", t:50, p:12, tag:["tatli"], k:["elma:3 adet","ceviz:0.5 su bardağı","tarcin:1 tatlı kaşığı","seker:0.75 su bardağı","tereyagi:125 g","yogurt:3 yemek kaşığı","un:3 su bardağı","kabartma_tozu:1 paket"], s:["Elmaları rendeleyip yarım su bardağı şekerle suyunu çekene kadar pişir, tarçın ve cevizi ekleyip soğut.","Tereyağı, yoğurt, kalan şeker, un ve kabartma tozuyla yumuşak bir hamur yoğur.","Hamuru açıp üçgenler kes, geniş kenarına iç koyup rulo yap.","180 °C fırında 25 dakika pişir, soğuyunca üzerine pudra şekeri serp."]},
   {n:"Çikolatalı muffin", o:"Chocolate Muffins", m:"Amerikan mutfağı", t:35, p:12, tag:["tatli"], k:["un:2 su bardağı","seker:1 su bardağı","yumurta:2 adet","sut:1 su bardağı","yag:0.5 su bardağı","kakao:3 yemek kaşığı","kabartma_tozu:1 paket","cikolata:50 g"], s:["Yumurta, şeker, süt ve yağı çırp.","Un, kakao ve kabartma tozunu eleyerek ekle, sadece karışana kadar karıştır.","Doğranmış çikolatayı ekle.","Muffin kalıplarını üçte iki doldur, 180 °C fırında 20 dakika pişir."]},
   {n:"Pankek", o:"Pancakes", m:"Amerikan mutfağı", t:20, p:4, tag:["tatli","kahvalti"], k:["un:1.5 su bardağı","sut:1 su bardağı","yumurta:2 adet","seker:2 yemek kaşığı","kabartma_tozu:1 tatlı kaşığı","tereyagi:2 yemek kaşığı","bal:3 yemek kaşığı"], s:["Un, şeker ve kabartma tozunu karıştır.","Süt, yumurta ve eritilmiş tereyağını ekleyip pürüzsüz olana kadar çırp.","Az yağlı tavaya birer kepçe dök, yüzeyinde kabarcıklar çıkınca çevir.","Bal ve meyveyle servis et."]},
-  {n:"Çikolatalı sufle", o:"Chocolate Soufflé", m:"Fransız mutfağı", t:25, p:4, tag:["tatli"], k:["cikolata:100 g","tereyagi:50 g","yumurta:2 adet","seker:3 yemek kaşığı","un:2 yemek kaşığı"], s:["Çikolata ve tereyağını benmari usulü erit.","Yumurta ve şekeri çırpıp çikolatayı ekle, unu karıştır.","Yağlanmış sufle kaplarına dök.","200 °C fırında 9–10 dakika pişir; ortası akışkan kalmalı, hemen servis et."]}
+  {n:"Çikolatalı sufle", o:"Chocolate Soufflé", m:"Fransız mutfağı", t:25, p:4, tag:["tatli"], k:["cikolata:100 g","tereyagi:50 g","yumurta:2 adet","seker:3 yemek kaşığı","un:2 yemek kaşığı"], s:["Çikolata ve tereyağını benmari usulü erit.","Yumurta ve şekeri çırpıp çikolatayı ekle, unu karıştır.","Yağlanmış sufle kaplarına dök.","200 °C fırında 9–10 dakika pişir; ortası akışkan kalmalı, hemen servis et."]},
+  {n:"Lahmacun", t:60, p:6, k:["un:3 su bardağı","maya:1 paket","su:1 su bardağı","tuz:1 tatlı kaşığı","kiyma:300 g","sogan:1 adet","domates:2 adet","kapya:1 adet","maydanoz:0.5 demet","salca:1 yemek kaşığı","pul_biber:1 tatlı kaşığı","karabiber:1 çay kaşığı","limon:1 adet"], s:["Ilık su, maya, un ve tuzla yumuşak bir hamur yoğur, üzerini örtüp 30 dakika dinlendir.","Kıyma, rondodan geçirilmiş soğan, domates, biber ve maydanozu salça ve baharatlarla yoğurarak harç yap.","Hamurdan parçalar koparıp çok ince aç, üzerine harcı ince bir tabaka hâlinde yay.","250 °C fırında kenarları kızarana kadar 8–10 dakika pişir.","Limon, maydanoz ve soğanla sarıp servis et."], note:"Harca bir tutam isot eklersen Urfa usulüne yaklaşır."},
+  {n:"Mantı", t:90, p:4, k:["un:2.5 su bardağı","yumurta:1 adet","tuz:1 tatlı kaşığı","kiyma:250 g","sogan:1 adet","karabiber:1 çay kaşığı","yogurt:2 su bardağı","sarimsak:2 diş","tereyagi:2 yemek kaşığı","pul_biber:1 tatlı kaşığı","su:3 litre"], s:["Un, yumurta, tuz ve yarım su bardağı suyla sert bir hamur yoğur, 20 dakika dinlendir.","Kıymayı rendelenmiş soğan, tuz ve karabiberle karıştır.","Hamuru ince aç, 2 cm’lik kareler kes; her kareye nohut kadar harç koyup dört köşesini birleştir.","Mantıları kaynayan tuzlu suda 10–12 dakika haşla.","Sarımsaklı yoğurtla servis et, üzerine tereyağında kızdırılmış pul biber gezdir."]},
+  {n:"Kıymalı pide", t:75, p:4, k:["un:3 su bardağı","maya:1 paket","su:1 su bardağı","seker:1 çay kaşığı","tuz:1 tatlı kaşığı","kiyma:300 g","sogan:1 adet","domates:1 adet","biber:2 adet","karabiber:1 çay kaşığı","tereyagi:1 yemek kaşığı","yumurta:1 adet"], s:["Ilık su, maya, şeker, un ve tuzla yumuşak bir hamur yoğur, 40 dakika mayalandır.","Kıymayı ince doğranmış soğan, domates, biber, tuz ve karabiberle karıştır.","Hamuru 4 parçaya böl, her birini oval aç; ortasına harcı yayıp kenarlarını içe kıvırarak kayık şekli ver.","Kenarlara yumurta sarısı sür, 230 °C fırında 12–15 dakika pişir.","Fırından çıkınca üzerine tereyağı sür."]},
+  {n:"Tavuk döner", t:40, p:4, k:["tavuk:600 g","yogurt:3 yemek kaşığı","salca:1 yemek kaşığı","sarimsak:3 diş","zeytinyagi:3 yemek kaşığı","pul_biber:1 tatlı kaşığı","tuz:1 tatlı kaşığı","karabiber:1 çay kaşığı","lavas:4 adet","domates:1 adet","tursu:2 adet"], s:["Tavuğu ince şeritler hâlinde kes.","Yoğurt, salça, ezilmiş sarımsak, zeytinyağı ve baharatlarla karıştırıp en az 2 saat buzdolabında beklet.","Tavayı iyice ısıt, tavukları parti parti, kenarları kızarana kadar 6–8 dakika pişir.","Lavaşa tavuk, domates ve turşu koyup dürüm yap."], note:"Ev usulü tarif; gerçek döner dikey ızgarada pişer."},
+  {n:"Adana kebap", t:40, p:4, k:["kiyma:500 g","kapya:2 adet","sogan:1 adet","pul_biber:1 yemek kaşığı","tuz:1 tatlı kaşığı","lavas:4 adet","domates:2 adet"], s:["Kapya biberi ve soğanı çok ince doğrayıp suyunu sık.","Kıyma, biber, soğan, pul biber ve tuzu en az 10 dakika yoğur.","Islak elle harcı yassı şişlere sıkıca geçir ya da uzun köfteler yap.","Mangalda ya da çok sıcak döküm tavada her yüzünü 4–5 dakika pişir; közlenmiş domates ve lavaşla servis et."], note:"Kebaplık kıymanın yağlı olması lezzet için önemlidir."},
+  {n:"Çiğ köfte", t:40, p:6, k:["bulgur:2 su bardağı","salca:2 yemek kaşığı","sogan:1 adet","pul_biber:2 yemek kaşığı","nar_eksisi:2 yemek kaşığı","limon:1 adet","maydanoz:1 demet","zeytinyagi:0.5 su bardağı","tuz:1 tatlı kaşığı","su:1 su bardağı","marul:1 adet"], s:["İnce bulguru 1 su bardağı sıcak suyla ıslatıp 10 dakika beklet.","Salça, pul biber, rendelenmiş soğan ve tuzu ekleyip 15–20 dakika iyice yoğur.","Nar ekşisi, limon suyu ve zeytinyağını ekleyip yoğurmaya devam et.","İnce kıyılmış maydanozu ekle, avucunla sıkarak şekil ver ve marulla servis et."], note:"Etsiz, ev usulü tarif; isot eklersen daha geleneksel olur."},
+
+  {n:"Yoğurtlu semizotu", t:10, p:4, tag:["meze"], k:["semizotu:1 demet","yogurt:2 su bardağı","sarimsak:1 diş","zeytinyagi:1 yemek kaşığı","tuz:1 çay kaşığı"], s:["Semizotunu yıkayıp kalın saplarını ayıkla ve iri doğra.","Yoğurdu ezilmiş sarımsak ve tuzla karıştır.","Semizotunu ekleyip karıştır, üzerine zeytinyağı gezdir."]},
+  {n:"Közlenmiş biber", t:30, p:4, tag:["meze"], k:["kapya:4 adet","sarimsak:2 diş","sirke:1 yemek kaşığı","zeytinyagi:3 yemek kaşığı","maydanoz:0.5 demet","tuz:1 çay kaşığı"], s:["Kapya biberleri ocakta ya da 220 °C fırında kabukları kararana kadar közle.","Bir poşete koyup 10 dakika beklet, sonra kabuklarını soy.","Şeritler hâlinde doğra, ezilmiş sarımsak, sirke, zeytinyağı ve tuzla karıştır.","Kıyılmış maydanozla servis et."]},
+  {n:"Mantar dolması", t:30, p:4, tag:["meze"], k:["mantar:12 adet","kasar:100 g","sarimsak:1 diş","tereyagi:1 yemek kaşığı","tuz:1 çay kaşığı","karabiber:1 çay kaşığı"], s:["Mantarların saplarını çıkar, sapları küçük doğra.","Sapları ezilmiş sarımsakla tereyağında 3 dakika kavur, tuz ve karabiber ekle.","Rendelenmiş kaşarla karıştırıp mantarların içini doldur.","200 °C fırında peynir eriyene kadar 15 dakika pişir."]},
+  {n:"Yoğurtlu patlıcan", t:30, p:4, tag:["meze"], k:["patlican:3 adet","yogurt:1.5 su bardağı","sarimsak:2 diş","yag:1 su bardağı","tuz:1 çay kaşığı"], s:["Patlıcanları alacalı soyup halka doğra, tuzlu suda 15 dakika beklet ve kurula.","Kızgın yağda iki yüzünü kızart, kâğıt havluya al.","Yoğurdu ezilmiş sarımsak ve tuzla karıştır.","Patlıcanları tabağa dizip üzerine sarımsaklı yoğurdu dök."]},
+  {n:"Tarator", t:15, p:4, tag:["meze"], k:["ceviz:1 su bardağı","ekmek:2 dilim","sarimsak:2 diş","yogurt:1 su bardağı","limon:0.5 adet","zeytinyagi:3 yemek kaşığı","tuz:1 çay kaşığı"], s:["Bayat ekmeği ıslatıp suyunu sık.","Ceviz, ekmek ve sarımsağı rondoda çek.","Yoğurt, limon suyu, zeytinyağı ve tuzu ekleyip pürüzsüz olana kadar karıştır."], note:"Kızarmış balık ve midyenin klasik eşlikçisidir."},
+  {n:"Pancar salatası", t:50, p:4, tag:["meze"], k:["pancar:3 adet","yogurt:1 su bardağı","sarimsak:1 diş","sirke:1 yemek kaşığı","zeytinyagi:2 yemek kaşığı","tuz:1 çay kaşığı"], s:["Pancarları kabuklarıyla yumuşayana kadar yaklaşık 40 dakika haşla.","Soğuyunca kabuklarını soyup rendele ya da küp doğra.","Sirke, zeytinyağı ve tuzla karıştır.","Sarımsaklı yoğurtla birlikte servis et."]},
+  {n:"Paçanga böreği", t:30, p:4, tag:["meze"], k:["yufka:2 adet","pastirma:100 g","kasar:100 g","domates:1 adet","kapya:1 adet","yumurta:1 adet","yag:1 su bardağı"], s:["Yufkaları üçgenler hâlinde kes.","Her üçgenin geniş kenarına pastırma, kaşar, domates ve biber şeritleri koy.","Kenarları içe katlayıp sar, uçlarını çırpılmış yumurtayla yapıştır.","Kızgın yağda iki yüzü kızarana kadar kızart."]},
+  {n:"Çerkez tavuğu", t:60, p:6, tag:["meze"], k:["tavuk:500 g","ceviz:1.5 su bardağı","ekmek:3 dilim","sarimsak:2 diş","tereyagi:1 yemek kaşığı","pul_biber:1 tatlı kaşığı","tuz:1 tatlı kaşığı","su:6 su bardağı"], s:["Tavuğu 6 su bardağı suda 35 dakika haşla, suyunu ayır ve etini didikle.","Ceviz, ıslatılmış bayat ekmek ve sarımsağı rondoda çek, tavuk suyuyla açarak krema kıvamına getir.","Didiklenmiş tavuğu sosla ve tuzla karıştır.","Tereyağında pul biberi kızdırıp üzerine gezdir."]},
+
+  {n:"Ristretto", m:"İtalyan mutfağı", t:3, p:1, tag:["kahve"], k:["espresso:1 shot"], s:["Espresso gibi hazırla: hazneye ince öğütülmüş kahveyi koyup bastır.","Demlemeyi 15–20 saniyede, yaklaşık 20 ml kahve aktığında durdur."], note:"Espressodan daha az suyla hazırlanır; daha yoğun ve tatlımsıdır."},
+  {n:"Lungo", m:"İtalyan mutfağı", t:3, p:1, tag:["kahve"], k:["espresso:1 shot"], s:["Espresso gibi hazırla: hazneye kahveyi koyup bastır.","Demlemeyi 45–60 saniye, yaklaşık 80–100 ml kahve olana kadar sürdür."], note:"Espressodan daha uzun demlenir; daha hafif ama daha acımsı olur."},
+  {n:"Cortado", m:"İspanyol mutfağı", t:4, p:1, tag:["kahve"], k:["espresso:1 shot","sut:40 ml"], s:["Bir espresso hazırla.","Sütü az köpüklü olacak şekilde ılıt.","Espressoya eşit miktarda süt ekle."]},
+  {n:"Viyana kahvesi", o:"Wiener Melange", m:"Avusturya mutfağı", t:5, p:1, tag:["kahve"], k:["espresso:2 shot","krema:100 ml","seker:1 tatlı kaşığı","kakao:1 çay kaşığı"], s:["Kremayı şekerle koyulaşana kadar çırp.","Çift espresso hazırlayıp fincana al.","Üzerine çırpılmış kremayı koy ve kakao serp."]},
+  {n:"Moka pot kahvesi", m:"İtalyan mutfağı", t:8, p:2, tag:["kahve"], k:["espresso:2 yemek kaşığı","su:150 ml"], s:["Moka potun alt haznesine vanaya kadar su koy.","Sepete ince öğütülmüş kahveyi bastırmadan, düz olacak şekilde doldur.","Üst kısmı sıkıca vida ve orta ateşe koy.","Fokurdama sesi gelince ocaktan al, fincanlara dök."]},
+  {n:"Menengiç kahvesi", t:5, p:1, tag:["kahve"], k:["menengic:2 tatlı kaşığı","sut:1 fincan"], s:["Cezveye süt ve menengiç kahvesini koyup karıştır.","Kısık ateşte, taşmamasına dikkat ederek ısıt.","Köpük yükselince ocaktan al ve fincana dök."], note:"Yabani fıstık ağacının meyvesinden yapılır, kafein içermez."},
+  {n:"Dibek kahvesi", t:5, p:1, tag:["kahve"], k:["dibek:1 tatlı kaşığı","su:1 fincan"], s:["Cezveye soğuk su ve dibek kahvesini koyup karıştır.","Kısık ateşte köpük yükselene kadar ısıt.","Köpüğü fincana paylaştır, kalan kahveyi yavaşça üzerine dök."], note:"Dibekte dövülerek çekilir; Türk kahvesinden daha yumuşak ve kremamsıdır."},
+  {n:"Buzlu americano", o:"Iced Americano", m:"Amerikan mutfağı", t:4, p:1, tag:["kahve"], k:["espresso:1 shot","su:150 ml","buz:1 su bardağı"], s:["Bardağı buzla doldur.","Soğuk suyu buzların üzerine dök.","Espresso hazırlayıp üzerine ekle."]},
+  {n:"Karamel latte", o:"Caramel Latte", m:"Dünya mutfağı", t:10, p:1, tag:["kahve"], k:["espresso:1 shot","sut:200 ml","seker:2 yemek kaşığı","krema:2 yemek kaşığı"], s:["Karamel sos için şekeri tavada karıştırmadan eritip karamelize et, ocaktan alıp kremayı ekle.","Sosu fincanın dibine koy, üzerine espressoyu ekle.","Sütü ısıtıp köpürt ve fincana dök."]},
+
+  {n:"Kazandibi", t:40, p:6, tag:["tatli"], k:["sut:4 su bardağı","seker:1 su bardağı","un:3 yemek kaşığı","nisasta:2 yemek kaşığı","tereyagi:1 yemek kaşığı","vanilin:1 paket"], s:["Süt, şeker, un ve nişastayı çırparak orta ateşte koyulaşana kadar pişir, vanilini ekle.","Metal tepsiyi tereyağıyla yağlayıp tabanına 2 kaşık şeker serp.","Muhallebiyi tepsiye dök.","Tepsiyi ocağın üzerinde gezdirerek tabanı karamelize olana kadar 5–6 dakika yak.","Soğuyunca rulo şeklinde kesip servis et."]},
+  {n:"Profiterol", m:"Fransız mutfağı", t:60, p:6, tag:["tatli"], k:["un:1 su bardağı","tereyagi:125 g","su:1 su bardağı","yumurta:4 adet","sut:3 su bardağı","seker:1 su bardağı","nisasta:2 yemek kaşığı","kakao:3 yemek kaşığı","cikolata:100 g","krema:0.5 su bardağı"], s:["Su ve tereyağını kaynat, unu ekleyip hamur tencerenin kenarından ayrılana kadar karıştır ve ılımaya bırak.","Yumurtaları tek tek ekleyerek pürüzsüz bir hamur elde et; ceviz büyüklüğünde sıkıp 200 °C fırında 25 dakika pişir, fırın kapağını açma.","Süt, şeker ve nişastayı koyulaşana kadar pişirip soğut, hamur toplarının içini krema ile doldur.","Krema, çikolata ve kakaoyu kısık ateşte eritip sos yap ve topların üzerine dök."]},
+  {n:"Güllaç", t:30, p:8, tag:["tatli"], k:["gullac:10 yaprak","sut:1 litre","seker:1.5 su bardağı","ceviz:1 su bardağı"], s:["Sütü şekerle ılıtıp şeker eriyene kadar karıştır.","Tepsiye bir güllaç yaprağı koyup sütle ıslat; yaprakların yarısını bu şekilde diz.","Dövülmüş cevizi yay, kalan yaprakları aynı şekilde ıslatarak üzerine diz.","Kalan sütü dökme, buzdolabında en az 3 saat dinlendirip dilimleyerek servis et."], note:"Süte bir kaşık gül suyu eklersen geleneksel aroma verir."},
+  {n:"Lokma", t:60, p:6, tag:["tatli"], k:["un:2 su bardağı","maya:1 paket","su:3 su bardağı","tuz:1 çay kaşığı","seker:2 su bardağı","limon:0.5 adet","yag:3 su bardağı"], s:["Şerbet için şekeri 1,5 su bardağı suyla 10 dakika kaynat, limon suyunu ekleyip soğut.","Un, maya, tuz ve 1,5 su bardağı ılık suyla akışkan bir hamur yap, 1 saat mayalandır.","Islak kaşıkla ya da avucunu sıkarak hamurdan ceviz büyüklüğünde parçalar kızgın yağa bırak.","Kızaran lokmaları sıcakken soğuk şerbete at, birkaç dakika sonra al."]},
+  {n:"Kadayıf", t:60, p:8, tag:["tatli"], k:["kadayif:500 g","tereyagi:200 g","ceviz:1.5 su bardağı","seker:3 su bardağı","su:2.5 su bardağı","limon:0.5 adet"], s:["Şerbet için şeker ve suyu 15 dakika kaynat, limon suyunu ekleyip soğut.","Kadayıfı eliyle didikleyip eritilmiş tereyağıyla iyice karıştır.","Yarısını tepsiye bastır, cevizi yay, kalanını üzerine bastırarak kapat.","180 °C fırında üzeri kızarana kadar 40 dakika pişir.","Sıcak kadayıfa soğuk şerbeti dök, 1 saat beklet."]},
+  {n:"Künefe", t:30, p:2, tag:["tatli"], k:["kadayif:250 g","kunefe_peyniri:200 g","tereyagi:100 g","seker:1 su bardağı","su:1 su bardağı","limon:0.5 adet"], s:["Şerbet için şeker ve suyu 10 dakika kaynat, limon suyunu ekleyip soğut.","Kadayıfı ince kıyıp eritilmiş tereyağıyla karıştır.","Künefe tavasına kadayıfın yarısını bastır, peyniri yay, kalan kadayıfla kapatıp bastır.","Kısık ateşte iki yüzü kızarana kadar çevirerek pişir.","Sıcak künefeye şerbeti dök, hemen servis et."], note:"Üzerine fıstık serpip kaymakla servis edebilirsin."},
+  {n:"Mozaik pasta", t:20, p:8, tag:["tatli"], k:["biskuvi:300 g","tereyagi:125 g","kakao:4 yemek kaşığı","seker:0.5 su bardağı","sut:1 su bardağı","ceviz:0.5 su bardağı"], s:["Süt, şeker, tereyağı ve kakaoyu kısık ateşte eriyip pürüzsüz olana kadar ısıt.","Elle kırılmış bisküvi ve cevizi ekleyip karıştır.","Karışımı streç filme alıp rulo şekli ver.","Buzdolabında en az 4 saat bekletip dilimle."]},
+  {n:"Krem karamel", o:"Crème Caramel", m:"Fransız mutfağı", t:60, p:6, tag:["tatli"], k:["sut:3 su bardağı","yumurta:4 adet","seker:1 su bardağı","vanilin:1 paket"], s:["Yarım su bardağı şekeri tavada karamelize edip sufle kaplarının dibine paylaştır.","Süt, yumurta, kalan şeker ve vanilini köpürtmeden karıştır, kaplara dök.","Kapları sıcak su dolu bir tepsiye koyup 160 °C fırında 45 dakika benmari usulü pişir.","Buzdolabında soğutup tabağa ters çevirerek servis et."]},
+  {n:"Elmalı turta", o:"Apple Pie", m:"Amerikan mutfağı", t:75, p:8, tag:["tatli"], k:["un:3 su bardağı","tereyagi:200 g","seker:1 su bardağı","yumurta:1 adet","elma:5 adet","tarcin:1 tatlı kaşığı","nisasta:1 yemek kaşığı","limon:0.5 adet"], s:["Un, soğuk tereyağı, yarım su bardağı şeker ve yumurtayla bir hamur yoğurup 30 dakika buzdolabında dinlendir.","Elmaları dilimleyip kalan şeker, tarçın, nişasta ve limon suyuyla karıştır.","Hamurun üçte ikisini açıp turta kalıbına yerleştir, elmaları doldur.","Kalan hamuru şeritler hâlinde kesip üstünü kafes gibi ör.","180 °C fırında üzeri kızarana kadar 40 dakika pişir."]},
+  {n:"Churros", m:"İspanyol mutfağı", t:30, p:4, tag:["tatli"], k:["un:1 su bardağı","su:1 su bardağı","tereyagi:2 yemek kaşığı","tuz:1 tutam","seker:0.75 su bardağı","tarcin:1 tatlı kaşığı","yag:2 su bardağı","cikolata:100 g"], s:["Su, tereyağı, tuz ve 1 kaşık şekeri kaynat, unu ekleyip top olana kadar karıştır.","Hamuru yıldız uçlu sıkma torbasına koy.","Kızgın yağa 10 cm’lik şeritler sıkıp altın rengi olana kadar kızart.","Sıcakken tarçınlı şekere bula, eritilmiş çikolatayla servis et."]},
+
+  {n:"Kaliforniya rulosu", o:"California Roll", m:"Japon mutfağı", t:60, p:4, tag:["dunya"], k:["pirinc:2 su bardağı","sirke:3 yemek kaşığı","seker:1 yemek kaşığı","tuz:1 tatlı kaşığı","nori:4 yaprak","salatalik:1 adet","avokado:1 adet","soya_sosu:4 yemek kaşığı","su:2.5 su bardağı"], s:["Pirinci suyu berraklaşana kadar yıka, 2,5 su bardağı suyla kısık ateşte 15 dakika pişirip 10 dakika demlendir.","Sirke, şeker ve tuzu karıştırıp sıcak pirince ekle ve soğumaya bırak.","Bambu matın üzerine nori koy, ıslak elle pirinci ince bir tabaka hâlinde yay.","Kenarına salatalık ve avokado şeritleri koyup sıkıca rulo yap.","Islak bıçakla 8 parçaya kes, soya sosuyla servis et."], note:"Suşilik pirinçle (yapışkan Japon pirinci) en iyi sonuç alınır."},
+  {n:"Burrito", m:"Meksika mutfağı", t:40, p:4, tag:["dunya"], k:["lavas:4 adet","kiyma:300 g","kuru_fasulye:1 su bardağı","pirinc:1 su bardağı","domates:2 adet","sogan:1 adet","kasar:100 g","pul_biber:1 tatlı kaşığı","yag:2 yemek kaşığı","tuz:1 tatlı kaşığı","su:1.5 su bardağı"], s:["Pirinci 1,5 su bardağı suyla pilav gibi pişir.","Soğanı yağda kavur, kıymayı ve doğranmış domatesi ekle, pul biber ve tuzla pişir.","Haşlanmış fasulyeyi ekleyip 5 dakika daha pişir.","Lavaşların ortasına pilav, kıymalı harç ve rendelenmiş kaşar koy; kenarlarını katlayıp sıkıca sar ve tavada kızart."]},
+  {n:"Fish and chips", m:"İngiliz mutfağı", t:45, p:4, tag:["dunya"], k:["balik:600 g","un:1.5 su bardağı","su:1 su bardağı","kabartma_tozu:1 tatlı kaşığı","tuz:1 tatlı kaşığı","patates:4 adet","yag:4 su bardağı","limon:1 adet"], s:["Patatesleri kalın parmak doğra, kızgın yağda 6–8 dakika kızartıp kenara al.","Un, kabartma tozu, tuz ve çok soğuk suyu çırparak akışkan bir hamur yap.","Balık filetolarını una bulayıp hamura batır ve kızgın yağda altın rengi olana kadar 5–6 dakika kızart.","Patatesleri bir kez daha kızartıp çıtırlaştır, limonla servis et."], note:"Su yerine soğuk maden suyu kullanırsan kaplama daha çıtır olur."},
+  {n:"Quesadilla", m:"Meksika mutfağı", t:20, p:2, tag:["dunya"], k:["lavas:4 adet","kasar:150 g","tavuk:200 g","kapya:1 adet","sogan:0.5 adet","tereyagi:1 yemek kaşığı"], s:["Tavuğu küçük doğrayıp soğan ve biberle 6 dakika sotele.","Bir lavaşın üzerine rendelenmiş kaşar, tavuk ve tekrar kaşar koy, üzerini diğer lavaşla kapat.","Tereyağlı tavada iki yüzü kızarıp peynir eriyene kadar pişir.","Üçgenler hâlinde kesip servis et."]},
+  {n:"Bibimbap", m:"Kore mutfağı", t:40, p:2, tag:["dunya"], k:["pirinc:1 su bardağı","havuc:1 adet","ispanak:200 g","mantar:100 g","kabak:1 adet","yumurta:2 adet","soya_sosu:2 yemek kaşığı","pul_biber:1 tatlı kaşığı","sarimsak:1 diş","yag:2 yemek kaşığı","su:1.5 su bardağı"], s:["Pirinci 1,5 su bardağı suyla pişirip demlendir.","Havuç, kabak ve mantarı ayrı ayrı az yağda sotele, ıspanağı sarımsakla söndür.","Yumurtaları sahanda, sarıları akışkan kalacak şekilde pişir.","Kaselere pilavı koy, sebzeleri yan yana diz, üzerine yumurtayı yerleştir.","Soya sosu ve pul biberle tatlandırıp karıştırarak ye."]},
+  {n:"Teriyaki tavuk", o:"Chicken Teriyaki", m:"Japon mutfağı", t:30, p:4, tag:["dunya"], k:["tavuk:500 g","soya_sosu:4 yemek kaşığı","bal:2 yemek kaşığı","sarimsak:2 diş","nisasta:1 tatlı kaşığı","yag:2 yemek kaşığı","su:0.5 su bardağı"], s:["Tavuğu küp doğrayıp yağda kızarana kadar sotele.","Soya sosu, bal, ezilmiş sarımsak, su ve nişastayı karıştır.","Sosu tavaya ekle, koyulaşıp tavuğu parlak şekilde kaplayana kadar 3–4 dakika pişir.","Pilavla servis et."]},
+  {n:"Fettuccine Alfredo", m:"İtalyan mutfağı", t:25, p:4, tag:["dunya"], k:["makarna:400 g","tereyagi:3 yemek kaşığı","krema:1 su bardağı","kasar:80 g","sarimsak:1 diş","tuz:1 tatlı kaşığı","karabiber:1 çay kaşığı","su:3 litre"], s:["Makarnayı tuzlu suda haşla, 1 kepçe suyunu ayır.","Tereyağında ezilmiş sarımsağı 1 dakika çevir, kremayı ekle ve hafifçe kaynat.","Rendelenmiş peyniri ekleyip eriyene kadar karıştır.","Makarnayı sosla karıştır, gerekirse makarna suyuyla aç; karabiberle servis et."]},
+  {n:"Chili con carne", m:"Meksika mutfağı", t:60, p:4, tag:["dunya"], k:["kiyma:400 g","kuru_fasulye:2 su bardağı","domates:4 adet","sogan:1 adet","kapya:1 adet","sarimsak:2 diş","salca:1 yemek kaşığı","pul_biber:1 yemek kaşığı","yag:2 yemek kaşığı","tuz:1 tatlı kaşığı","su:1 su bardağı"], s:["Soğan, sarımsak ve biberi yağda kavur.","Kıymayı ekleyip suyunu çekene kadar pişir, salça ve pul biberi ekle.","Rendelenmiş domates, haşlanmış fasulye ve 1 su bardağı su ekle.","Kısık ateşte koyulaşana kadar 30 dakika pişir; pilav ya da ekmekle servis et."]},
+  {n:"Kung pao tavuk", o:"Kung Pao Chicken", m:"Çin mutfağı", t:30, p:4, tag:["dunya"], k:["tavuk:500 g","fistik:0.5 su bardağı","kapya:1 adet","sarimsak:2 diş","soya_sosu:3 yemek kaşığı","seker:1 yemek kaşığı","sirke:1 yemek kaşığı","nisasta:1 yemek kaşığı","pul_biber:1 tatlı kaşığı","yag:2 yemek kaşığı"], s:["Tavuğu küp doğrayıp nişastaya bula.","Yüksek ateşte yağda kızarana kadar sotele, tavadan al.","Sarımsak, biber ve pul biberi 1 dakika çevir.","Soya sosu, şeker ve sirkeyi ekle, tavuğu ve fıstıkları ekleyip sos kaplayana kadar karıştır."]},
+  {n:"Minestrone", m:"İtalyan mutfağı", t:50, p:4, tag:["dunya","corba"], k:["sogan:1 adet","havuc:1 adet","kabak:1 adet","patates:1 adet","domates:2 adet","kuru_fasulye:1 su bardağı","makarna:0.5 su bardağı","sarimsak:1 diş","zeytinyagi:3 yemek kaşığı","tuz:1 tatlı kaşığı","su:6 su bardağı"], s:["Soğan, havuç ve sarımsağı zeytinyağında kavur.","Küp doğranmış kabak, patates ve rendelenmiş domatesi ekleyip 5 dakika çevir.","6 su bardağı sıcak su ve haşlanmış fasulyeyi ekleyip 20 dakika pişir.","Küçük makarnayı ekle, yumuşayana kadar 10 dakika daha pişir ve tuzla tatlandır."]},
+
+  {n:"Patlamış mısır", t:10, p:4, tag:["atistirmalik"], k:["misir_tanesi:0.5 su bardağı","yag:2 yemek kaşığı","tereyagi:1 yemek kaşığı","tuz:1 tatlı kaşığı"], s:["Geniş bir tencerede yağı ısıt, içine 3 mısır tanesi at.","Taneler patlayınca kalan mısırları ekle ve kapağı kapat.","Tencereyi ara ara sallayarak patlamalar yavaşlayana kadar pişir.","Ocaktan al, eritilmiş tereyağı ve tuzla karıştır."]},
+  {n:"Nachos", m:"Meksika mutfağı", t:20, p:4, tag:["atistirmalik"], k:["lavas:4 adet","kasar:150 g","domates:1 adet","pul_biber:1 çay kaşığı","zeytinyagi:2 yemek kaşığı","tuz:1 çay kaşığı"], s:["Lavaşları üçgenler hâlinde kes, zeytinyağı ve tuz sür.","200 °C fırında kenarları kızarana kadar 8 dakika pişir.","Üzerine rendelenmiş kaşar, doğranmış domates ve pul biber serp.","Peynir eriyene kadar 3 dakika daha fırınla; guacamole ile servis et."]},
+  {n:"Çıtır tavuk", t:40, p:4, tag:["atistirmalik"], k:["tavuk:500 g","un:1 su bardağı","yumurta:2 adet","sut:0.5 su bardağı","galeta_unu:1 su bardağı","pul_biber:1 tatlı kaşığı","tuz:1 tatlı kaşığı","karabiber:1 çay kaşığı","yag:3 su bardağı"], s:["Tavuğu parmak şeklinde kesip tuz ve baharatlarla karıştır.","Önce una, sonra sütle çırpılmış yumurtaya, en son galeta ununa bula.","Kızgın yağda iki yüzü altın rengi olana kadar 4–5 dakika kızart.","Kâğıt havluya alıp sosla servis et."]},
+  {n:"Tavuk kanat", o:"Chicken Wings", t:50, p:4, tag:["atistirmalik"], k:["tavuk:1 kg","salca:1 yemek kaşığı","bal:1 yemek kaşığı","zeytinyagi:3 yemek kaşığı","sarimsak:2 diş","pul_biber:1 tatlı kaşığı","tuz:1 tatlı kaşığı","karabiber:1 çay kaşığı"], s:["Salça, bal, zeytinyağı, ezilmiş sarımsak ve baharatları karıştır.","Kanatları sosla iyice kaplayıp 30 dakika beklet.","Yağlı kâğıt serili tepsiye diz.","220 °C fırında ara sıra çevirerek kızarana kadar 35 dakika pişir."]},
+  {n:"Soğan halkası", o:"Onion Rings", t:30, p:4, tag:["atistirmalik"], k:["sogan:2 adet","un:1 su bardağı","yumurta:1 adet","sut:0.5 su bardağı","galeta_unu:1 su bardağı","tuz:1 tatlı kaşığı","yag:3 su bardağı"], s:["Soğanları 1 cm kalınlığında halka doğrayıp halkalarını ayır.","Halkaları önce una, sonra sütle çırpılmış yumurtaya, en son galeta ununa bula.","Kızgın yağda altın rengi olana kadar 2–3 dakika kızart.","Kâğıt havluya alıp tuz serp."]},
+  {n:"Kumpir", t:75, p:2, tag:["atistirmalik"], k:["patates:2 adet","tereyagi:2 yemek kaşığı","kasar:100 g","misir:0.5 su bardağı","zeytin:0.25 su bardağı","tursu:2 adet","tuz:1 çay kaşığı"], s:["İri patatesleri yıkayıp folyoya sar, 200 °C fırında yumuşayana kadar 60 dakika pişir.","Patatesleri ortadan yar, içini çatalla tereyağı, kaşar ve tuzla ezerek karıştır.","Üzerine mısır, zeytin ve doğranmış turşu ekle.","İstersen mayonez ve ketçapla servis et."]},
+  {n:"Peynirli poğaça", t:60, p:12, tag:["atistirmalik"], k:["un:3.5 su bardağı","yogurt:0.5 su bardağı","sut:0.5 su bardağı","yag:0.5 su bardağı","yumurta:1 adet","kabartma_tozu:1 paket","tuz:1 tatlı kaşığı","peynir:200 g","maydanoz:0.5 demet"], s:["Yoğurt, süt, yağ, yumurta beyazı ve tuzu karıştır.","Un ve kabartma tozunu ekleyip ele yapışmayan yumuşak bir hamur yoğur.","Ceviz büyüklüğünde parçalar alıp içine maydanozlu peynir koy ve kapat.","Üzerlerine yumurta sarısı sürüp 180 °C fırında kızarana kadar 25 dakika pişir."]},
+  {n:"Mozzarella stick", o:"Mozzarella Sticks", t:30, p:4, tag:["atistirmalik"], k:["mozzarella:250 g","un:0.5 su bardağı","yumurta:2 adet","galeta_unu:1 su bardağı","tuz:1 çay kaşığı","yag:2 su bardağı"], s:["Mozzarellayı parmak kalınlığında çubuklar hâlinde kes.","Önce una, sonra çırpılmış yumurtaya, en son galeta ununa bula; yumurta ve galeta adımını bir kez daha tekrarla.","Dondurucuda 30 dakika beklet.","Kızgın yağda altın rengi olana kadar 1–2 dakika kızart."]},
+  {n:"Bruschetta", m:"İtalyan mutfağı", t:15, p:4, tag:["atistirmalik"], k:["ekmek:6 dilim","domates:3 adet","sarimsak:2 diş","zeytinyagi:4 yemek kaşığı","tuz:1 çay kaşığı"], s:["Ekmek dilimlerini fırında ya da tavada kıtırlaşana kadar kızart.","Sıcak ekmeklere yarım sarımsak sür.","Küçük doğranmış domatesi zeytinyağı ve tuzla karıştır.","Domatesleri ekmeklerin üzerine koyup hemen servis et."], note:"Taze fesleğen eklersen tam İtalyan usulü olur."},
+  {n:"Fırında patates cipsi", t:35, p:4, tag:["atistirmalik"], k:["patates:3 adet","zeytinyagi:2 yemek kaşığı","tuz:1 tatlı kaşığı","pul_biber:1 çay kaşığı"], s:["Patatesleri kabuklarıyla çok ince dilimle, soğuk suda 10 dakika bekletip kurula.","Zeytinyağı, tuz ve pul biberle karıştır.","Yağlı kâğıt serili tepsiye birbirine değmeyecek şekilde diz.","200 °C fırında kenarları kızarana kadar 20–25 dakika pişir."]},
+  {n:"Kavrulmuş nohut", t:45, p:4, tag:["atistirmalik"], k:["nohut:2 su bardağı","zeytinyagi:2 yemek kaşığı","tuz:1 tatlı kaşığı","pul_biber:1 tatlı kaşığı"], s:["Haşlanmış nohutları süzüp havluyla iyice kurula.","Zeytinyağı, tuz ve pul biberle karıştır.","Tepsiye yayıp 200 °C fırında ara sıra karıştırarak çıtırlaşana kadar 30–35 dakika pişir."]},
+  {n:"Mini pizza", t:25, p:4, tag:["atistirmalik"], k:["ekmek:6 dilim","salca:2 yemek kaşığı","domates:1 adet","kasar:100 g","sucuk:50 g","zeytinyagi:1 yemek kaşığı","pul_biber:1 çay kaşığı"], s:["Salçayı zeytinyağı ve pul biberle karıştırıp ekmek dilimlerine sür.","Üzerine ince doğranmış domates ve sucuk koy.","Rendelenmiş kaşar serp.","200 °C fırında peynir eriyene kadar 10 dakika pişir."]}
 ];
 
 /* Kategoriler: [kimlik, ad, simge, arama ipuçları] */
 const CATS = [
-  ["populer","Popüler","⭐",["popüler","en çok","sevilen","klasik"]],
-  ["kahve","Kahveler","☕️",["kahve","latte","espresso","americano","cappuccino","filtre","mocha","frappe"]],
-  ["meze","Mezeler","🫒",["meze","başlangıç","ara sıcak","aperatif"]],
   ["corba","Çorbalar","🍲",["çorba"]],
   ["etli","Etli yemekler","🥩",["et","etli","kıyma","tavuk","köfte","kebap","kebab","kuşbaşı","balık"]],
-  ["etsiz","Etsiz yemekler","🥗",["etsiz","vejetaryen","vegan"]],
   ["sebze","Sebze yemekleri","🥦",["sebze","zeytinyağlı"]],
-  ["dunya","Dünya mutfağı","🌍",["dünya","italyan","meksika","pizza","hamburger","asya","uzak doğu"]],
+  ["etsiz","Etsiz yemekler","🥗",["etsiz","vejetaryen","vegan"]],
+  ["dunya","Dünya mutfağı","🌍",["dünya","italyan","meksika","pizza","hamburger","asya","uzak doğu","japon","çin"]],
+  ["meze","Mezeler","🫒",["meze","başlangıç","ara sıcak"]],
   ["kahvalti","Kahvaltılık","🍳",["kahvaltı"]],
+  ["atistirmalik","Atıştırmalıklar","🍿",["atıştırmalık","atıştır","aperatif","cips","snack"]],
   ["tatli","Tatlılar","🍰",["tatlı","pasta","kurabiye","kek"]],
+  ["kahve","Kahveler","☕️",["kahve","latte","espresso","americano","cappuccino","filtre","mocha","frappe"]],
   ["hizli","15 dakikada","⚡",["hızlı","çabuk","pratik"]]
 ];
 const FILTERS = CATS.map(c => [c[0], c[1]]);
 const CAT_BY_ID = Object.fromEntries(CATS.map(c => [c[0], c]));
-const FILTER_PROMPT = {populer:"Türkiye'de çok sevilen klasik", kahve:"kahve içeceği olan", meze:"meze ya da başlangıç olan", dunya:"dünya mutfağından olan", hizli:"en fazla 15 dakikada hazırlanabilen", kahvalti:"kahvaltıda yenebilecek", etsiz:"et, tavuk ya da balık içermeyen", etli:"et, tavuk ya da balık içeren", sebze:"sebze yemeği olan", corba:"çorba olan", tatli:"tatlı olan"};
-const TAGS_OK = ["kahvalti","etsiz","etli","sebze","corba","tatli","meze","kahve","dunya"];
+const FILTER_PROMPT = {atistirmalik:"atıştırmalık olan", populer:"Türkiye'de çok sevilen klasik", kahve:"kahve içeceği olan", meze:"meze ya da başlangıç olan", dunya:"dünya mutfağından olan", hizli:"en fazla 15 dakikada hazırlanabilen", kahvalti:"kahvaltıda yenebilecek", etsiz:"et, tavuk ya da balık içermeyen", etli:"et, tavuk ya da balık içeren", sebze:"sebze yemeği olan", corba:"çorba olan", tatli:"tatlı olan"};
+const TAGS_OK = ["kahvalti","etsiz","etli","sebze","corba","tatli","meze","kahve","dunya","atistirmalik"];
 const MEAT = new Set(["kiyma","tavuk","sucuk","kusbasi","balik","pastirma"]);
+const ATIS = new Set(["Patates kızartması"]);
 const MEZE = new Set(["Cacık","Haydari","Acılı ezme","Havuç tarator","Piyaz","Sigara böreği","Patates salatası"]);
 const SEBZE = new Set(["Karnıyarık","Musakka","Kabak mücveri","Patates yemeği","Kıymalı patates","Zeytinyağlı taze fasulye","Türlü","İmam bayıldı","Ispanak yemeği","Zeytinyağlı pırasa","Kapuska","Mantar sote","Bezelye yemeği","Fırında sebze","Kıymalı ıspanak","Tavuklu bezelye","Patlıcan kebabı"]);
+// En sevilenler sekmesi için derlenmiş listeler (sıralı)
+const TOP_TR = ["Mercimek çorbası","Kuru fasulye","Lahmacun","Mantı","Karnıyarık","Tavuk döner","Adana kebap","Kıymalı pide","İzmir köfte","Menemen","Pirinç pilavı","Ezogelin çorbası","Mercimek köftesi","Çiğ köfte","Hünkar beğendi","Baklava","Sütlaç","Künefe","Türk kahvesi"];
+const TOP_WORLD = ["Pizza margherita","Hamburger","Spagetti bolonez","Kaliforniya rulosu","Tacos","Karbonara","Lazanya","Pad Thai","Tavuk köri","Kızarmış pilav","Burrito","Fish and chips","Paella","Falafel","Fettuccine Alfredo","Tiramisu","Cheesecake","Latte"];
+const TOP_RANK = new Map([...TOP_TR, ...TOP_WORLD].map((n, i) => ["b:" + n, i]));
+const sortRecipes = list => list.slice().sort((a, b) => ((TOP_RANK.has(a.key) ? TOP_RANK.get(a.key) : 999) - (TOP_RANK.has(b.key) ? TOP_RANK.get(b.key) : 999)) || a.ad.localeCompare(b.ad, "tr"));
 // Türkiye'de çok sevilen klasikler (editör seçimi; kullanım verisine dayanmaz)
 const POPULAR = new Set(["Mercimek çorbası","Ezogelin çorbası","Menemen","Karnıyarık","Kuru fasulye","Pirinç pilavı","İzmir köfte","Tavuk sote","Zeytinyağlı taze fasulye","Mercimek köftesi","Kısır","Hünkar beğendi","Tas kebabı","Sütlaç","Revani","Çoban salatası","Fırında tavuk ve patates"]);
 
@@ -613,6 +696,7 @@ RAW.forEach(r => {
   const tags = (r.tag || []).slice();
   if (!tags.includes("kahve") && !tags.includes("tatli")) tags.push(malz.some(m => MEAT.has(m.id)) ? "etli" : "etsiz");
   if (MEZE.has(r.n)) tags.push("meze");
+  if (ATIS.has(r.n)) tags.push("atistirmalik");
   if (SEBZE.has(r.n)) tags.push("sebze");
   if (POPULAR.has(r.n)) tags.push("populer");
   const key = "b:" + r.n;
@@ -741,7 +825,12 @@ function detailHTML(r, compact){
   let h = illusHTML(r);
   if (!compact){
     if (r.src === "ai") h += `<span class="ai-tag">Yapay zekâ tarifi</span>`;
-    h += `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div><h2>${esc(r.ad)}</h2>`;
+    const wi = wikiInfo(r);
+    h += wi
+      ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a></figcaption></figure>`
+      : `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
+    h += `<h2>${esc(r.ad)}</h2>`;
+    if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (v && mode === "dish" && currentKey === r.key) renderDishDetail(); });
     const meta = [r.mutfak, r.sure ? r.sure + " dakika" : ""].filter(Boolean).join(", ");
     h += `<p class="sub">${esc(meta)}${meta ? ". " : ""}${r.malzemeler.length} malzemenin ${have} tanesi evde.</p>`;
   }
@@ -775,13 +864,14 @@ function detailHTML(r, compact){
 
 const catMatch = (r, id) => id === "hizli" ? !!(r.sure && r.sure <= 15) : (r.etiketler || []).includes(id);
 function recipeCat(r){
-  for (const id of ["kahve","tatli","corba","meze","kahvalti","dunya","sebze","etli"]) if (catMatch(r, id)) return id;
+  for (const id of ["kahve","tatli","corba","atistirmalik","meze","kahvalti","dunya","sebze","etli"]) if (catMatch(r, id)) return id;
   return "etsiz";
 }
 function recipeEmoji(r){
   const n = norm(r.ad);
   const rules = [
-    [/affogato/, "🍨"], [/soğuk latte|frappe|cold brew|dalgona/, "🥤"], [/kahve|espresso|americano|latte|cappuccino|flat white|macchiato|mocha/, "☕️"], [/çorba/, "🍲"], [/hamburger/, "🍔"], [/pizza/, "🍕"], [/taco|fajita/, "🌮"], [/lazanya|spagetti|karbonara/, "🍝"], [/paella/, "🥘"], [/ratatouille|şakşuka|köpoğlu|babagannuş|patlıcan salatası/, "🍆"], [/falafel/, "🧆"], [/humus|fava|atom/, "🥣"], [/guacamole/, "🥑"], [/brownie|sufle|supangle/, "🍫"], [/cheesecake|tiramisu|yaş pasta|trileçe|magnolia/, "🍰"], [/baklava/, "🍯"], [/kabak tatlısı/, "🎃"], [/cookie/, "🍪"], [/muffin/, "🧁"], [/yaprak sarma/, "🍃"], [/muhammara/, "🌶️"], [/rus salatası|sezar|yunan salatası|girit/, "🥗"], [/kızarmış pilav/, "🍚"], [/shakshuka/, "🍳"], [/mercimek köftesi/, "🧆"], [/balık/, "🐟"], [/kızartması/, "🍟"], [/mantar/, "🍄"], [/kek|revani|şekerpare/, "🍰"], [/pişi/, "🍩"], [/çılbır|sahanda/, "🍳"], [/piyaz|ezme|haydari/, "🥗"], [/kapuska|pırasa|lahana/, "🥬"], [/bezelye|orman kebab/, "🥘"], [/hünkar/, "🍖"], [/tavuk/, "🍗"], [/köfte|kebab|kebap|şiş/, "🍢"], [/makarna|spagetti|noodle|pad thai/, "🍝"],
+    [/lahmacun|çiğ köfte|burrito/, "🌯"], [/döner/, "🥙"], [/pide/, "🥖"], [/mantı/, "🥟"], [/patlamış mısır/, "🍿"], [/nachos|quesadilla/, "🌮"], [/soğan halkası/, "🧅"], [/kumpir|cipsi/, "🥔"], [/poğaça/, "🥐"], [/mozzarella stick/, "🧀"], [/bruschetta/, "🥖"], [/kavrulmuş nohut/, "🥜"], [/kaliforniya/, "🍣"], [/fish and chips/, "🐟"], [/bibimbap/, "🍚"], [/fettuccine/, "🍝"], [/chili/, "🌶️"], [/minestrone|tarator/, "🥣"], [/semizotu|pancar/, "🥗"], [/közlenmiş biber/, "🌶️"], [/kazandibi|krem karamel|güllaç/, "🍮"], [/profiterol|mozaik/, "🍫"], [/lokma|churros/, "🍩"], [/kadayıf|künefe/, "🍯"], [/turta/, "🥧"],
+    [/affogato/, "🍨"], [/soğuk latte|buzlu|frappe|cold brew|dalgona/, "🥤"], [/kahve|espresso|americano|latte|cappuccino|flat white|macchiato|mocha/, "☕️"], [/çorba/, "🍲"], [/hamburger/, "🍔"], [/pizza/, "🍕"], [/taco|fajita/, "🌮"], [/lazanya|spagetti|karbonara/, "🍝"], [/paella/, "🥘"], [/ratatouille|şakşuka|köpoğlu|babagannuş|patlıcan salatası/, "🍆"], [/falafel/, "🧆"], [/humus|fava|atom/, "🥣"], [/guacamole/, "🥑"], [/brownie|sufle|supangle/, "🍫"], [/cheesecake|tiramisu|yaş pasta|trileçe|magnolia/, "🍰"], [/baklava/, "🍯"], [/kabak tatlısı/, "🎃"], [/cookie/, "🍪"], [/muffin/, "🧁"], [/yaprak sarma/, "🍃"], [/muhammara/, "🌶️"], [/rus salatası|sezar|yunan salatası|girit/, "🥗"], [/kızarmış pilav/, "🍚"], [/shakshuka/, "🍳"], [/mercimek köftesi/, "🧆"], [/balık/, "🐟"], [/kızartması/, "🍟"], [/mantar/, "🍄"], [/kek|revani|şekerpare/, "🍰"], [/pişi/, "🍩"], [/çılbır|sahanda/, "🍳"], [/piyaz|ezme|haydari/, "🥗"], [/kapuska|pırasa|lahana/, "🥬"], [/bezelye|orman kebab/, "🥘"], [/hünkar/, "🍖"], [/tavuk/, "🍗"], [/köfte|kebab|kebap|şiş/, "🍢"], [/makarna|spagetti|noodle|pad thai/, "🍝"],
     [/pilav|risotto|pirinç/, "🍚"], [/patlıcan|karnıyarık|imam|musakka/, "🍆"], [/salata|cacık|tarator|kısır/, "🥗"],
     [/börek|gözleme/, "🥟"], [/tost|ekmek|sandviç/, "🥪"], [/krep|pankek/, "🥞"], [/omlet|yumurta|menemen/, "🍳"],
     [/kurabiye/, "🍪"], [/sütlaç|muhallebi|helva/, "🍮"], [/pizza/, "🍕"], [/taco|burrito/, "🌮"], [/sushi/, "🍣"], [/köri|curry/, "🍛"],
@@ -805,12 +895,90 @@ function cardHTML(r){
   </div>`;
 }
 
+/* ---------- Yemek görselleri: Vikipedi / Wikimedia Commons ----------
+   Yalnızca Wikimedia Commons'taki özgür lisanslı görseller kullanılır. "" = bu yemek için görsel arama. */
+const WIKI_TR = {"Menemen":"Menemen (yemek)","Atom":"","Magnolia":"","Köpoğlu":"","Supangle":"","Mozaik pasta":"","Mini pizza":"","Tacos":"Taco","Kek":"Kek","Pişi":"Pişi"};
+const WIKI_EN = {"Menemen":"Menemen (food)","Kaliforniya rulosu":"California roll","Patlamış mısır":"Popcorn","Soğan halkası":"Onion ring","Çıtır tavuk":"Chicken fingers","Tavuk döner":"Doner kebab","Adana kebap":"Adana kebabı","Kıymalı pide":"Pide","Mantı":"Manti (food)","Peynirli poğaça":"Pogača","Kızarmış pilav":"Fried rice","Hünkar beğendi":"Hünkar beğendi","Sütlaç":"Rice pudding","Krep":"Crêpe","Kek":"Cake","Muhallebi":"Muhallebi","Patates kızartması":"French fries","Sahanda yumurta":"Fried egg","Türk kahvesi":"Turkish coffee","Espresso":"Espresso","Filtre kahve":"Drip coffee","Latte":"Latte","Cappuccino":"Cappuccino","Americano":"Caffè Americano","Macchiato":"Caffè macchiato","Mocha":"Caffè mocha","Cold brew":"Cold brew coffee","Dalgona kahve":"Dalgona coffee","Frappe":"Frappé coffee","Affogato":"Affogato","Flat white":"Flat white","Cortado":"Cortado","Ristretto":"Ristretto","Lungo":"Lungo","Brownie":"Chocolate brownie","Baklava":"Baklava","Lokma":"Lokma","Künefe":"Kanafeh","Kadayıf":"Kadayıf","Güllaç":"Güllaç","Kazandibi":"Kazandibi","Profiterol":"Profiterole","Churros":"Churro","Falafel":"Falafel","Humus":"Hummus","Babagannuş":"Baba ghanoush","Muhammara":"Muhammara","Tarator":"Tarator","Cacık":"Tzatziki","Haydari":"Haydari","Paella":"Paella","Ratatouille":"Ratatouille","Guacamole":"Guacamole","Hamburger":"Hamburger","Burrito":"Burrito","Nachos":"Nachos","Quesadilla":"Quesadilla","Bibimbap":"Bibimbap","Lazanya":"Lasagna","Bruschetta":"Bruschetta","Kumpir":"Kumpir","Lahmacun":"Lahmacun","Çiğ köfte":"Çiğ köfte","Karnıyarık":"Karnıyarık","İmam bayıldı":"İmam bayıldı","Mercimek köftesi":"Mercimek köftesi","Kuru fasulye":"Kuru fasulye","Mercimek çorbası":"Lentil soup","Ezogelin çorbası":"Ezogelin soup","Menengiç kahvesi":"Pistacia terebinthus","Dibek kahvesi":"Turkish coffee"};
+const FOOD_RE = /yemek|yemeği|tatlı|çorba|meze|kahve|içecek|mutfa|salata|pilav|ekmek|börek|hamur|kebap|köfte|sos|peynir|dish|food|cuisine|dessert|soup|salad|coffee|drink|beverage|sauce|bread|pastry|cake|cookie|biscuit|snack|cheese|meal|stew|kebab|pasta|noodle|rice|sandwich|pizza|confection|pudding|appetizer|espresso|fried|roll/i;
+let wikiImgs = load("pisir-wiki", {}); if (!wikiImgs || typeof wikiImgs !== "object") wikiImgs = {};
+const WIKI_RETRY_MS = 7 * 24 * 3600 * 1000;
+const wikiPending = {};
+const wikiQueue = [];
+let wikiActive = 0;
+function wikiInfo(r){ const v = wikiImgs[r.ad]; return v && v.s ? v : null; }
+function needsWiki(r){ const v = wikiImgs[r.ad]; return !v || (!v.s && Date.now() - (v.n || 0) > WIKI_RETRY_MS); }
+function saveWiki(){ try { localStorage.setItem("pisir-wiki", JSON.stringify(wikiImgs)); } catch(e) {} }
+async function lookupWiki(r){
+  const tr = Object.prototype.hasOwnProperty.call(WIKI_TR, r.ad) ? WIKI_TR[r.ad] : r.ad;
+  if (tr === "") return null;
+  const en = WIKI_EN[r.ad] || r.orijinal || r.ad;
+  for (const [lang, title] of [["tr", tr], ["en", en]]){
+    const res = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g, "_"))}`);
+    if (!res.ok) continue;
+    const j = await res.json().catch(() => null);
+    if (!j || j.type === "disambiguation") continue;
+    if (!FOOD_RE.test(`${j.description || ""} ${j.extract || ""}`)) continue; // ilçe, çiçek gibi yanlış sayfaları ele
+    const th = j.thumbnail && j.thumbnail.source;
+    const orig = j.originalimage && j.originalimage.source;
+    if (!th || !/\/wikipedia\/commons\//.test(th)) continue; // yalnızca özgür lisanslı Commons görselleri
+    const file = decodeURIComponent(String(orig || th).split("/").pop()).replace(/^\d+px-/, "");
+    return {s:th, f:file};
+  }
+  return null;
+}
+function getWikiImage(r){
+  if (!needsWiki(r)) return Promise.resolve(wikiInfo(r));
+  if (wikiPending[r.ad]) return wikiPending[r.ad];
+  const p = new Promise(resolve => {
+    wikiQueue.push(async () => {
+      let out = null, failed = false;
+      try { out = await lookupWiki(r); } catch(e){ failed = true; } // bağlantı sorunu: sonra tekrar dene
+      if (!failed){ wikiImgs[r.ad] = out || {n:Date.now()}; saveWiki(); }
+      resolve(out);
+    });
+    pumpWiki();
+  });
+  wikiPending[r.ad] = p;
+  p.then(() => { delete wikiPending[r.ad]; });
+  return p;
+}
+function pumpWiki(){
+  while (wikiActive < 3 && wikiQueue.length){
+    const job = wikiQueue.shift(); wikiActive++;
+    job().finally(() => { wikiActive--; pumpWiki(); });
+  }
+}
+function applyImg(card, v){
+  if (card.classList.contains("has-img")) return;
+  const m = card.querySelector(".dc-media"); if (!m) return;
+  const img = new Image(); img.alt = ""; img.decoding = "async";
+  img.onload = () => { if (!card.classList.contains("has-img")){ m.prepend(img); card.classList.add("has-img"); } };
+  img.src = v.s;
+}
+function loadCardImg(card){
+  const r = REG.get(card.dataset.key); if (!r) return;
+  const v = wikiInfo(r);
+  if (v) return applyImg(card, v);
+  if (!needsWiki(r) || !navigator.onLine) return;
+  getWikiImage(r).then(res => {
+    if (!res) return;
+    document.querySelectorAll(".dish-card[data-img]").forEach(c => { if (c.dataset.img === r.ad) applyImg(c, res); });
+  });
+}
+let wikiObserver = null;
+function hydrateImages(root){
+  const cards = (root || document).querySelectorAll(".dish-card[data-img]:not(.has-img)");
+  if (!("IntersectionObserver" in window)){ cards.forEach(loadCardImg); return; }
+  if (!wikiObserver) wikiObserver = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting){ wikiObserver.unobserve(e.target); loadCardImg(e.target); } }), {rootMargin:"300px"});
+  cards.forEach(c => wikiObserver.observe(c));
+}
+
 /* ---------- Bölümler ---------- */
 const HERO = {
   pantry:["Dolabında ne var?","Malzemeleri seç, yemekleri gör."],
   dish:["Ne pişirelim?","Bir kategori seç ya da yemek ara."],
   plan:["Haftalık menü","Günlere yemek ekle, alışveriş listen hazır."],
-  fav:["Favorilerin","Kalplediğin tarifler."],
+  fav:["En sevilenler","Türk ve dünya mutfağının en sevilenleri, senin favorilerin."],
   recent:["Son baktıkların","En son açtığın tarifler."]
 };
 function renderHero(){
@@ -818,7 +986,7 @@ function renderHero(){
   $("heroText").textContent = HERO[mode][1];
   const listMode = mode === "fav" || mode === "recent";
   ["pantry","dish","plan","fav","recent"].forEach(m => $("tab-" + m).setAttribute("aria-selected", mode === m));
-  $("tab-fav").textContent = favs.length ? `❤️ Favoriler (${favs.length})` : "❤️ Favoriler";
+  $("tab-fav").textContent = "🏆 En sevilenler";
   const planN = plan.reduce((n, d) => n + d.length, 0);
   $("tab-plan").textContent = planN ? `📅 Menü (${planN})` : "📅 Menü";
   $("pantryMode").hidden = mode !== "pantry";
@@ -887,9 +1055,11 @@ function aiPantryHTML(){
   return h + `</div>`;
 }
 
-function dishCard(r){
+function dishCard(r, act = "pickDish", note = ""){
   const cat = recipeCat(r);
-  return `<button type="button" class="dish-card cat-${cat}" data-act="pickDish" data-key="${esc(r.key)}" aria-pressed="${!dishState && currentKey === r.key}"><span class="dc-emo" aria-hidden="true">${recipeEmoji(r)}</span><span class="dc-name">${esc(r.ad)}</span><span class="dc-time">⏱️ ${r.sure} dk</span></button>`;
+  const wi = wikiInfo(r);
+  const pressed = act === "pickDish" ? ` aria-pressed="${!dishState && currentKey === r.key}"` : "";
+  return `<button type="button" class="dish-card cat-${cat}${wi ? " has-img" : ""}" data-act="${act}" data-key="${esc(r.key)}" data-img="${esc(r.ad)}"${pressed}><span class="dc-media">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy" decoding="async">` : ""}<span class="dc-emo" aria-hidden="true">${recipeEmoji(r)}</span></span><span class="dc-name">${esc(r.ad)}</span><span class="dc-time">${note ? esc(note) + " · " : ""}⏱️ ${r.sure} dk</span></button>`;
 }
 function hintCats(q){
   if (q.length < 2) return [];
@@ -898,7 +1068,7 @@ function hintCats(q){
 function renderDishList(){
   const raw = $("dishSearch").value.trim();
   const q = norm(raw);
-  const list = BUILTIN.filter(r => (!q || norm(r.ad).includes(q)) && fpass(r));
+  const list = sortRecipes(BUILTIN.filter(r => (!q || norm(r.ad).includes(q)) && fpass(r)));
   let html = "";
   const hints = hintCats(q);
   if (hints.length){
@@ -908,20 +1078,22 @@ function renderDishList(){
     html += `<div class="ai-row"><button type="button" class="ai-btn" data-act="aiDish" ${dishState && dishState.state === "loading" ? "disabled" : ""}>✨ “${esc(raw)}” için tarif oluştur</button></div>`;
   }
   if (!q && !filters.size){
-    // En çok pişirdiklerin (bu telefonda tamamlanan tarifler)
-    const mine = Object.entries(cookCounts).filter(([k]) => REG.has(k)).sort((a, b) => b[1] - a[1]).slice(0, 6);
-    if (mine.length) html += `<section class="dish-sec"><h2><span aria-hidden="true">👩‍🍳</span> En çok pişirdiklerin</h2><div class="dish-grid">${mine.map(([k, n]) => dishCard(REG.get(k)).replace('<span class="dc-time">', `<span class="dc-time">${n} kez pişirdin · `)).join("")}</div></section>`;
-    // Popüler bölümü ve kategorilere göre ayrı ayrı göster
+    // Her kategoriden en sevilen 8 tarif; tamamı için "Tümünü gör"
     html += CATS.filter(c => c[0] !== "hizli").map(([id, l, emo]) => {
-      const items = id === "populer" ? BUILTIN.filter(r => catMatch(r, id)) : BUILTIN.filter(r => recipeCat(r) === id);
-      return items.length ? `<section class="dish-sec"><h2><span aria-hidden="true">${emo}</span> ${l}</h2><div class="dish-grid">${items.map(dishCard).join("")}</div></section>` : "";
+      const items = sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
+      if (!items.length) return "";
+      const more = items.length > 8 ? `<button type="button" class="see-all cat-${id}" data-act="filter" data-f="${id}">Tümünü gör · ${items.length} tarif</button>` : "";
+      return `<section class="dish-sec"><div class="sec-head"><h2><span aria-hidden="true">${emo}</span> ${l}</h2><span class="sec-count">${items.length} tarif</span></div><div class="dish-grid">${items.slice(0, 8).map(r => dishCard(r)).join("")}</div>${more}</section>`;
     }).join("");
   } else if (list.length){
-    html += `<div class="dish-grid">${list.map(dishCard).join("")}</div>`;
+    const c = filters.size ? CAT_BY_ID[[...filters][0]] : null;
+    if (c) html += `<div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${c[1]}</h2><span class="sec-count">${list.length} tarif</span></div>`;
+    html += `<div class="dish-grid">${list.map(r => dishCard(r)).join("")}</div>`;
   } else if (!hints.length && !(raw && sampleFn)){
     html += raw ? `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>` : `<p class="empty">Bu kategoride yemek yok.</p>`;
   }
   $("dishList").innerHTML = html;
+  hydrateImages($("dishList"));
 }
 function renderDishDetail(){
   const box = $("dishDetail");
@@ -936,10 +1108,24 @@ function savedRow(r){
 }
 function renderSaved(){
   if (mode === "fav"){
+    const grid = (list, note) => `<div class="dish-grid">${list.map(r => dishCard(r, "openSaved", note ? note(r) : "")).join("")}</div>`;
+    const sec = (title, sub, list, note) => list.length ? `<section class="dish-sec"><div class="sec-head"><h2>${title}</h2></div>${sub ? `<p class="sub">${sub}</p>` : ""}${grid(list, note)}</section>` : "";
+    let h = "";
+    // Gerçek veri: tüm kullanıcıların tamamladığı tarifler (en az 5 farklı tarif birikince görünür)
+    const app = (statsState.top || []).map(([k, n]) => [REG.get(k), n]).filter(([r]) => r);
+    if (app.length >= 5){
+      const counts = new Map(app.map(([r, n]) => [r.key, n]));
+      h += sec("📈 Bu uygulamada en çok pişirilenler", "Tüm kullanıcıların pişirme modunda sonuna kadar yaptığı tarifler.", app.slice(0, 12).map(([r]) => r), r => `${counts.get(r.key)} kez pişirildi`);
+    }
+    h += sec("🇹🇷 Türk mutfağının en sevilenleri", "Türkiye’de en çok sevilen ve en sık yapılan yemeklerden derlendi.", TOP_TR.map(n => REG.get("b:" + n)).filter(Boolean));
+    h += sec("🌍 Dünyanın en sevilenleri", "Dünyada en çok bilinen ve sevilen yemeklerden derlendi.", TOP_WORLD.map(n => REG.get("b:" + n)).filter(Boolean));
+    const mine = Object.entries(cookCounts).filter(([k]) => REG.has(k)).sort((a, b) => b[1] - a[1]).slice(0, 8);
+    if (mine.length) h += sec("👩‍🍳 Senin en çok pişirdiklerin", "", mine.map(([k]) => REG.get(k)), r => `${cookCounts[r.key]} kez pişirdin`);
     const f = favs.map(k => REG.get(k)).filter(Boolean);
-    $("savedMode").innerHTML = f.length
-      ? `<p class="sub">Açmak için dokun. Favorilerden çıkarmak için tarifteki kalp butonunu kullan.</p><div class="saved-list">${f.map(savedRow).join("")}</div>`
-      : `<div class="empty">Henüz favorin yok. Beğendiğin bir tarifte “Favorilere ekle”ye dokun, burada seni beklesin.</div>`;
+    h += `<section class="dish-sec"><div class="sec-head"><h2>❤️ Kaydettiklerin</h2>${f.length ? `<span class="sec-count">${f.length} tarif</span>` : ""}</div>${f.length ? grid(f) : `<div class="empty">Beğendiğin bir tarifte “♡ Favorilere ekle”ye dokun, burada seni beklesin.</div>`}</section>`;
+    $("savedMode").innerHTML = h;
+    hydrateImages($("savedMode"));
+    loadStats();
   } else {
     const rc = recents.map(k => REG.get(k)).filter(Boolean);
     $("savedMode").innerHTML = rc.length
@@ -1191,6 +1377,7 @@ function renderCook(){
       cook.counted = true;
       cookCounts[r.key] = (cookCounts[r.key] || 0) + 1;
       try { localStorage.setItem("pisir-pisirilen", JSON.stringify(cookCounts)); } catch(e) {}
+      if (STATS_URL && r.src === "b") fetch(STATS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({key:r.key})}).catch(() => {});
     }
     h += `<div class="cook-main"><p class="cook-finish">Afiyet olsun!</p><p class="sub">${esc(r.ad)} tarifinin tüm adımlarını tamamladın.</p></div>
       <div class="cook-nav"><button type="button" data-act="cookPrev">Geri</button><button type="button" class="primary" id="cookNext" data-act="cookClose">Kapat</button></div>`;
@@ -1250,7 +1437,7 @@ const errMsg = e => ({
   server:"Yapay zekâ servisi şu an cevap veremedi. Biraz sonra tekrar dene.",
   offline:"İnternet bağlantısı yok. Yapay zekâ özellikleri internet ister, hazır tarifler ise çalışmaya devam eder."
 }[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.") + (e && e.detail ? " (Ayrıntı: " + String(e.detail).slice(0, 200) + ")" : "");
-const FORMAT = `{"ad": "yemeğin Türkçe adı", "orijinal_ad": "yemeğin kendi ülkesinde ya da dünyada bilinen adı, Latin harfleriyle (örneğin Pad Thai, Ratatouille); Türk yemeğiyse Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etli", "etsiz", "sebze", "corba", "tatli", "meze", "kahve", "dunya" değerlerinden yemeğe uyanlar], "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
+const FORMAT = `{"ad": "yemeğin Türkçe adı", "orijinal_ad": "yemeğin kendi ülkesinde ya da dünyada bilinen adı, Latin harfleriyle (örneğin Pad Thai, Ratatouille); Türk yemeğiyse Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etli", "etsiz", "sebze", "corba", "tatli", "meze", "kahve", "dunya", "atistirmalik" değerlerinden yemeğe uyanlar], "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
 
 async function runDishAI(){
   const q = $("dishSearch").value.trim();
@@ -1412,6 +1599,7 @@ document.addEventListener("click", e => {
       } else {
         filters = (filters.has(f) && filters.size === 1) ? new Set() : new Set([f]); // tek seçim
         renderAll();
+        if (el.classList.contains("see-all")) $("filters").scrollIntoView({block:"start"});
       }
       break;
     }
@@ -1527,6 +1715,20 @@ if (AI_URL){
     catch(e){ throw {code:"server"}; }
   };
   renderAll();
+}
+
+/* ---------- Ortak sayaç: uygulamada en çok pişirilenler (Cloudflare KV) ---------- */
+const STATS_URL = AI_URL ? AI_URL.replace(/\/$/, "") + "/sayac" : "";
+const statsState = {top:null, at:0};
+function loadStats(){
+  if (!STATS_URL || Date.now() - statsState.at < 5 * 60 * 1000) return;
+  statsState.at = Date.now();
+  fetch(STATS_URL).then(r => r.ok ? r.json() : null).then(d => {
+    if (d && Array.isArray(d.top)){
+      statsState.top = d.top.filter(x => Array.isArray(x) && typeof x[0] === "string" && typeof x[1] === "number");
+      if (mode === "fav") renderSaved();
+    }
+  }).catch(() => {});
 }
 
 /* Ana ekrana eklenebilir ve internetsiz çalışır (PWA) */
