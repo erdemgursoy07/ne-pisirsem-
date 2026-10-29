@@ -220,7 +220,7 @@ header.hero{padding:40px 0 24px}
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Malzeme ara, örneğin “patlıcan”" aria-label="Malzeme ara">
+        <input class="search" id="search" type="search" placeholder="Malzeme ara ya da ekle, örneğin “kuşkonmaz”" aria-label="Malzeme ara">
         <button class="clear" type="button" data-act="clear">Seçimleri temizle</button>
       </div>
       <div id="groups"></div>
@@ -791,7 +791,12 @@ function renderTimers(){
 }
 
 /* ---------- Yapay zekâ ---------- */
-const errMsg = e => ({not_granted:"Yapay zekâ kullanımına izin verilmedi.", rate_limited:"Kısa sürede çok fazla istek gönderildi. Biraz bekleyip tekrar dene."}[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.");
+const errMsg = e => ({
+  not_granted:"Yapay zekâ kullanımına izin verilmedi.",
+  rate_limited:"Yapay zekâ şu an çok yoğun ya da günlük ücretsiz kota doldu. Biraz sonra tekrar dene.",
+  daily_limit:`Bugünkü ${typeof AI_DAILY_LIMIT === "number" ? AI_DAILY_LIMIT + " " : ""}yapay zekâ hakkını kullandın. Yarın tekrar dene; hazır tarifler her zaman açık.`,
+  offline:"İnternet bağlantısı yok. Yapay zekâ özellikleri internet ister, hazır tarifler ise çalışmaya devam eder."
+}[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.");
 const FORMAT = `{"ad": "yemeğin Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etsiz", "corba", "tatli" değerlerinden yemeğe uyanlar], "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
 
 async function runDishAI(){
@@ -831,10 +836,11 @@ async function runPantryAI(){
 }
 
 /* ---------- Görsel, ikame ve menü ---------- */
+const ILLUS_ENABLED = false;
 function illusHTML(r){
   const svg = illus[r.key];
   if (svg) return `<img class="dish-img" alt="${esc(r.ad)} için yapay zekâ çizimi" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}"><p class="img-cap">Yapay zekâ çizimi</p>`;
-  if (!sampleFn) return "";
+  if (!sampleFn || !ILLUS_ENABLED) return "";
   const st = illusState[r.key];
   if (st === "loading") return `<button type="button" class="img-btn" disabled>Görsel çiziliyor, bu biraz sürebilir…</button>`;
   return `<button type="button" class="img-btn" data-act="illus" data-key="${esc(r.key)}">🎨 Yemeğin görselini oluştur</button>${st === "error" ? `<p class="sub-msg">Görsel oluşturulamadı. Tekrar dene.</p>` : ""}`;
@@ -1003,14 +1009,41 @@ document.addEventListener("keydown", e => {
   else if (e.key === "ArrowLeft" && cook.step > 0){ cook.step--; renderCook(); }
 });
 
-/* Yapay zekâ özellikleri bu web sürümünde kapalı.
-   Geri açmak için AI_ENABLED = true yapılır ve bir yapay zekâ servisi bağlanır (bu ücretlidir). */
-const AI_ENABLED = false;
-if (AI_ENABLED){
-  (async () => {
-    try { if (window.claude && typeof window.claude.use === "function") sampleFn = await window.claude.use("sample"); } catch(e) { sampleFn = null; }
-    if (sampleFn) renderAll();
-  })();
+/* ---------- Yapay zekâ (Cloudflare Worker + Gemini) ----------
+   AI_URL: Cloudflare Worker adresin. Boş bırakılırsa yapay zekâ özellikleri gizlenir, uygulama yine çalışır.
+   AI_DAILY_LIMIT: her cihazın günlük yapay zekâ isteği sınırı (ücretsiz kotayı korur). */
+const AI_URL = "https://ne-pisirsem-ai.erdemgursoy07.workers.dev";
+const AI_DAILY_LIMIT = 15;
+
+function aiQuota(){
+  const today = new Date().toDateString();
+  const q = load("pisir-ai-kota", null);
+  return q && q.day === today && typeof q.count === "number" ? q : {day:today, count:0};
+}
+async function aiCall(prompt, wantJson){
+  if (!navigator.onLine) throw {code:"offline"};
+  const q = aiQuota();
+  if (q.count >= AI_DAILY_LIMIT) throw {code:"daily_limit"};
+  q.count += 1;
+  try { localStorage.setItem("pisir-ai-kota", JSON.stringify(q)); } catch(e) {}
+  let res;
+  try {
+    res = await fetch(AI_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({prompt, json:!!wantJson})});
+  } catch(e){ throw {code:"offline"}; }
+  if (res.status === 429) throw {code:"rate_limited"};
+  if (!res.ok) throw {code:"server"};
+  const data = await res.json().catch(() => null);
+  if (!data || typeof data.text !== "string") throw {code:"server"};
+  return data.text;
+}
+if (AI_URL){
+  sampleFn = async (prompt) => ({text: await aiCall(prompt, false)});
+  sampleFn.json = async (prompt) => {
+    const text = await aiCall(prompt, true);
+    try { return JSON.parse(text.replace(/```json|```/g, "").trim()); }
+    catch(e){ throw {code:"server"}; }
+  };
+  renderAll();
 }
 
 /* Ana ekrana eklenebilir ve internetsiz çalışır (PWA) */
