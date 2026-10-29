@@ -793,8 +793,10 @@ function renderTimers(){
 /* ---------- Yapay zekâ ---------- */
 const errMsg = e => ({
   not_granted:"Yapay zekâ kullanımına izin verilmedi.",
-  rate_limited:"Yapay zekâ şu an çok yoğun ya da günlük ücretsiz kota doldu. Biraz sonra tekrar dene.",
+  rate_limited:"Yapay zekânın bugünkü ücretsiz kotası doldu ya da şu an çok yoğun. Biraz sonra ya da yarın tekrar dene; hazır tarifler çalışmaya devam ediyor.",
   daily_limit:`Bugünkü ${typeof AI_DAILY_LIMIT === "number" ? AI_DAILY_LIMIT + " " : ""}yapay zekâ hakkını kullandın. Yarın tekrar dene; hazır tarifler her zaman açık.`,
+  unreachable:"Yapay zekâ servisine şu an ulaşılamıyor. Biraz sonra tekrar dene; hazır tarifler çalışmaya devam ediyor.",
+  server:"Yapay zekâ servisi şu an cevap veremedi. Biraz sonra tekrar dene.",
   offline:"İnternet bağlantısı yok. Yapay zekâ özellikleri internet ister, hazır tarifler ise çalışmaya devam eder."
 }[e && e.code] || "Tarif oluşturulamadı. Tekrar dene.");
 const FORMAT = `{"ad": "yemeğin Türkçe adı", "mutfak": "hangi ülkenin mutfağı", "sure": toplam hazırlık ve pişirme süresi dakika olarak sayı, "kisi": kaç kişilik olduğu sayı, "etiketler": ["kahvalti", "etsiz", "corba", "tatli" değerlerinden yemeğe uyanlar], "malzemeler": [{"ad": "malzeme adı", "miktar": "sayıyla başlayan miktar, örneğin 2 adet ya da 1 su bardağı", "evde": true ya da false}], "adimlar": ["tarifin adımları, her biri bir cümle; bekleme ya da pişirme gereken adımlarda süreyi dakika olarak yaz"], "not": "varsa kısa bir püf noktası, yoksa boş metin"}`;
@@ -1013,27 +1015,27 @@ document.addEventListener("keydown", e => {
    AI_URL: Cloudflare Worker adresin. Boş bırakılırsa yapay zekâ özellikleri gizlenir, uygulama yine çalışır.
    AI_DAILY_LIMIT: her cihazın günlük yapay zekâ isteği sınırı (ücretsiz kotayı korur). */
 const AI_URL = "https://ne-pisirsem-ai.erdemgursoy07.workers.dev";
-const AI_DAILY_LIMIT = 15;
+const AI_DAILY_LIMIT = 0; // 0 = sınır yok. Cihaz başına sınır koymak istersen buraya bir sayı yaz.
 
 function aiQuota(){
   const today = new Date().toDateString();
-  const q = load("pisir-ai-kota", null);
+  const q = load("pisir-ai-kota-v2", null);
   return q && q.day === today && typeof q.count === "number" ? q : {day:today, count:0};
 }
 async function aiCall(prompt, wantJson){
   if (!navigator.onLine) throw {code:"offline"};
-  const q = aiQuota();
-  if (q.count >= AI_DAILY_LIMIT) throw {code:"daily_limit"};
-  q.count += 1;
-  try { localStorage.setItem("pisir-ai-kota", JSON.stringify(q)); } catch(e) {}
+  if (AI_DAILY_LIMIT > 0 && aiQuota().count >= AI_DAILY_LIMIT) throw {code:"daily_limit"};
   let res;
   try {
     res = await fetch(AI_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({prompt, json:!!wantJson})});
-  } catch(e){ throw {code:"offline"}; }
+  } catch(e){ throw {code: navigator.onLine ? "unreachable" : "offline"}; }
   if (res.status === 429) throw {code:"rate_limited"};
   if (!res.ok) throw {code:"server"};
   const data = await res.json().catch(() => null);
   if (!data || typeof data.text !== "string") throw {code:"server"};
+  // Yalnızca başarılı istekler günlük hakkından düşülür
+  const q = aiQuota(); q.count += 1;
+  try { localStorage.setItem("pisir-ai-kota-v2", JSON.stringify(q)); } catch(e) {}
   return data.text;
 }
 if (AI_URL){
