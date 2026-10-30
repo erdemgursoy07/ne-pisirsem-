@@ -1329,6 +1329,24 @@ const POPULAR = new Set(["Mercimek çorbası","Ezogelin çorbası","Menemen","Ka
 /* ---------- Yardımcılar ---------- */
 const $ = id => document.getElementById(id);
 const norm = s => String(s || "").toLocaleLowerCase("tr").trim();
+/* Bir bölümü yeniden çizer ama içindeki görselleri silip yeniden yüklemez:
+   aynı adresteki görsel ekranda zaten varsa o görsel aynen yerine konur (görseller yanıp sönmez). */
+function setHTML(el, html){
+  if (!el) return;
+  const old = new Map();
+  el.querySelectorAll("img").forEach(i => { const k = i.getAttribute("src"); if (k && !old.has(k)) old.set(k, i); });
+  el.innerHTML = html;
+  if (!old.size) return;
+  el.querySelectorAll("img").forEach(n => {
+    const k = n.getAttribute("src"), o = old.get(k);
+    if (!o) return;
+    old.delete(k);
+    o.className = n.className.replace(/\bimg-new\b/, "").trim();
+    o.alt = n.alt;
+    n.replaceWith(o);
+  });
+  // Kartlar görselleri sonradan eklendiyse (has-img), aynı kart yeniden çizildiğinde görsel korunsun
+}
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const cap = s => s.charAt(0).toLocaleUpperCase("tr") + s.slice(1);
 const str = v => typeof v === "string" ? v : "";
@@ -2749,7 +2767,7 @@ function renderGroups(){
     const exact = Object.values(LABEL).some(l => norm(l) === q) || [...extras].some(x => norm(x) === q);
     if (!exact && sampleFn && !dishes.length) html += `<div class="add-row"><p class="sub">Aradığın malzeme listede yoksa kendin ekleyebilirsin.</p><button type="button" class="ai-btn" data-act="addExtra" id="addExtra">“${esc(raw)}” malzemesini ekle</button></div>`;
     else if (!hits.length && !dishes.length) html += `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>`;
-    $("groups").innerHTML = html;
+    setHTML($("groups"), html);
     hydrateImages($("groups"));
     return;
   }
@@ -2759,7 +2777,10 @@ function renderGroups(){
   html += `<div class="group"><div class="group-head"><h2>⭐ En çok kullanılanlar</h2></div><div class="chips">${QUICK.map(id => chipHTML(id, LABEL[id])).join("")}</div></div>`;
 
   html += `<p class="quick-hint">🔎 Aradığın malzeme burada yoksa yukarıdaki arama kutusuna yaz.</p>`;
-  $("groups").innerHTML = html;
+  // Öneri şeridi malzeme listesinin içinde: liste yeniden çizilirken şeridin içeriği (ve görselleri) korunur
+  const oldStrip = $("sugStrip"), keep = oldStrip ? [...oldStrip.childNodes] : [];
+  setHTML($("groups"), html);
+  const newStrip = $("sugStrip"); if (newStrip && keep.length) newStrip.append(...keep);
 }
 
 // Dolabım'dan başka bir bölüme geçince seçimler sıfırlanır (temel malzemeler varsayılan olarak seçili kalır)
@@ -2823,9 +2844,9 @@ function renderResults(){
   else status.innerHTML = `Henüz tam eşleşme yok, ama <strong>${near.length} yemeğe</strong> çok yakınsın.`;
 
   const stripList = [...readyS, ...nearS].slice(0, 10);
-  if (strip && !mainSel){ strip.innerHTML = pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button>`; strip.classList.remove("only-mobile"); }
+  if (strip && !mainSel){ setHTML(strip, pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button>`); strip.classList.remove("only-mobile"); }
   else if (strip) strip.classList.remove("only-mobile");
-  if (strip && mainSel) strip.innerHTML = stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "";
+  if (strip && mainSel) setHTML(strip, stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "");
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
@@ -2834,7 +2855,7 @@ function renderResults(){
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
   }
-  $("results").innerHTML = html;
+  setHTML($("results"), html);
 }
 
 function aiPantryHTML(){
@@ -2889,7 +2910,7 @@ function renderDishList(){
   } else if (!hints.length && !(raw && sampleFn)){
     html += raw ? `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>` : `<p class="empty">Bu kategoride yemek yok.</p>`;
   }
-  $("dishList").innerHTML = html;
+  setHTML($("dishList"), html);
   hydrateImages($("dishList"));
 }
 function renderDishDetail(){
@@ -2898,7 +2919,7 @@ function renderDishDetail(){
   if (dishState && dishState.state === "loading"){ box.innerHTML = `<div class="empty">“${esc(dishState.query)}” için tarif hazırlanıyor. Bu birkaç saniye sürebilir…</div>`; return; }
   if (dishState && dishState.state === "error"){ box.innerHTML = `<div class="empty">${esc(dishState.msg)}</div>`; return; }
   const r = currentKey && REG.get(currentKey);
-  box.innerHTML = r ? detailHTML(r, false) : `<div class="empty">Bir yemek seç; malzemelerini, hangilerinin evde olduğunu ve neleri alman gerektiğini gösterelim.</div>`;
+  setHTML(box, r ? detailHTML(r, false) : `<div class="empty">Bir yemek seç; malzemelerini, hangilerinin evde olduğunu ve neleri alman gerektiğini gösterelim.</div>`);
 }
 
 function savedRow(r){
@@ -2921,7 +2942,7 @@ function renderSaved(){
     if (mine.length) h += sec("👩‍🍳 Senin en çok pişirdiklerin", "", mine.map(([k]) => REG.get(k)), r => `${cookCounts[r.key]} kez pişirdin`);
     const f = favs.map(k => REG.get(k)).filter(Boolean);
     h += `<section class="dish-sec"><div class="sec-head"><h2>❤️ Kaydettiklerin</h2>${f.length ? `<span class="sec-count">${f.length} tarif</span>` : ""}</div>${f.length ? grid(f) : `<div class="empty">Beğendiğin bir tarifte “♡ Favorilere ekle”ye dokun, burada seni beklesin.</div>`}</section>`;
-    $("savedMode").innerHTML = h;
+    setHTML($("savedMode"), h);
     hydrateImages($("savedMode"));
     loadStats();
   } else {
@@ -3003,7 +3024,7 @@ function renderDaily(){
   const show = mode === "pantry"; // günün menüsü yalnızca Dolabım'da (Yemek ara'da tekrar olmasın)
   box.hidden = !show; if (!show) return;
   if (!dailyMenu().length){ box.hidden = true; return; }
-  box.innerHTML = dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : "");
+  setHTML(box, dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : ""));
 }
 
 /* ---------- Tarif sayfası: yemeğe nereden dokunulursa dokunulsun üstte açılır ---------- */
@@ -3011,11 +3032,11 @@ let sheetKey = null;
 function renderSheet(){
   const sh = $("sheet"); if (!sh) return;
   const g = guideKey ? GUIDE_BY.get(guideKey) : null;
-  if (g){ sh.hidden = false; document.documentElement.classList.add("sheet-open"); $("sheetBody").innerHTML = guideHTML(g); return; }
+  if (g){ sh.hidden = false; document.documentElement.classList.add("sheet-open"); setHTML($("sheetBody"), guideHTML(g)); return; }
   const r = sheetKey ? REG.get(sheetKey) : null;
   if (!r){ sh.hidden = true; document.documentElement.classList.remove("sheet-open"); return; }
   sh.hidden = false; document.documentElement.classList.add("sheet-open");
-  $("sheetBody").innerHTML = detailHTML(r, false);
+  setHTML($("sheetBody"), detailHTML(r, false));
 }
 function openSheet(key, opt){
   guideKey = null; sheetKey = key; warmVoice(REG.get(key)); addRecent(key); renderSheet();
@@ -3603,7 +3624,7 @@ function renderPlan(){
       : `<p class="done">Menündeki tüm yemeklerin malzemeleri evde, alışverişe gerek yok!</p>`;
     h += `</div>`;
   }
-  $("planMode").innerHTML = h;
+  setHTML($("planMode"), h);
 }
 
 /* ---------- Olaylar ---------- */
