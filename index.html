@@ -99,6 +99,38 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+/* ===== Yeni ana sayfa düzeni ===== */
+.topbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:16px;padding:12px 0;margin:0 0 6px;background:var(--bg)}
+.topbar .brand{flex:0 0 auto}
+.topbar .tabs{margin:0 auto;flex:0 1 auto;min-width:0}
+.topbar .top-actions{flex:0 0 auto}
+.topbar .tab{padding:9px 13px}
+@media (max-width:1399px) and (min-width:700px){.topbar .brand span:last-child{display:none}}
+@media (min-width:900px){.suggest-strip{display:none}}
+@media (max-width:900px) and (min-width:700px){.topbar .tab{padding:8px 9px;font-size:.9rem}.topbar .tab-i{margin-right:4px}}
+@media (max-width:699px){.topbar .brand{flex:1 1 auto;min-width:0}.topbar{padding:10px 0}}
+header.hero .hero-card .marquee{display:none}
+@media (min-width:700px){
+  header.hero .hero-card{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:32px;align-items:center;padding:24px 28px}
+  header.hero .hero-card .flow{flex-direction:column;flex-wrap:nowrap;align-self:center;margin:0}
+  header.hero .hero-card .flow li{min-width:220px;margin:0}
+}
+header.hero{margin-bottom:22px}
+#filters:not([hidden]){margin-top:18px}
+@media (min-width:900px){
+  body[data-mode="pantry"] #daily{display:none}
+  .layout{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:start}
+  .pantry,.results{background:var(--surface);border:1.5px solid var(--line);border-radius:24px;padding:22px}
+  .results{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto}
+  .pantry .mybox{border:0;padding:0;background:none;border-radius:0;margin-bottom:18px}
+  .pantry .acc{background:transparent}
+  .results .daily-mini{margin-bottom:18px;background:var(--bg)}
+  .results .combo{background:var(--bg)}
+  .results .section{margin-top:0}
+  .pantry .toolbar{margin-bottom:16px}
+}
+.results .daily-mini{flex-direction:column;align-items:flex-start;gap:6px}
+@media (max-width:899px){.results .daily-mini{display:none}}
 /* Ana sayfa: kompakt karşılama ve yol gösterici */
 header.hero .hero-card{padding:22px 26px 16px}
 header.hero .hero-card h1{font-size:clamp(1.9rem,4vw,2.7rem);margin:0 0 6px;line-height:1.1;max-width:none}
@@ -106,7 +138,7 @@ header.hero .hero-card .marquee-track span{font-size:1.55rem}
 header.hero .hero-card #heroText{margin:0;font-size:1rem;max-width:none}
 header.hero .hero-card .marquee{margin:14px 0 0}
 .flow{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.flow li{display:flex;align-items:center;gap:8px;padding:7px 14px 7px 7px;border-radius:999px;background:rgba(255,255,255,.7);font-weight:700;font-size:.92rem;color:var(--muted)}
+.flow li{margin:0;display:flex;align-items:center;gap:8px;padding:7px 14px 7px 7px;border-radius:999px;background:rgba(255,255,255,.7);font-weight:700;font-size:.92rem;color:var(--muted)}
 .flow-n{width:26px;height:26px;border-radius:999px;display:grid;place-items:center;background:var(--line);color:var(--ink);font-size:.85rem;font-weight:800}
 .flow li.on{color:var(--ink);background:#fff;box-shadow:0 2px 10px rgba(13,21,40,.08)}
 .flow li.on .flow-n{background:var(--cobalt);color:#fff}
@@ -512,21 +544,24 @@ header.hero{padding:28px 0 20px}
 </head>
 <body>
 <div class="wrap">
-  <header class="hero">
-    <div class="topbar"><div class="brand"><span class="brand-logo" aria-hidden="true">🍳</span><span>Bugün ne pişirsem?</span></div><div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></div>
-    <div class="hero-card">
-      <p class="greet" id="greet"></p>
-      <h1 id="heroTitle">Dolabında ne var?</h1>
-      <p id="heroText"></p>
-      <ol class="flow" id="flow" aria-label="Nasıl çalışır"></ol>
-      <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
-    </div>
+  <nav class="topbar" aria-label="Ana menü"><div class="brand"><span class="brand-logo" aria-hidden="true">🍳</span><span>Bugün ne pişirsem?</span></div>
     <div class="tabs" role="tablist" aria-label="Görünüm">
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="pantry" id="tab-pantry"><span class="tab-i" aria-hidden="true">🧺</span><span class="tab-t">Dolabım</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="dish" id="tab-dish"><span class="tab-i" aria-hidden="true">🔎</span><span class="tab-t">Yemek ara</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="plan" id="tab-plan"><span class="tab-i" aria-hidden="true">📅</span><span class="tab-t">Menü</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="fav" id="tab-fav"><span class="tab-i" aria-hidden="true">🏆</span><span class="tab-t">En sevilenler</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="recent" id="tab-recent"><span class="tab-i" aria-hidden="true">🕘</span><span class="tab-t">Geçmiş</span></button>
+    </div>
+    <div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></nav>
+  <header class="hero">
+    <div class="hero-card">
+      <div class="hero-text">
+        <p class="greet" id="greet"></p>
+        <h1 id="heroTitle">Dolabında ne var?</h1>
+        <p id="heroText"></p>
+      </div>
+      <ol class="flow" id="flow" aria-label="Nasıl çalışır"></ol>
+      <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
     </div>
     <div class="filters cats" id="filters" role="group" aria-label="Kategoriler"></div>
     <div class="status" id="status" aria-live="polite"></div>
@@ -1330,6 +1365,7 @@ function greeting(){
   return (h < 5 ? "İyi geceler" : h < 12 ? "Günaydın" : h < 18 ? "İyi günler" : h < 22 ? "İyi akşamlar" : "İyi geceler") + " 👋";
 }
 function renderHero(){
+  document.body.dataset.mode = mode;
   $("greet").textContent = greeting();
   $("heroTitle").textContent = HERO[mode][0];
   $("heroText").textContent = HERO[mode][1];
@@ -1366,6 +1402,17 @@ let adminKey = (() => { try { return localStorage.getItem("pisir-yonetici") || "
 })();
 const saveMyPhotos = () => { try { localStorage.setItem("pisir-fotolarim", JSON.stringify(myPhotos)); } catch(e) {} };
 const uploadState = {};
+// Cloudflare'in deposu değişiklikleri her yere ~1 dakikada ulaştırır; bu sürede telefon kendi değişikliklerini hatırlar
+let photoLocal = load("pisir-foto-yerel", {add:{}, del:{}}); if (!photoLocal || !photoLocal.add || !photoLocal.del) photoLocal = {add:{}, del:{}};
+const savePhotoLocal = () => { try { localStorage.setItem("pisir-foto-yerel", JSON.stringify(photoLocal)); } catch(e) {} };
+function mergePhotos(key, server){
+  const now = Date.now();
+  Object.keys(photoLocal.del).forEach(id => { if (now - photoLocal.del[id] > 864e5) delete photoLocal.del[id]; });
+  const added = (photoLocal.add[key] || []).filter(x => now - x.t < 15 * 60e3);
+  photoLocal.add[key] = added;
+  const ids = new Set(server.map(x => x.id));
+  return [...added.filter(x => !ids.has(x.id)), ...server].filter(x => !photoLocal.del[x.id]);
+}
 function photoInput(r, label, capture){
   return `<label class="ai-btn photo-btn">${label}<input type="file" accept="image/*" ${capture ? 'capture="environment"' : ""} data-photo-key="${esc(r.key)}" hidden></label>`;
 }
@@ -1376,7 +1423,7 @@ function photosHTML(r){
   const list = (st && st.list) || [];
   const up = uploadState[r.key];
   return `<section class="photos"><div class="photos-head"><h3>📸 Bu yemeği yapanlar</h3>${list.length ? `<span class="sec-count">${list.length} fotoğraf</span>` : ""}</div>
-    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy"></button>${myPhotos[ph.id] || adminKey ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}</div>`; }).join("")}</div>`
+    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy" onerror="this.closest('.ph').hidden=true"></button>${myPhotos[ph.id] || adminKey ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}</div>`; }).join("")}</div>`
       : `<p class="sub">${st && st.state === "loading" ? "Fotoğraflar yükleniyor…" : "Henüz fotoğraf yok. Bu yemeği yaptıysan ilk fotoğrafı sen ekle!"}</p>`}
     ${photoInput(r, "📷 Fotoğrafını ekle", false)}
     ${up ? `<p class="photo-msg">${esc(up)}</p>` : ""}
@@ -1385,10 +1432,10 @@ function photosHTML(r){
 async function loadPhotos(r){
   photoCache[r.key] = {state:"loading", list:[]};
   try {
-    const res = await fetch(`${PHOTO_URL}?tarif=${encodeURIComponent(r.key)}`);
+    const res = await fetch(`${PHOTO_URL}?tarif=${encodeURIComponent(r.key)}&_=${Date.now()}`, {cache:"no-store"});
     const d = res.ok ? await res.json() : null;
-    photoCache[r.key] = {state:"done", list:(d && Array.isArray(d.fotos)) ? d.fotos.filter(x => x && typeof x.id === "string") : []};
-  } catch(e){ photoCache[r.key] = {state:"done", list:[]}; }
+    photoCache[r.key] = {state:"done", list:mergePhotos(r.key, (d && Array.isArray(d.fotos)) ? d.fotos.filter(x => x && typeof x.id === "string") : [])};
+  } catch(e){ photoCache[r.key] = {state:"done", list:mergePhotos(r.key, [])}; }
   refreshPhotoViews(r.key);
 }
 function refreshPhotoViews(key){
@@ -1423,6 +1470,7 @@ document.addEventListener("change", async e => {
     const d = await res.json().catch(() => null);
     if (res.ok && d && d.id){
       if (d.token){ myPhotos[d.id] = d.token; saveMyPhotos(); }
+      photoLocal.add[key] = [{id:d.id, t:Date.now()}, ...(photoLocal.add[key] || [])]; savePhotoLocal();
       uploadState[key] = "✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.";
       const old = (photoCache[key] && photoCache[key].list) || [];
       photoCache[key] = {state:"done", list:[{id:d.id, t:Date.now()}, ...old]};
@@ -1517,6 +1565,14 @@ function renderGroups(){
   $("groups").innerHTML = html;
 }
 
+// Dolabım'dan başka bir bölüme geçince seçimler sıfırlanır (temel malzemeler varsayılan olarak seçili kalır)
+function resetPantry(){
+  selected = new Set(GROUPS[0].items.map(([id]) => id));
+  extras.clear(); manual = {}; open.clear(); openGroups.clear();
+  aiPantry = {state:"idle", keys:[], msg:""};
+  $("search").value = "";
+  save();
+}
 // Hızlı başlangıç: tek dokunuşla seçilen hazır malzeme kombinasyonları
 const COMBOS = [["🍳",["yumurta","domates","sogan"]],["🥣",["mercimek","sogan","havuc"]],["🍝",["makarna","domates","sarimsak"]],["🍗",["tavuk","biber","domates"]],["🍆",["patlican","kiyma","domates","sogan"]],["🥗",["domates","salatalik","sogan","limon"]]];
 function combosHTML(){
@@ -1576,7 +1632,7 @@ function renderResults(){
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}</div>`;
+    html = `${dailyMiniHTML()}<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}</div>`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -1722,12 +1778,16 @@ function dailyMenu(){
   const m = MENUS[daySeed(MENUS.length, 0)];
   return m.map((n, i) => [MENU_SLOTS[i][0], MENU_SLOTS[i][1], REG.get("b:" + n)]).filter(x => x[2]);
 }
+function dailyMiniHTML(){
+  const menu = dailyMenu(); if (!menu.length) return "";
+  return `<button type="button" class="daily-mini" data-act="goDaily" aria-expanded="${dailyOpen}"><span class="dm-tag">🌟 Bugünün sofrası</span><span class="dm-items">${menu.map(([e, , r]) => `<span>${e} ${esc(r.ad)}</span>`).join("")}</span><span class="dm-go">${dailyOpen ? "Menüyü gizle ↑" : "Menüyü gör ↓"}</span></button>`;
+}
 function renderDaily(){
   const box = $("daily");
   const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
   box.hidden = !show; if (!show) return;
   const menu = dailyMenu(); if (!menu.length){ box.hidden = true; return; }
-  const mini = `<button type="button" class="daily-mini" data-act="goDaily" aria-expanded="${dailyOpen}"><span class="dm-tag">🌟 Bugünün sofrası</span><span class="dm-items">${menu.map(([e, , r]) => `<span>${e} ${esc(r.ad)}</span>`).join("")}</span><span class="dm-go">${dailyOpen ? "Menüyü gizle ↑" : "Menüyü gör ↓"}</span></button>`;
+  const mini = dailyMiniHTML();
   if (!dailyOpen){ box.innerHTML = mini; return; }
   if (dailySel >= menu.length) dailySel = 0;
   const sel = menu[dailySel][2];
@@ -2318,7 +2378,7 @@ document.addEventListener("click", e => {
   const key = el.dataset.key;
   const r = key ? REG.get(key) : null;
   switch (act){
-    case "tab": mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
+    case "tab": if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
     case "filter": {
       const f = el.dataset.f;
       if (mode !== "dish"){
@@ -2354,17 +2414,20 @@ document.addEventListener("click", e => {
       const id = el.dataset.id, token = myPhotos[id] || "";
       if (!r || (!token && !adminKey) || !confirm(lang === "en" ? "Remove this photo?" : "Bu fotoğrafı kaldırmak istiyor musun?")) break;
       el.disabled = true; el.textContent = "Kaldırılıyor…";
+      const gone = () => { // ekrandan ve bu telefonun hafızasından kaldır
+        delete myPhotos[id]; saveMyPhotos();
+        photoLocal.del[id] = Date.now(); Object.keys(photoLocal.add).forEach(k => { photoLocal.add[k] = photoLocal.add[k].filter(x => x.id !== id); }); savePhotoLocal();
+        const st = photoCache[key]; if (st) st.list = st.list.filter(x => x.id !== id);
+        uploadState[key] = "Fotoğrafın kaldırıldı.";
+      };
       fetch(PHOTO_URL + "/sil", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:key, id, token, admin:adminKey || undefined})})
-        .then(res => res.json().then(d => ({ok:res.ok, d})).catch(() => ({ok:res.ok, d:null})))
-        .then(({ok, d}) => {
-          if (ok){
-            delete myPhotos[id]; saveMyPhotos();
-            const st = photoCache[key]; if (st) st.list = st.list.filter(x => x.id !== id);
-            uploadState[key] = "Fotoğrafın kaldırıldı.";
-          } else uploadState[key] = (d && d.error) || "Fotoğraf kaldırılamadı, tekrar dene.";
+        .then(res => res.json().catch(() => null).then(d => ({ok:res.ok, status:res.status, d})))
+        .then(({ok, status, d}) => {
+          if (ok || status === 404) gone(); // 404: zaten kaldırılmış
+          else uploadState[key] = (d && d.error) || "Fotoğraf kaldırılamadı, tekrar dene.";
           refreshPhotoViews(key);
         })
-        .catch(() => { uploadState[key] = "Fotoğraf kaldırılamadı, bağlantını kontrol et."; refreshPhotoViews(key); });
+        .catch(() => { uploadState[key] = "Fotoğraf kaldırılamadı, internet bağlantını kontrol edip tekrar dene."; refreshPhotoViews(key); });
       break;
     }
     case "lang": setLang(lang === "en" ? "tr" : "en"); break;
@@ -2374,7 +2437,10 @@ document.addEventListener("click", e => {
       if (voiceOn && player){ player.src = SILENT; player.play().catch(() => {}); } // telefonda sesi çalmaya izin ver
       if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
-    case "goDaily": dailyOpen = !dailyOpen; renderDaily(); break;
+    case "goDaily":
+      if (el.closest("#results")){ resetPantry(); mode = "dish"; filters = new Set(); $("dishSearch").value = ""; dailyOpen = true; renderAll(); window.scrollTo(0, 0); }
+      else { dailyOpen = !dailyOpen; renderDaily(); }
+      break;
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
