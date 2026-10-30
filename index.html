@@ -108,12 +108,17 @@ button:disabled{opacity:.45;cursor:default}
 .diet-note{margin:8px 0 0;font-size:.85rem;color:#B35C00;font-weight:600}
 /* Sipariş */
 .order{margin-top:14px}
-.order-list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
-.order-list li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
-.order-name{font-weight:700}
-.order-shops{display:flex;flex-wrap:wrap;gap:6px}
-.shop-link{font-size:.82rem;font-weight:700;padding:6px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink);text-decoration:none}
-.shop-link:hover{border-color:var(--cobalt)}
+.order-box{margin-top:12px;padding:16px;border:1.5px solid var(--line);border-radius:18px;background:var(--surface)}
+.order-h{margin:0 0 8px;font-weight:800;font-size:.95rem}
+.order-items{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.order-item{padding:6px 12px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-weight:600;font-size:.9rem;color:var(--ink);text-decoration:none}
+.order-item.is-link{border-color:var(--cobalt);color:var(--cobalt)}
+.order-markets{display:flex;flex-wrap:wrap;gap:8px}
+.market{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:10px 14px;font-weight:700;cursor:pointer}
+.market:hover{border-color:var(--cobalt)}
+.market[aria-pressed="true"]{background:#2B8A3E;border-color:#2B8A3E;color:#fff}
+.order-tip{margin:12px 0 0;font-size:.88rem;color:var(--muted)}
+.market-open{display:inline-block;margin-top:10px;text-decoration:none}
 /* Şef'e sor */
 .chef{margin-top:28px;padding:18px;border-radius:20px;background:var(--bg);border:1.5px solid var(--line);max-width:760px}
 .chef h3{margin-top:0}
@@ -1194,7 +1199,7 @@ function toggleOwn(m){
   else manual[norm(m.ad)] = !owned(m);
 }
 function fpass(r){
-  if (!dietPass(r)) return false;
+  if (mode === "dish" && !dietPass(r)) return false; // beslenme tercihi yalnızca Yemek ara'da geçerli
   for (const f of filters){
     if (f === "hizli"){ if (!(r.sure && r.sure <= 15)) return false; }
     else if (!(r.etiketler || []).includes(f)) return false;
@@ -1419,7 +1424,7 @@ function greeting(){
 }
 function renderHero(){
   document.body.dataset.mode = mode;
-  $("dietBar").hidden = !(mode === "pantry" || mode === "dish");
+  $("dietBar").hidden = mode !== "dish";
   if (!$("dietBar").hidden) $("dietBar").innerHTML = dietBarHTML();
   $("greet").textContent = greeting();
   $("heroTitle").textContent = HERO[mode][0];
@@ -1487,16 +1492,26 @@ function dietBarHTML(){
 
 /* ---------- Eksikleri marketten sipariş et ---------- */
 const MARKETS = [
-  ["Trendyol", q => `https://www.trendyol.com/sr?q=${encodeURIComponent(q)}`],
-  ["Migros", q => `https://www.migros.com.tr/arama?q=${encodeURIComponent(q)}`],
-  ["CarrefourSA", q => `https://www.carrefoursa.com/search/?text=${encodeURIComponent(q)}`],
-  ["Getir", () => "https://getir.com/"]
+  {id:"tgo", ad:"Trendyol Go by Uber Eats", de:"Trendyol Go'da", i:"Trendyol Go'yu", ara:null, ana:null},
+  {id:"migros", ad:"Migros", de:"Migros'ta", i:"Migros'u", ara:q => `https://www.migros.com.tr/arama?q=${encodeURIComponent(q)}`, ana:"https://www.migros.com.tr/"},
+  {id:"carrefour", ad:"CarrefourSA", de:"CarrefourSA'da", i:"CarrefourSA'yı", ara:q => `https://www.carrefoursa.com/search/?text=${encodeURIComponent(q)}`, ana:"https://www.carrefoursa.com/"},
+  {id:"getir", ad:"Getir", de:"Getir'de", i:"Getir'i", ara:null, ana:"https://getir.com/"}
 ];
-const orderOpen = new Set();
+const orderOpen = new Set(), orderMarket = {}, orderNames = {};
 function orderHTML(id, names){
   if (!names.length) return "";
+  orderNames[id] = names;
   const isOpen = orderOpen.has(id);
-  return `<div class="order"><button type="button" class="fav order-btn" data-act="orderToggle" data-id="${esc(id)}" aria-expanded="${isOpen}">🛒 Eksikleri sipariş et ${isOpen ? "↑" : "↓"}</button>${isOpen ? `<ul class="order-list">${names.map(n => `<li><span class="order-name">${esc(n)}</span><span class="order-shops">${MARKETS.map(([m, u]) => `<a class="shop-link" href="${esc(u(n))}" target="_blank" rel="noopener">${m}</a>`).join("")}</span></li>`).join("")}</ul><p class="note">Butonlar marketin arama sayfasını açar; ürünü sepete sen eklersin. Getir'de açılan sayfada malzemeyi aratman gerekebilir.</p>` : ""}</div>`;
+  const btn = `<button type="button" class="fav order-btn" data-act="orderToggle" data-id="${esc(id)}" aria-expanded="${isOpen}">🛒 Eksikleri sipariş et ${isOpen ? "↑" : "↓"}</button>`;
+  if (!isOpen) return `<div class="order">${btn}</div>`;
+  const mk = MARKETS.find(m => m.id === orderMarket[id]);
+  return `<div class="order">${btn}<div class="order-box">
+    <p class="order-h">🧾 Eksiklerin</p>
+    <div class="order-items">${names.map(n => mk && mk.ara ? `<a class="order-item is-link" href="${esc(mk.ara(n))}" target="_blank" rel="noopener">🔎 ${esc(n)}</a>` : `<span class="order-item">${esc(n)}</span>`).join("")}</div>
+    <p class="order-h">🏪 Nereden sipariş vermek istersin?</p>
+    <div class="order-markets">${MARKETS.map(m => `<button type="button" class="market" data-act="orderMarket" data-id="${esc(id)}" data-m="${m.id}" aria-pressed="${orderMarket[id] === m.id}">${m.ad}</button>`).join("")}</div>
+    ${mk ? `<p class="order-tip">✓ Eksik listen kopyalandı. ${mk.ara ? `${mk.de} aramak için yukarıdaki eksiklere dokun.` : `${mk.ad} uygulamasını açıp arama kutusuna yapıştırarak eksikleri sırayla ekleyebilirsin.`}</p>${mk.ana ? `<a class="ai-btn market-open" href="${esc(mk.ana)}" target="_blank" rel="noopener">${mk.i} aç</a>` : ""}` : `<p class="order-tip">Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.</p>`}
+  </div></div>`;
 }
 
 /* ---------- Şef'e sor ---------- */
@@ -2702,6 +2717,12 @@ document.addEventListener("click", e => {
     case "share": if (r) shareRecipe(r); break;
     case "shareList": if (r) shareText(`${r.ad} alışveriş listesi`, `🛒 ${r.ad} için alışveriş listesi\n${shopText(r)}\n\nTarif: ${recipeUrl(r)}`); break;
     case "sharePlan": shareText("Haftalık alışveriş listesi", `🛒 Haftalık alışveriş listem\n${planShopText()}`); break;
+    case "orderMarket": {
+      const oid = el.dataset.id; orderMarket[oid] = el.dataset.m;
+      const names = orderNames[oid] || [];
+      try { navigator.clipboard && navigator.clipboard.writeText(names.join(", ")); } catch(e) {}
+      renderAll(); if (mode === "plan") renderPlan(); break;
+    }
     case "orderToggle": { const oid = el.dataset.id; orderOpen.has(oid) ? orderOpen.delete(oid) : orderOpen.add(oid); renderAll(); if (mode === "plan") renderPlan(); break; }
     case "chefToggle": cook.chef = !cook.chef; renderCook(); break;
     case "chefAsk": if (r){ const inp = el.closest(".chef-form").querySelector("input"); chefAsk(r, inp.value, el.dataset.step != null ? Number(el.dataset.step) : null); } break;
@@ -2838,7 +2859,7 @@ function loadStats(){
    Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
 let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
 const EN_EXACT = {
-  "Bugün ne pişirsem?":"What should I cook today?","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
+  "Bugün ne pişirsem?":"What should I cook today?","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
   "💡 Öneriler burada belirecek":"💡 Ideas will appear here","Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:":"As you pick ingredients, dishes you can make appear here instantly. Tap one to get started:","⚡ Hızlı başlangıç":"⚡ Quick start",
   "🗑️ Kaldır":"🗑️ Remove","Kaldırılıyor…":"Removing…","Fotoğrafın kaldırıldı.":"Your photo was removed.","Fotoğraf kaldırılamadı, tekrar dene.":"Couldn't remove the photo, please try again.","Fotoğrafı büyüt":"Enlarge photo","✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.":"✓ Your photo was added, well done! Tap it to enlarge, or remove it if you like.","Fotoğrafımı sil":"Delete my photo","Fotoğrafın silindi.":"Your photo was deleted.","Fotoğraf silinemedi, tekrar dene.":"Couldn't delete the photo, please try again.","✓ Fotoğrafın eklendi, ellerine sağlık!":"✓ Your photo was added, well done!","Fotoğraf hazırlanıyor…":"Preparing photo…","Fotoğraf kontrol ediliyor, bu birkaç saniye sürebilir…":"Checking your photo, this may take a few seconds…","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
   "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
