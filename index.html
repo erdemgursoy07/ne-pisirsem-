@@ -774,6 +774,9 @@ body{background:var(--bg)}
 .voice-panel{max-width:100%;box-sizing:border-box}
 .voice-panel{margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 4px 18px rgba(29,36,51,.08)}
 .vp-title{margin:4px 0 8px;font-weight:800}
+.vp-msg{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:#FFF4E6;color:#7A3E00;font-size:.88rem;font-weight:600;line-height:1.4}
+[data-theme="dark"] .vp-msg{background:#3A2A14;color:#FFD8A8}
+.vp-msg[hidden]{display:none}
 .vp-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
 .vp-row{display:flex;gap:8px;align-items:stretch}
 .vp-pick{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);cursor:pointer;font:inherit}
@@ -936,7 +939,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 58</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 59</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2277,21 +2280,37 @@ const saveVoicePref = () => { try { localStorage.setItem("pisir-sesci", JSON.str
 function voicePanelHTML(){
   return `<div class="voice-panel" role="group" aria-label="Ses seçimi">
     <p class="vp-title">🎙️ Okuyan ses</p>
+    <p class="vp-msg" id="vpMsg" role="status" hidden></p>
     <div class="vp-list">${VOICE_LIST.map(([id, ad, not]) => `<div class="vp-row${voicePref.ses === id ? " on" : ""}"><button type="button" class="vp-pick" data-act="setVoice" data-v="${id}" aria-pressed="${voicePref.ses === id}"><b>${voicePref.ses === id ? "✓ " : ""}${ad}</b><small>${not}</small></button><button type="button" class="fav vp-try" data-act="tryVoice" data-v="${id}">▶ Dinle</button></div>`).join("")}</div>
     <p class="vp-title">🗣️ Okuma tarzı</p>
     <div class="vp-styles"><button type="button" class="chip" data-act="setStyle" data-v="sade" aria-pressed="${voicePref.stil !== "sohbet"}">Sade: adımı olduğu gibi okur</button><button type="button" class="chip" data-act="setStyle" data-v="sohbet" aria-pressed="${voicePref.stil === "sohbet"}">Sohbet gibi anlatır</button></div>
     <button type="button" class="fav vp-close" data-act="voicePick">Tamam</button>
   </div>`;
 }
+const VOICE_ERR = {
+  kota: "Yapay zekâ sesinin ücretsiz günlük kotası doldu. Şimdilik “Telefonun sesi”ni seçebilirsin; kota her gün sıfırlanır.",
+  anahtar: "Yapay zekâ anahtarı ses için yetkili değil (Cloudflare'deki GEMINI_API_KEY'i kontrol et).",
+  zaman: "Yapay zekâ çok geç yanıt verdi. Birazdan tekrar dene.",
+  model: "Ses modeline şu an ulaşılamıyor. Birazdan tekrar dene.",
+  eski: "Cloudflare'deki aracı kod güncel değil: yeni worker.js'i yükleyip Deploy'a bas.",
+  baglanti: "Ses servisine bağlanılamadı. İnternet bağlantını kontrol edip tekrar dene.",
+  diger: "Bu ses şu an hazırlanamadı, biraz sonra tekrar dene."
+};
 const VOICE_SAMPLE = "Soğanları ince ince doğra ve tereyağında, pembeleşene kadar beş dakika kavur.";
+function vpMsg(t){ const m = $("vpMsg"); if (m){ m.textContent = t || ""; m.hidden = !t; } }
 async function tryVoice(id){
   stopSpeech(); const seq = speakSeq;
+  vpMsg("");
   if (id === "telefon"){ deviceSpeak(VOICE_SAMPLE); return; }
-  showToast("Ses hazırlanıyor…");
+  const btn = document.querySelector(`[data-act="tryVoice"][data-v="${id}"]`);
+  if (btn){ btn.textContent = "⏳ Hazırlanıyor"; btn.disabled = true; }
+  const done = () => { const b = document.querySelector(`[data-act="tryVoice"][data-v="${id}"]`); if (b){ b.textContent = "▶ Dinle"; b.disabled = false; } };
+  aiVoiceRetryAt = 0; aiVoiceFails = 0; lastVoiceErr = ""; // kullanıcı özellikle istedi: beklemeden dene
   const url = await aiVoice(VOICE_SAMPLE, id, "sade");
+  done();
   if (seq !== speakSeq) return;
-  if (url && player){ player.src = url; try { await player.play(); return; } catch(e) {} }
-  showToast("Bu ses şu an hazırlanamadı, biraz sonra tekrar dene.");
+  if (url && player){ player.src = url; try { await player.play(); return; } catch(e) { vpMsg("Telefon sesi çalmayı engelledi; “▶ Dinle”ye bir kez daha bas."); return; } }
+  vpMsg("⚠️ " + (VOICE_ERR[lastVoiceErr] || VOICE_ERR.diger));
 }
 function plainStep(r, i){
   return r.adimlar[i]
@@ -3343,7 +3362,7 @@ function spokenStep(r, i){
 const player = typeof Audio === "function" ? new Audio() : null;
 const SILENT = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
 const audioCache = new Map();
-let aiVoiceFails = 0, aiVoiceRetryAt = 0, speakSeq = 0, voiceKind = "";
+let lastVoiceErr = "", aiVoiceFails = 0, aiVoiceRetryAt = 0, speakSeq = 0, voiceKind = "";
 function pcmToWav(b64, rate){
   const bin = atob(b64), len = bin.length, buf = new ArrayBuffer(44 + len), v = new DataView(buf);
   const w = (o, str) => { for (let i = 0; i < str.length; i++) v.setUint8(o + i, str.charCodeAt(i)); };
@@ -3365,8 +3384,8 @@ function aiVoice(text, ses = voicePref.ses, stil = voicePref.stil){
   const p = voiceFromCache(ck).then(hit => {
     if (hit) return hit;
     if (aiVoiceFails >= 2 && Date.now() < aiVoiceRetryAt) return null;
-    return fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text, lang, voice:ses, stil})})
-      .then(res => res.ok ? res.json() : null)
+    return fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text, lang, voice:ses, stil}), signal: AbortSignal.timeout ? AbortSignal.timeout(30000) : undefined})
+      .then(res => res.json().catch(() => null).then(d => { if (!res.ok || !d || !d.audio) lastVoiceErr = d && d.sebep ? d.sebep : (d && d.error ? "eski" : "baglanti"); return d; }))
       .then(d => {
         if (!d || !d.audio){ aiVoiceFails++; if (aiVoiceFails >= 2) aiVoiceRetryAt = Date.now() + 60000; return null; }
         aiVoiceFails = 0;
@@ -3375,7 +3394,7 @@ function aiVoice(text, ses = voicePref.ses, stil = voicePref.stil){
         voiceToCache(ck, blob);
         return URL.createObjectURL(blob);
       })
-      .catch(() => { aiVoiceFails++; if (aiVoiceFails >= 2) aiVoiceRetryAt = Date.now() + 60000; return null; });
+      .catch(() => { lastVoiceErr = "baglanti"; aiVoiceFails++; if (aiVoiceFails >= 2) aiVoiceRetryAt = Date.now() + 60000; return null; });
   });
   audioCache.set(ck, p);
   p.then(u => { if (!u) audioCache.delete(ck); });
