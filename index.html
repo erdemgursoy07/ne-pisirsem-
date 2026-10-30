@@ -1804,7 +1804,7 @@ function dailyCardHTML(){
 }
 function renderDaily(){
   const box = $("daily");
-  const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
+  const show = mode === "pantry"; // günün menüsü yalnızca Dolabım'da (Yemek ara'da tekrar olmasın)
   box.hidden = !show; if (!show) return;
   if (!dailyMenu().length){ box.hidden = true; return; }
   box.innerHTML = dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : "");
