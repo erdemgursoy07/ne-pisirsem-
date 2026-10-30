@@ -978,6 +978,27 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   /* İstatistik sayıları büyüyerek belirir */
   .stat b{display:inline-block;animation:countPop .5s ease .2s backwards}
 }
+/* Yapay zekâ görselleri */
+.dc-ai{position:absolute;left:8px;top:8px;padding:2px 7px;border-radius:999px;background:rgba(20,24,33,.62);color:#fff;font-size:.66rem;font-weight:700;letter-spacing:.02em;backdrop-filter:blur(4px)}
+.ai-cap{color:var(--muted)}
+.img-adm-one{margin:0 0 8px;text-align:right}
+.img-adm{max-width:760px}
+.ia-prog{display:flex;align-items:center;gap:12px;margin:10px 0 12px;font-size:.92rem}
+.ia-bar{flex:1;height:10px;border-radius:999px;background:var(--bg);overflow:hidden;border:1px solid var(--line)}
+.ia-bar span{display:block;height:100%;background:linear-gradient(90deg,#C2410C,#F59F00);transition:width .4s ease}
+.ia-acts{margin-bottom:10px}
+.ia-cur{margin:6px 0;font-size:.9rem}
+.ia-last{margin:10px 0;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.ia-last{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.ia-last img{display:block;width:200px;max-width:100%;aspect-ratio:4/3;object-fit:cover}
+.ia-last figcaption{flex:1;min-width:180px;padding:8px 12px;font-size:.88rem;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.ia-tabs{display:flex;gap:8px;margin:12px 0 10px;flex-wrap:wrap}
+.ia-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;max-height:46vh;overflow:auto;padding:2px}
+.ia-cell{display:flex;flex-direction:column;gap:4px;padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-size:.82rem}
+.ia-thumb{display:grid;place-items:center;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg);font-size:1.8rem}
+.ia-thumb img{width:100%;height:100%;object-fit:cover}
+.ia-name{font-weight:700;line-height:1.25}
+#imgadm .tour-card{max-height:92vh;overflow:auto}
 </style>
 </head>
 <body>
@@ -1069,6 +1090,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
           <li><button type="button" data-act="prefsOpen">Tercihlerim</button></li>
           <li><button type="button" data-act="trOpen">Verilerini taşı</button></li>
           <li id="footBugs" hidden><button type="button" data-act="bugAdminOpen">🛠️ Hata bildirimleri</button></li>
+          <li id="footImg" hidden><button type="button" data-act="imgAdminOpen">🎨 Yemek görselleri</button></li>
           <li><a href="gizlilik.html">Gizlilik ve kullanım şartları</a></li>
           <li><a href="gizlilik.html#iletisim">İletişim</a></li>
         </ul>
@@ -1085,7 +1107,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 62</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 63</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -1873,8 +1895,8 @@ function detailHTML(r, compact){
     if (r.src === "ai") h += `<span class="ai-tag">Yapay zekâ tarifi</span>`;
     const wi = wikiInfo(r);
     h += wi
-      ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a></figcaption></figure>`
-      : `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
+      ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption>${wi.ai ? `<span class="ai-cap">✨ Görsel yapay zekâ ile oluşturuldu</span>` : `<a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a>`}${adminKey && r.src === "b" ? ` · <button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}">🎨 Yeniden üret</button>` : ""}</figcaption></figure>`
+      : (adminKey && r.src === "b" && IMG_BASE() ? `<p class="img-adm-one"><button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}">🎨 Bu tarife yapay zekâ görseli üret</button></p>` : "") + `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
     h += `<h2>${esc(r.ad)}</h2>${badgesHTML(r)}`;
     if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (!v) return; if (sheetKey === r.key) renderSheet(); if (mode === "dish" && currentKey === r.key) renderDishDetail(); });
     const meta = [r.mutfak, r.sure ? r.sure + " dakika" : ""].filter(Boolean).join(", ");
@@ -1961,7 +1983,18 @@ const WIKI_REFRESH = {"Kadayıf":2};
 Object.keys(WIKI_REFRESH).forEach(n => { const v = wikiImgs[n]; if (v && (v.rv || 0) < WIKI_REFRESH[n]) delete wikiImgs[n]; });
 const WIKI_RETRY_MS = 7 * 24 * 3600 * 1000;
 const wikiPending = {};
-function wikiInfo(r){ const v = wikiImgs[r.ad]; return v && v.s ? v : null; }
+let aiImgs = load("pisir-aigorsel", {}); if (!aiImgs || typeof aiImgs !== "object") aiImgs = {};
+const IMG_BASE = () => PHOTO_URL ? PHOTO_URL.replace(/\/foto$/, "/gorsel") : "";
+function aiImgInfo(r){ const sl = typeof SLUG !== "undefined" && SLUG.get(r.key); return sl && aiImgs[sl] && IMG_BASE() ? {s: `${IMG_BASE()}/${sl}?v=${aiImgs[sl]}`, ai:true} : null; }
+function wikiInfo(r){ const a = aiImgInfo(r); if (a) return a; const v = wikiImgs[r.ad]; return v && v.s ? v : null; }
+async function loadAiImgList(){
+  if (!IMG_BASE() || !navigator.onLine) return;
+  try {
+    const res = await fetch(IMG_BASE() + "/liste"); const d = await res.json();
+    if (!d || typeof d.list !== "object") return;
+    if (JSON.stringify(d.list) !== JSON.stringify(aiImgs)){ aiImgs = d.list; try { localStorage.setItem("pisir-aigorsel", JSON.stringify(aiImgs)); } catch(e) {} renderAll(); }
+  } catch(e) {}
+}
 function needsWiki(r){ const v = wikiImgs[r.ad]; return !v || (!v.s && Date.now() - (v.n || 0) > WIKI_RETRY_MS); }
 let wikiSaveTimer = null;
 function saveWiki(){ clearTimeout(wikiSaveTimer); wikiSaveTimer = setTimeout(() => { try { localStorage.setItem("pisir-wiki3", JSON.stringify(wikiImgs)); } catch(e) {} }, 300); }
@@ -2799,6 +2832,101 @@ function renderBugAdmin(){
   el.hidden = false;
 }
 
+/* ---------- Yapay zekâ yemek görselleri (yalnızca yönetici üretir) ---------- */
+const imgAdm = {run:false, cur:"", msg:"", last:null, tab:"eksik", skip:new Set(), busy:new Set()};
+const IMG_ERR = {
+  kota: "Gemini görsel kotası doldu ya da faturalandırma kapalı. Google AI Studio'da bu proje için faturalandırmayı açman gerekebilir.",
+  anahtar: "Gemini anahtarı görsel üretmeye yetkili değil.",
+  yetki: "Yönetici anahtarı geçersiz. Siteyi ?yonetici=ANAHTAR ile bir kez aç.",
+  model: "Görsel modeline ulaşılamadı.",
+  zaman: "Gemini çok geç yanıt verdi.",
+  bos: "Gemini görsel yerine yalnızca yazı döndürdü.",
+  diger: "Görsel üretilemedi."
+};
+const imgRecipes = () => BUILTIN.filter(r => r.src === "b" && SLUG.has(r.key));
+const hasAiImg = r => !!aiImgs[SLUG.get(r.key)];
+function squeezeImage(b64, mime){
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => {
+      const W = 800, H = 600, c = document.createElement("canvas"); c.width = W; c.height = H;
+      const sc = Math.max(W / im.width, H / im.height), w = im.width * sc, h = im.height * sc;
+      c.getContext("2d").drawImage(im, (W - w) / 2, (H - h) / 2, w, h);
+      const toB64 = (type, q) => new Promise(res => c.toBlob(b => { if (!b) return res(null); const fr = new FileReader(); fr.onload = () => res({type:b.type, data:String(fr.result).split(",")[1]}); fr.readAsDataURL(b); }, type, q));
+      (async () => {
+        let out = await toB64("image/webp", 0.8);
+        if (!out || out.type !== "image/webp") out = await toB64("image/jpeg", 0.82); // Safari WebP kaydedemez
+        if (out && out.data.length > 850000) out = await toB64(out.type, 0.6);
+        out ? resolve(out) : reject(new Error("sıkıştırılamadı"));
+      })();
+    };
+    im.onerror = () => reject(new Error("görsel açılamadı"));
+    im.src = `data:${mime || "image/png"};base64,${b64}`;
+  });
+}
+async function genAiImage(r){
+  const cat = recipeCat(r);
+  const res = await fetch(IMG_BASE() + "/uret", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey, ad:r.ad, en:enName(r), malzemeler:r.malzemeler.map(m => m.ad), kategori:(CAT_BY_ID[cat] || [,""])[1], dunya:cat === "dunya", icecek:cat === "kahve"})});
+  const d = await res.json().catch(() => null);
+  if (!res.ok || !d || !d.image) { const e = new Error((d && d.sebep) || "diger"); e.sebep = (d && d.sebep) || "diger"; throw e; }
+  const small = await squeezeImage(d.image, d.mime);
+  const sl = SLUG.get(r.key);
+  const sv = await fetch(IMG_BASE() + "/kaydet", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey, slug:sl, data:small.data, mime:small.type})});
+  const sd = await sv.json().catch(() => null);
+  if (!sv.ok || !sd || !sd.ok){ const e = new Error("kayıt"); e.sebep = (sd && sd.sebep) || "diger"; throw e; }
+  aiImgs[sl] = sd.v; try { localStorage.setItem("pisir-aigorsel", JSON.stringify(aiImgs)); } catch(e) {}
+  return sl;
+}
+async function imgRun(){
+  let fails = 0;
+  while (imgAdm.run){
+    const r = imgRecipes().find(x => !hasAiImg(x) && !imgAdm.skip.has(x.key));
+    if (!r){ imgAdm.run = false; imgAdm.cur = ""; imgAdm.msg = "🎉 Bütün tariflerin görseli hazır."; break; }
+    imgAdm.cur = r.ad; imgAdm.msg = ""; renderImgAdmin();
+    try { await genAiImage(r); imgAdm.last = r.key; fails = 0; renderAll(); }
+    catch(e){
+      fails++;
+      if (["kota","anahtar","yetki"].includes(e.sebep) || fails >= 3){ imgAdm.run = false; imgAdm.msg = "⚠️ " + (IMG_ERR[e.sebep] || IMG_ERR.diger); }
+      else { imgAdm.skip.add(r.key); imgAdm.msg = `⚠️ “${r.ad}” atlandı: ${IMG_ERR[e.sebep] || IMG_ERR.diger}`; }
+    }
+    imgAdm.cur = ""; renderImgAdmin();
+    await new Promise(res => setTimeout(res, 800));
+  }
+  renderImgAdmin();
+}
+async function imgOne(key, quiet){
+  const r = REG.get(key); if (!r || imgAdm.busy.has(key)) return;
+  imgAdm.busy.add(key); renderImgAdmin(); if (!quiet) showToast(`🎨 “${r.ad}” görseli üretiliyor…`);
+  try { await genAiImage(r); imgAdm.last = key; imgAdm.msg = ""; renderAll(); if (!quiet) showToast(`✓ “${r.ad}” görseli hazır`); }
+  catch(e){ imgAdm.msg = "⚠️ " + (IMG_ERR[e.sebep] || IMG_ERR.diger); if (!quiet) showToast(imgAdm.msg); }
+  imgAdm.busy.delete(key); renderImgAdmin();
+  if ($("sheet") && !$("sheet").hidden && typeof renderSheet === "function") renderSheet();
+}
+function renderImgAdmin(){
+  const el = $("imgadm"); if (!el || el.hidden && !imgAdm.open) return;
+  const all = imgRecipes(), ready = all.filter(hasAiImg), miss = all.filter(r => !hasAiImg(r));
+  const pct = all.length ? Math.round(ready.length / all.length * 100) : 0;
+  const last = imgAdm.last && REG.get(imgAdm.last);
+  const lastWi = last && aiImgInfo(last);
+  const items = (imgAdm.tab === "eksik" ? miss : ready);
+  const cell = r => { const wi = aiImgInfo(r), busy = imgAdm.busy.has(r.key) || imgAdm.cur === r.ad; return `<div class="ia-cell" data-key="ia-${esc(r.key)}"><span class="ia-thumb">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span>${recipeEmoji(r)}</span>`}</span><span class="ia-name">${esc(r.ad)}</span><button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}" ${busy ? "disabled" : ""}>${busy ? "⏳" : wi ? "🔄 Yenile" : "🎨 Üret"}</button></div>`; };
+  setHTML(el, `<div class="tour-card prefs-card img-adm" role="dialog" aria-modal="true" aria-label="Yemek görselleri"><h2>🎨 Yemek görselleri</h2>
+    <p class="sub">Görseller Gemini ile <b>bir kez</b> üretilir, küçültülüp saklanır ve herkese gösterilir. Her görselde “✨ YZ” etiketi bulunur.</p>
+    <div class="ia-prog"><div class="ia-bar"><span style="width:${pct}%"></span></div><b>${ready.length} / ${all.length}</b> tarifin görseli hazır</div>
+    <div class="ia-acts">${imgAdm.run ? `<button type="button" class="ai-btn" data-act="imgStop">⏸ Durdur</button>` : `<button type="button" class="ai-btn" data-act="imgStart" ${miss.length ? "" : "disabled"}>▶ Eksikleri üret (${miss.length})</button>`}</div>
+    ${imgAdm.cur ? `<p class="ia-cur">⏳ Şimdi üretiliyor: <b>${esc(imgAdm.cur)}</b></p>` : ""}
+    ${imgAdm.msg ? `<p class="vp-msg">${esc(imgAdm.msg)}</p>` : ""}
+    ${lastWi ? `<figure class="ia-last"><img src="${esc(lastWi.s)}" alt="${esc(last.ad)}"><figcaption><b>Son üretilen: ${esc(last.ad)}</b> <button type="button" class="link-btn" data-act="imgOne" data-key="${esc(last.key)}">🔄 Beğenmedim, yeniden üret</button></figcaption></figure>` : ""}
+    <div class="ia-tabs"><button type="button" class="chip" data-act="imgTab" data-v="eksik" aria-pressed="${imgAdm.tab === "eksik"}">Eksikler (${miss.length})</button><button type="button" class="chip" data-act="imgTab" data-v="hazir" aria-pressed="${imgAdm.tab === "hazir"}">Hazır olanlar (${ready.length})</button></div>
+    <div class="ia-grid">${items.map(cell).join("") || `<p class="sub">Burada gösterilecek tarif yok.</p>`}</div>
+    <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="imgAdminClose">Kapat</button></div></div>`);
+  el.hidden = false;
+}
+function openImgAdmin(){
+  let el = $("imgadm"); if (!el){ el = document.createElement("div"); el.id = "imgadm"; el.className = "tour"; document.body.appendChild(el); }
+  imgAdm.open = true; el.hidden = false; renderImgAdmin(); loadAiImgList();
+}
+
 /* ---------- Bildirim baloncuğu ---------- */
 const toastQueue = []; let toastBusy = false;
 function showToast(text){
@@ -3230,14 +3358,16 @@ function dishCard(r, act = "pickDish", note = ""){
   const cat = recipeCat(r);
   const wi = wikiInfo(r);
   const pressed = act === "pickDish" ? ` aria-pressed="${!dishState && currentKey === r.key}"` : "";
-  return `<button type="button" class="dish-card cat-${cat}${wi ? " has-img" : ""}" data-act="${act}" data-key="${esc(r.key)}" data-img="${esc(r.ad)}"${pressed}><span class="dc-media">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy" decoding="async">` : ""}<span class="dc-emo" aria-hidden="true">${recipeEmoji(r)}</span>${favs.includes(r.key) ? `<span class="dc-fav" title="Favorilerinde">♥</span>` : ""}</span><span class="dc-name">${esc(r.ad)}</span>${cookCounts[r.key] ? `<span class="dc-done">✓ ${cookCounts[r.key]} kez pişirdin</span>` : ""}${note ? `<span class="dc-note">${esc(note)}</span>` : ""}${badgesHTML(r)}</button>`;
+  return `<button type="button" class="dish-card cat-${cat}${wi ? " has-img" : ""}" data-act="${act}" data-key="${esc(r.key)}" data-img="${esc(r.ad)}"${pressed}><span class="dc-media">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy" decoding="async">` : ""}<span class="dc-emo" aria-hidden="true">${recipeEmoji(r)}</span>${favs.includes(r.key) ? `<span class="dc-fav" title="Favorilerinde">♥</span>` : ""}${wi && wi.ai ? `<span class="dc-ai" title="Görsel yapay zekâ ile oluşturuldu">✨ YZ</span>` : ""}</span><span class="dc-name">${esc(r.ad)}</span>${cookCounts[r.key] ? `<span class="dc-done">✓ ${cookCounts[r.key]} kez pişirdin</span>` : ""}${note ? `<span class="dc-note">${esc(note)}</span>` : ""}${badgesHTML(r)}</button>`;
 }
 function hintCats(q){
   if (q.length < 2) return [];
   return CATS.filter(([id, , , keys]) => keys.some(k => k.startsWith(q) || (q.startsWith(k) && k.length >= 2 && q.length <= k.length + 2)) && !filters.has(id));
 }
-const openCats = new Set();
+const openCats = new Set(); let catAutoDone = false;
+function timeCat(){ const h = new Date().getHours(); return h >= 5 && h < 11 ? "kahvalti" : h >= 11 && h < 15 ? "corba" : h >= 15 && h < 21 ? "etli" : "tatli"; }
 function renderDishList(){
+  if (!catAutoDone && mode === "dish"){ catAutoDone = true; if (!openCats.size) openCats.add(timeCat()); }
   const raw = $("dishSearch").value.trim();
   const q = norm(raw);
   let list = sortRecipes(BUILTIN.filter(r => (!q || nameHit(r, q)) && fpass(r)));
@@ -3761,6 +3891,7 @@ async function runExplain(){
 }
 
 let cookAnimAt = "";
+setTimeout(loadAiImgList, 400);
 function renderCook(){
   const r = REG.get(cook.key); if (!r) return;
   const n = r.adimlar.length;
@@ -4155,6 +4286,12 @@ document.addEventListener("click", e => {
     case "bugCancel": bug.key = null; renderSheet(); break;
     case "bugSend": if (r){ bug.text = $("bugText") ? $("bugText").value : ""; sendBug(r); } break;
     case "bugAdminOpen": openBugAdmin(); break;
+    case "imgAdminOpen": openImgAdmin(); break;
+    case "imgAdminClose": { const ie = $("imgadm"); if (ie) ie.hidden = true; imgAdm.open = false; break; }
+    case "imgStart": if (!imgAdm.run){ imgAdm.run = true; imgAdm.skip.clear(); imgRun(); } break;
+    case "imgStop": imgAdm.run = false; imgAdm.msg = "Durduruldu. Kaldığın yerden devam edebilirsin."; renderImgAdmin(); break;
+    case "imgTab": imgAdm.tab = el.dataset.v; renderImgAdmin(); break;
+    case "imgOne": imgOne(el.dataset.key, !!(el.closest && el.closest("#imgadm"))); break;
     case "bugAdminClose": { const be = $("bugs"); if (be) be.hidden = true; break; }
     case "bugView": { const be = $("bugs"); if (be) be.hidden = true; openSheet(el.dataset.key); break; }
     case "bugSolve": {
@@ -4522,7 +4659,7 @@ renderAll();
 { const mg = location.hash.match(/^#rehber-([a-z]+)/); if (mg && GUIDE_BY.has(mg[1])) openGuide(mg[1], {root:true}); }
 // Ana ekran kısayolu ile gelindiyse ilgili sekmeyi aç (?sekme=ara / menu / sevilen)
 { const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"recent"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
-{ const fb = $("footBugs"); if (fb) fb.hidden = !adminKey; } // hata bildirimleri yalnızca yöneticiye görünür
+{ const fb = $("footBugs"); if (fb) fb.hidden = !adminKey; const fi = $("footImg"); if (fi) fi.hidden = !adminKey; } // hata bildirimleri yalnızca yöneticiye görünür
 // İlk kez gelen kişiye kısa tanıtım
 try { if (!localStorage.getItem("pisir-tur") && !/^#(t=|rehber-)/.test(location.hash)) renderTour(); } catch(e) {}
 // Ziyaretçi istatistikleri (Cloudflare Web Analytics, çerez kullanmaz). Anahtarı aldığında tırnakların arasına yaz.
