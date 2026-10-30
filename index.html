@@ -99,6 +99,10 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+button.brand{background:none;border:0;padding:0;margin:0;font-family:inherit;line-height:inherit;color:inherit;cursor:pointer;text-align:left}
+button.brand:hover span:last-child{color:var(--cobalt)}
+.brand-img{display:block;object-fit:cover;background:none !important;padding:0;border-radius:12px}
+.foot-logo .brand-img{border-radius:10px}
 .inspire{display:grid;gap:12px;padding:20px;border-radius:24px;background:linear-gradient(135deg,#FFF4E3 0%,#E8F0FF 100%);margin:0 0 26px}
 :root[data-theme="dark"] .inspire{background:linear-gradient(135deg,#2B2216 0%,#16244A 100%)}
 .inspire-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
@@ -706,7 +710,7 @@ header.hero{padding:28px 0 20px}
 </head>
 <body>
 <div class="wrap">
-  <nav class="topbar" aria-label="Ana menü"><div class="brand"><span class="brand-logo" aria-hidden="true">🍳</span><span>Bugün ne pişirsem?</span></div>
+  <nav class="topbar" aria-label="Ana menü"><button type="button" class="brand" data-act="goHome" aria-label="Ana sayfa: Bugün ne pişirsem?"><img class="brand-logo brand-img" src="icon-192.png" alt="" width="42" height="42"><span>Bugün ne pişirsem?</span></button>
     <div class="tabs" role="tablist" aria-label="Görünüm">
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="pantry" id="tab-pantry"><span class="tab-i" aria-hidden="true">🧺</span><span class="tab-t">Dolabım</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="dish" id="tab-dish"><span class="tab-i" aria-hidden="true">🔎</span><span class="tab-t">Yemek ara</span></button>
@@ -754,7 +758,7 @@ header.hero{padding:28px 0 20px}
   <footer class="site-foot">
     <div class="foot-grid">
       <div class="foot-brand">
-        <p class="foot-logo"><span class="brand-logo" aria-hidden="true">🍳</span> Bugün ne pişirsem?</p>
+        <p class="foot-logo"><img class="brand-logo brand-img" src="icon-192.png" alt="" width="34" height="34"> Bugün ne pişirsem?</p>
         <p class="foot-slogan">Dolabındakiyle ne pişireceğini bul.</p>
         <p class="foot-text">Evdeki malzemelerden yemek önerisi, adım adım sesli pişirme ve haftalık menü. Ücretsiz, reklamsız, üyeliksiz.</p>
       </div>
@@ -3401,6 +3405,13 @@ document.addEventListener("click", e => {
     case "inspireOne": { const c = el.dataset.c, used = new Set(Object.entries(inspire.picks).filter(([k]) => k !== c).map(([, v]) => v)); inspire.picks[c] = pickFor(c, inspire.picks[c], used); renderDishList(); break; }
     case "inspireOpt": { const o = el.dataset.o; inspire[o] = !inspire[o]; inspire.picks = {}; renderDishList(); break; }
     case "inspireGo": if (mode === "pantry") resetPantry(); mode = "dish"; filters = new Set(); $("dishSearch").value = ""; currentKey = null; dishState = null; renderAll(); window.scrollTo(0, 0); break;
+    case "goHome":
+      // Logoya basınca: açık tarif/rehberi kapat, Dolabım'ın en üstüne dön
+      if (guideKey || sheetKey){ guideKey = null; sheetKey = null; renderSheet(); }
+      try { if (location.hash) history.replaceState(null, "", location.pathname + location.search); } catch(e) {}
+      if (mode !== "pantry"){ mode = "pantry"; planTarget = null; filters = new Set(); }
+      currentKey = null; dishState = null; renderAll(); window.scrollTo(0, 0);
+      break;
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
