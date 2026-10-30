@@ -769,6 +769,19 @@ body{background:var(--bg)}
 /* Ses etiketi: sesli mod düğmesinin yanında küçük rozet */
 .voice-kind{display:inline-block;margin-left:6px;font-size:.78rem;font-weight:700;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
 .voice-kind:empty{display:none}
+.cook-top{flex-wrap:wrap;row-gap:8px}
+.cook-vp-btn{margin-left:6px;padding:6px 12px;font-size:.85rem;white-space:nowrap}
+.voice-panel{max-width:100%;box-sizing:border-box}
+.voice-panel{margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:0 4px 18px rgba(29,36,51,.08)}
+.vp-title{margin:4px 0 8px;font-weight:800}
+.vp-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.vp-row{display:flex;gap:8px;align-items:stretch}
+.vp-pick{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);cursor:pointer;font:inherit}
+.vp-pick small{color:var(--muted);font-size:.8rem}
+.vp-row.on .vp-pick{border-color:var(--cobalt);background:color-mix(in srgb,var(--cobalt) 9%,var(--surface))}
+.vp-try{white-space:nowrap;padding:0 14px}
+.vp-styles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.vp-close{width:100%}
 .cook-wake:has(#cookWake:empty){display:none}
 /* "Dolabında ne var?" merkezde */
 .hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
@@ -799,6 +812,24 @@ body{background:var(--bg)}
   @keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.08)}100%{transform:scale(1)}}
   .badge.ok .badge-emo{animation:pop .4s ease}
 }
+/* Sade "Dolabım" */
+body[data-mode="pantry"] .hero-card{padding:22px 26px}
+body[data-mode="pantry"] #greet{display:none}
+body[data-mode="pantry"] .hero h1{font-size:clamp(1.7rem,3.2vw,2.3rem);margin:0}
+body[data-mode="pantry"] #heroText{margin:6px 0 0}
+.pref-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;width:100%;margin-top:14px;padding:10px 14px;border:1px dashed var(--line);border-radius:14px;background:transparent;color:var(--muted);font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;text-align:left}
+.pref-sum-go{margin-left:auto;color:var(--cobalt)}
+.pref-sum[aria-expanded="true"]{border-style:solid;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.pref-sum + .pref-row{margin-top:0;border-top-left-radius:0;border-top-right-radius:0}
+.chip-more{border-style:dashed;color:var(--cobalt);font-weight:700}
+.start-card{text-align:center}
+.start-emo{font-size:2.6rem;line-height:1;margin-bottom:6px}
+.start-card .sub{margin:4px auto 16px;max-width:34ch}
+.start-l{margin:0 0 8px;font-size:.85rem;font-weight:700;color:var(--muted)}
+.start-card .combos{display:flex;flex-direction:column;gap:8px;max-width:340px;margin:0 auto 12px}
+.start-card .combo{justify-content:flex-start;padding:10px 14px;font-size:.9rem;border-radius:14px;min-height:0}
+.start-card .inspire-go{max-width:340px;margin:0 auto;display:block;width:100%}
+#results .daily-mini{margin-top:14px}
 </style>
 </head>
 <body>
@@ -836,7 +867,7 @@ body{background:var(--bg)}
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…" aria-label="Malzeme ara">
+        <input class="search" id="search" type="search" placeholder="🔎 Malzeme ara: patlıcan, kıyma…" aria-label="Malzeme ara">
         <label class="fav scan-btn" title="Buzdolabının ya da tezgâhın fotoğrafını çek, malzemeleri biz bulalım">📸 <span>Fotoğraftan tanı</span><input type="file" accept="image/*" capture="environment" id="fridgeInput" hidden></label>
       </div>
       <div id="groups"></div>
@@ -905,7 +936,7 @@ body{background:var(--bg)}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 56</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 58</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -1906,8 +1937,8 @@ function renderHero(){
   if (!$("dietBar").hidden) $("dietBar").innerHTML = dietBarHTML();
   $("greet").textContent = greeting();
   $("heroTitle").textContent = HERO[mode][0];
-  $("heroText").textContent = mode === "pantry" ? "Malzemelerini seç ya da buzdolabının fotoğrafını çek; sana ne pişirebileceğini hemen söyleyelim." : HERO[mode][1];
-  $("heroCta").hidden = $("heroAi").hidden = mode !== "pantry";
+  $("heroText").textContent = mode === "pantry" ? "Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim." : HERO[mode][1];
+  $("heroCta").hidden = $("heroAi").hidden = true;
   const listMode = mode === "fav" || mode === "recent";
   ["pantry","dish","plan","fav","recent"].forEach(m => $("tab-" + m).setAttribute("aria-selected", mode === m));
   const planN = plan.reduce((n, d) => n + d.length, 0);
@@ -2231,7 +2262,46 @@ function closeTour(){ const el = $("tour"); if (el) el.hidden = true; try { loca
 /* ---------- Akıcı sesli anlatım: yapay zekâ tarifi konuşma diline çevirir ---------- */
 let narr = load("pisir-anlatim", {}); if (!narr || typeof narr !== "object") narr = {};
 const narrPending = {};
+let voicePref = load("pisir-sesci", {ses:"Kore", stil:"sade"});
+if (!voicePref || typeof voicePref !== "object") voicePref = {ses:"Kore", stil:"sade"};
+const VOICE_LIST = [
+  ["Kore", "Kore", "Net ve güven veren kadın sesi"],
+  ["Charon", "Charon", "Sakin, bilgilendirici erkek sesi"],
+  ["Aoede", "Aoede", "Hafif ve ferah kadın sesi"],
+  ["Achird", "Achird", "Samimi, arkadaşça erkek sesi"],
+  ["Iapetus", "Iapetus", "Açık ve anlaşılır erkek sesi"],
+  ["Sulafat", "Sulafat", "Sıcak kadın sesi (önceki ses)"],
+  ["telefon", "Telefonun sesi", "İnternet gerekmez, anında okur"]
+];
+const saveVoicePref = () => { try { localStorage.setItem("pisir-sesci", JSON.stringify(voicePref)); } catch(e) {} };
+function voicePanelHTML(){
+  return `<div class="voice-panel" role="group" aria-label="Ses seçimi">
+    <p class="vp-title">🎙️ Okuyan ses</p>
+    <div class="vp-list">${VOICE_LIST.map(([id, ad, not]) => `<div class="vp-row${voicePref.ses === id ? " on" : ""}"><button type="button" class="vp-pick" data-act="setVoice" data-v="${id}" aria-pressed="${voicePref.ses === id}"><b>${voicePref.ses === id ? "✓ " : ""}${ad}</b><small>${not}</small></button><button type="button" class="fav vp-try" data-act="tryVoice" data-v="${id}">▶ Dinle</button></div>`).join("")}</div>
+    <p class="vp-title">🗣️ Okuma tarzı</p>
+    <div class="vp-styles"><button type="button" class="chip" data-act="setStyle" data-v="sade" aria-pressed="${voicePref.stil !== "sohbet"}">Sade: adımı olduğu gibi okur</button><button type="button" class="chip" data-act="setStyle" data-v="sohbet" aria-pressed="${voicePref.stil === "sohbet"}">Sohbet gibi anlatır</button></div>
+    <button type="button" class="fav vp-close" data-act="voicePick">Tamam</button>
+  </div>`;
+}
+const VOICE_SAMPLE = "Soğanları ince ince doğra ve tereyağında, pembeleşene kadar beş dakika kavur.";
+async function tryVoice(id){
+  stopSpeech(); const seq = speakSeq;
+  if (id === "telefon"){ deviceSpeak(VOICE_SAMPLE); return; }
+  showToast("Ses hazırlanıyor…");
+  const url = await aiVoice(VOICE_SAMPLE, id, "sade");
+  if (seq !== speakSeq) return;
+  if (url && player){ player.src = url; try { await player.play(); return; } catch(e) {} }
+  showToast("Bu ses şu an hazırlanamadı, biraz sonra tekrar dene.");
+}
+function plainStep(r, i){
+  return r.adimlar[i]
+    .replace(/(\d+)\s*°\s*C/g, "$1 derece")
+    .replace(/(\d+)\s*[–-]\s*(\d+)/g, "$1 ile $2")
+    .replace(/(\d+),5(?!\d)/g, "$1 buçuk")
+    .replace(/;/g, ",");
+}
 async function ensureNarration(r){
+  if (voicePref.stil !== "sohbet") return null; // sade okumada yapay zekâ anlatımı kullanılmaz
   const k = lang + "|" + r.key;
   if (narr[k] || !sampleFn) return narr[k] || null;
   if (narrPending[k]) return narrPending[k];
@@ -2261,9 +2331,11 @@ Yalnızca şu JSON'u döndür: {"adimlar": ["1. adımın anlatımı", "..."], "b
 }
 function narrText(r, i){
   const n = narr[lang + "|" + r.key];
-  if (i >= r.adimlar.length) return (n && n.bitis) || (lang === "en" ? `Enjoy your meal! ${enName(r)} is ready.` : `Afiyet olsun! ${r.ad} hazır, ellerine sağlık.`);
+  if (i >= r.adimlar.length) return (n && voicePref.stil === "sohbet" && n.bitis) || (lang === "en" ? `Enjoy your meal! ${enName(r)} is ready.` : `Afiyet olsun! ${r.ad} hazır, ellerine sağlık.`);
+  if (lang === "en") return n && voicePref.stil === "sohbet" ? n.adimlar[i] : trText(r.adimlar[i]);
+  if (voicePref.stil !== "sohbet") return plainStep(r, i);
   if (n) return n.adimlar[i];
-  return lang === "en" ? `Step ${i + 1}. ${trText(r.adimlar[i])}` : spokenStep(r, i);
+  return spokenStep(r, i);
 }
 // Sıradaki iki adımın sesini arka planda hazırla: adımlar arasında bekleme olmasın
 async function prefetchVoice(r, from){
@@ -2503,8 +2575,12 @@ function renderPrefs(){
 function openPrefs(onb){ prefsOnb = !!onb; prefSearchText = ""; renderPrefs(); }
 function closePrefs(){ const el = $("prefs"); if (el) el.hidden = true; renderAll(); }
 document.addEventListener("input", e => { if (e.target && e.target.id === "prefSearch"){ prefSearchText = e.target.value; renderPrefs(); } });
+let prefOpen = false, quickAll = false;
 function prefRowHTML(){
-  return `<div class="pref-row">
+  const sureL = pantryTime ? (pantryTime === 60 ? "1 saate kadar" : `${pantryTime} dk'ya kadar`) : "her süre";
+  const sum = `<button type="button" class="pref-sum" data-act="prefToggle" aria-expanded="${prefOpen}"><span>👥 ${kisiNow()} kişi</span><span>⏱️ ${sureL}</span>${prefs.sev.length ? `<span>🚫 ${prefs.sev.length} sevmediğin</span>` : ""}<span class="pref-sum-go">${prefOpen ? "Kapat ▲" : "Değiştir ▼"}</span></button>`;
+  if (!prefOpen) return sum;
+  return sum + `<div class="pref-row">
     <div class="pref-grp" aria-label="Kişi sayısı"><span class="pref-l" aria-hidden="true">👥</span><button type="button" class="pref-step" data-act="kisiMinus" aria-label="Bir kişi azalt">−</button><b>${kisiNow()} kişi</b><button type="button" class="pref-step" data-act="kisiPlus" aria-label="Bir kişi artır">+</button></div>
     <div class="pref-grp" role="group" aria-label="Ne kadar vaktin var?"><span class="pref-l" aria-hidden="true">⏱️</span>${[[0,"Hepsi"],[15,"15 dk"],[30,"30 dk"],[60,"1 saat"]].map(([v, l]) => `<button type="button" class="diet" data-act="sureSet" data-v="${v}" aria-pressed="${pantryTime === v}">${l}</button>`).join("")}</div>
     <button type="button" class="link-btn pref-open" data-act="prefsOpen">⚙️ ${prefs.sev.length ? `${prefs.sev.length} sevmediğin` : "Tercihlerim"}</button>
@@ -2888,11 +2964,10 @@ function renderGroups(){
     return;
   }
 
-  // 3) Kişi sayısı, süre ve en çok kullanılanlar
+  // 3) Malzemeler (en sık 16'sı; gerisi tek dokunuşla) ve küçük ayar satırı
+  const shown = QUICK.filter((id, i) => quickAll || i < 16 || selected.has(id));
+  html += `<div class="group"><div class="chips">${shown.map(id => chipHTML(id, LABEL[id])).join("")}${QUICK.length > shown.length ? `<button type="button" class="chip chip-more" data-act="quickMore">＋ ${QUICK.length - shown.length} malzeme daha</button>` : ""}</div></div>`;
   html += prefRowHTML();
-  html += `<div class="group"><div class="group-head"><h2>⭐ En çok kullanılanlar</h2></div><div class="chips">${QUICK.map(id => chipHTML(id, LABEL[id])).join("")}</div></div>`;
-
-  html += `<p class="quick-hint">🔎 Aradığın malzeme burada yoksa yukarıdaki arama kutusuna yaz.</p>`;
   // Öneri şeridi malzeme listesinin içinde: liste yeniden çizilirken şeridin içeriği (ve görselleri) korunur
   const oldStrip = $("sugStrip"), keep = oldStrip ? [...oldStrip.childNodes] : [];
   setHTML($("groups"), html);
@@ -2910,7 +2985,7 @@ function resetPantry(){
 // Hızlı başlangıç: tek dokunuşla seçilen hazır malzeme kombinasyonları
 const COMBOS = [["🍳",["yumurta","domates","sogan"]],["🥣",["mercimek","sogan","havuc"]],["🍝",["makarna","domates","sarimsak"]],["🍗",["tavuk","biber","domates"]],["🍆",["patlican","kiyma","domates","sogan"]],["🥗",["domates","salatalik","sogan","limon"]]];
 function combosHTML(){
-  return `<div class="combos">${COMBOS.map(([e, ids], i) => `<button type="button" class="combo" data-act="combo" data-i="${i}"><span class="combo-e" aria-hidden="true">${e}</span><span>${ids.map(id => LABEL[id]).join(" + ")}</span></button>`).join("")}</div>`;
+  return `<div class="combos">${COMBOS.slice(0, 4).map(([e, ids], i) => `<button type="button" class="combo" data-act="combo" data-i="${i}"><span class="combo-e" aria-hidden="true">${e}</span><span>${ids.map(id => LABEL[id]).join(" + ")}</span></button>`).join("")}</div>`;
 }
 // Çoğu yemekte olmasa da olur: lezzet verir ama yemeğin kendisi değildir
 const FLEX = new Set(["kekik","kimyon","sumak","biber","kapya","maydanoz","dereotu","nane","pul_biber","limon","sarimsak","salca","sogan"]);
@@ -2966,7 +3041,7 @@ function renderResults(){
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button>`}</div>`;
+    html = `<div class="section start-card"><div class="start-emo" aria-hidden="true">🍳</div><h2>Yemek önerilerin burada</h2><p class="sub">Soldan malzeme seçtikçe yapabileceğin yemekler burada belirir.</p><p class="start-l">Ya da hızlıca dene:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Bana rastgele öner</button>`}</div>${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -3283,33 +3358,34 @@ async function voiceFromCache(text){
   try { if (typeof caches === "undefined") return null; const c = await caches.open(VOICE_CACHE); const r = await c.match(voiceKey(text)); return r ? URL.createObjectURL(await r.blob()) : null; } catch(e){ return null; }
 }
 function voiceToCache(text, blob){ try { if (typeof caches !== "undefined") caches.open(VOICE_CACHE).then(c => c.put(voiceKey(text), new Response(blob, {headers:{"Content-Type":blob.type || "audio/wav"}}))); } catch(e) {} }
-function aiVoice(text){
-  if (!TTS_URL || !navigator.onLine) return voiceFromCache(text);
-  if (audioCache.has(text)) return audioCache.get(text);
-  const p = voiceFromCache(text).then(hit => {
+function aiVoice(text, ses = voicePref.ses, stil = voicePref.stil){
+  const ck = ses + "|" + stil + "|" + text;
+  if (!TTS_URL || !navigator.onLine) return voiceFromCache(ck);
+  if (audioCache.has(ck)) return audioCache.get(ck);
+  const p = voiceFromCache(ck).then(hit => {
     if (hit) return hit;
     if (aiVoiceFails >= 2 && Date.now() < aiVoiceRetryAt) return null;
-    return fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text, lang})})
+    return fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text, lang, voice:ses, stil})})
       .then(res => res.ok ? res.json() : null)
       .then(d => {
         if (!d || !d.audio){ aiVoiceFails++; if (aiVoiceFails >= 2) aiVoiceRetryAt = Date.now() + 60000; return null; }
         aiVoiceFails = 0;
         const m = /rate=(\d+)/.exec(d.mime || "");
         const blob = /wav|mpeg|mp3|ogg/.test(d.mime || "") ? new Blob([Uint8Array.from(atob(d.audio), c => c.charCodeAt(0))], {type:d.mime}) : pcmToWav(d.audio, m ? Number(m[1]) : 24000);
-        voiceToCache(text, blob);
+        voiceToCache(ck, blob);
         return URL.createObjectURL(blob);
       })
       .catch(() => { aiVoiceFails++; if (aiVoiceFails >= 2) aiVoiceRetryAt = Date.now() + 60000; return null; });
   });
-  audioCache.set(text, p);
-  p.then(u => { if (!u) audioCache.delete(text); });
+  audioCache.set(ck, p);
+  p.then(u => { if (!u) audioCache.delete(ck); });
   return p;
 }
 // Sesli mod açıksa tarif açılır açılmaz anlatımı ve ilk adımın sesini arka planda hazırla
 function warmVoice(r){
-  if (!voiceOn || !r || !TTS_URL) return;
+  if (!voiceOn || !r || !TTS_URL || voicePref.ses === "telefon") return;
   const go = () => aiVoice(narrText(r, 0)).then(() => { if (r.adimlar.length > 1) aiVoice(narrText(r, 1)); });
-  if (sampleFn && !narr[lang + "|" + r.key]) ensureNarration(r).then(go); else go();
+  if (voicePref.stil === "sohbet" && sampleFn && !narr[lang + "|" + r.key]) ensureNarration(r).then(go); else go();
 }
 
 function deviceSpeak(text){
@@ -3334,6 +3410,7 @@ function stopSpeech(){
 async function speak(text){
   if (!voiceOn) return;
   stopSpeech();
+  if (voicePref.ses === "telefon"){ deviceSpeak(text); updateVoiceLabel(); return; }
   const seq = speakSeq;
   const url = await Promise.race([aiVoice(text), new Promise(res => setTimeout(() => res("bekleme"), 2500))]); // en fazla 2,5 sn bekle, sonra telefonun sesiyle başla
   if (seq !== speakSeq) return; // bu arada başka adıma geçildi
@@ -3520,9 +3597,9 @@ function renderCook(){
   const n = r.adimlar.length;
   const serv = getServ(r), f = serv / (r.kisi || 4);
   let h = `<div class="cook-inner">
-    <div class="cook-top"><button type="button" class="cook-close" data-act="cookClose">Kapat</button><div class="cook-title" id="cookTitle">${esc(r.ad)}</div>${canSpeak() ? `<button type="button" class="voice-btn" data-act="voice" aria-pressed="${voiceOn}">${voiceOn ? "🔊 Sesli" : "🔈 Sessiz"}</button><span id="voiceKind" class="voice-kind"></span>` : ""}<span class="cook-count">${cook.step < n ? `Adım ${cook.step + 1} / ${n}` : "Bitti"}</span></div>
+    <div class="cook-top"><button type="button" class="cook-close" data-act="cookClose">Kapat</button><div class="cook-title" id="cookTitle">${esc(r.ad)}</div>${canSpeak() ? `<button type="button" class="voice-btn" data-act="voice" aria-pressed="${voiceOn}">${voiceOn ? "🔊 Sesli" : "🔈 Sessiz"}</button><span id="voiceKind" class="voice-kind"></span>${voiceOn ? `<button type="button" class="fav cook-vp-btn" data-act="voicePick" aria-expanded="${!!cook.vp}">🎙️ Ses</button>` : ""}` : ""}<span class="cook-count">${cook.step < n ? `Adım ${cook.step + 1} / ${n}` : "Bitti"}</span></div>
     <div class="cook-progress" aria-hidden="true"><span style="width:${Math.min(100, (cook.step + 1) / n * 100)}%"></span></div>
-    <div class="cook-timers" id="cookTimers" aria-live="polite"></div>`;
+    <div class="cook-timers" id="cookTimers" aria-live="polite"></div>${cook.vp && voiceOn ? voicePanelHTML() : ""}`;
   if (cook.step < n){
     const s = r.adimlar[cook.step];
     const min = stepMinutes(s);
@@ -3761,7 +3838,7 @@ document.addEventListener("click", e => {
   const key = el.dataset.key;
   const r = key ? REG.get(key) : null;
   // Telefonlar sesi yalnızca bir dokunuşla başlatmaya izin verir: pişirme butonlarında sesi her seferinde "aç"
-  if (voiceOn && ["cook","cookNext","cookPrev","speakAgain"].includes(act)) unlockAudio();
+  if (["cook","cookNext","cookPrev","speakAgain","tryVoice","setVoice","setStyle"].includes(act) && voiceOn) unlockAudio();
   switch (act){
     case "tab": if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
     case "filter": {
@@ -3917,9 +3994,15 @@ document.addEventListener("click", e => {
         .catch(() => { bugAdmin.msg = "Silinemedi, tekrar dene."; renderBugAdmin(); });
       break;
     }
+    case "prefToggle": prefOpen = !prefOpen; renderGroups(); break;
+    case "quickMore": quickAll = true; renderGroups(); break;
     case "focusSearch": { const se = $("search"); if (se){ se.scrollIntoView({block:"center", behavior:"smooth"}); se.focus({preventScroll:true}); } break; }
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
+    case "voicePick": cook.vp = !cook.vp; renderCook(); break;
+    case "setVoice": voicePref.ses = el.dataset.v; saveVoicePref(); renderCook(); tryVoice(voicePref.ses); break;
+    case "tryVoice": tryVoice(el.dataset.v); break;
+    case "setStyle": { voicePref.stil = el.dataset.v; saveVoicePref(); renderCook(); const cr = REG.get(cook.key); if (cr && cook.step < cr.adimlar.length){ if (voicePref.stil === "sohbet") ensureNarration(cr); speak(narrText(cr, cook.step)); } break; }
     case "speakAgain": { const cr = REG.get(cook.key); if (cr) speak(narrText(cr, cook.step)); break; }
     case "menuToPlan": {
       const di = (new Date().getDay() + 6) % 7;
