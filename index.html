@@ -458,7 +458,7 @@ body,.dish-card,.mybox,.acc,.chip,.tabs,.daily,.nut{transition:background-color 
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
 .confetti i{position:absolute;top:-16px;width:9px;height:15px;border-radius:2px;animation-name:konfeti;animation-timing-function:linear;animation-fill-mode:forwards}
 @keyframes konfeti{to{transform:translateY(110vh) rotate(760deg)}}
-.dc-media img,.daily-media img,.detail-img img{animation:gorsel .35s ease}
+.img-new{animation:gorsel .35s ease} /* yalnızca ilk kez yüklenen görsel yavaşça belirir */
 @keyframes gorsel{from{opacity:0}to{opacity:1}}
 /* Karanlık modda sabit renkli parçalar */
 :root[data-theme="dark"] .cat-populer{--c:#74A7FF;--cbg:#18243D}
@@ -1778,7 +1778,7 @@ function prefetchImages(){
 function applyImg(card, v){
   if (card.classList.contains("has-img")) return;
   const m = card.querySelector(".dc-media"); if (!m) return;
-  const img = new Image(); img.alt = ""; img.decoding = "async";
+  const img = new Image(); img.alt = ""; img.decoding = "async"; img.className = "img-new";
   img.onload = () => { if (!card.classList.contains("has-img")){ m.prepend(img); card.classList.add("has-img"); } };
   img.src = v.s;
 }
@@ -2309,7 +2309,7 @@ function inspireHTML(){
     <div class="plan-presets"><button type="button" class="diet" data-act="inspireOpt" data-o="quick" aria-pressed="${inspire.quick}">⚡ 30 dk altı</button><button type="button" class="diet" data-act="inspireOpt" data-o="easy" aria-pressed="${inspire.easy}">🟢 Sadece kolay</button></div>
     ${items.length ? `<div class="inspire-grid">${items.map(([c, l, r]) => {
       const wi = wikiInfo(r), n = nutrition(r);
-      return `<div class="insp cat-${recipeCat(r)}"><button type="button" class="insp-main" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><small class="insp-cat">${l}</small><b>${esc(r.ad)}</b><small class="insp-meta">${r.sure ? `⏱️ ${fmtDur(r.sure)}` : ""}${n && n.kcal ? ` · 🔥 ${n.kcal} kcal` : ""}</small></span></button><button type="button" class="insp-re" data-act="inspireOne" data-c="${c}" aria-label="${l} önerisini değiştir">🔄</button></div>`;
+      return `<div class="insp cat-${recipeCat(r)}"><button type="button" class="insp-main" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><small class="insp-cat">${l}</small><b>${esc(r.ad)}</b><small class="insp-meta">${r.sure ? `⏱️ ${fmtDur(r.sure)}` : ""}${n && n.kcal ? ` · 🔥 ${n.kcal} kcal` : ""}</small></span></button><button type="button" class="insp-re" data-act="inspireOne" data-c="${c}" aria-label="${l} önerisini değiştir">🔄</button></div>`;
     }).join("")}</div>` : `<p class="sub">Bu seçeneklere uyan tarif bulamadık; bir seçeneği kaldırmayı dene.</p>`}</section>`;
 }
 
@@ -2329,7 +2329,7 @@ function pickFrom(list, exclude){
 function inspCardHTML(r, label, reAct, reAttrs){
   const wi = wikiInfo(r), n = nutrition(r);
   if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (!v) return; if (mode === "dish") renderDishList(); else if (mode === "pantry") renderResults(); });
-  return `<div class="insp cat-${recipeCat(r)}"><button type="button" class="insp-main" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t">${label ? `<small class="insp-cat">${esc(label)}</small>` : ""}<b>${esc(r.ad)}</b><small class="insp-meta">${r.sure ? `⏱️ ${fmtDur(r.sure)}` : ""}${n && n.kcal ? ` · 🔥 ${n.kcal} kcal` : ""}</small></span></button><button type="button" class="insp-re" data-act="${reAct}" ${reAttrs} aria-label="Başka bir öneri">🔄</button></div>`;
+  return `<div class="insp cat-${recipeCat(r)}"><button type="button" class="insp-main" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t">${label ? `<small class="insp-cat">${esc(label)}</small>` : ""}<b>${esc(r.ad)}</b><small class="insp-meta">${r.sure ? `⏱️ ${fmtDur(r.sure)}` : ""}${n && n.kcal ? ` · 🔥 ${n.kcal} kcal` : ""}</small></span></button><button type="button" class="insp-re" data-act="${reAct}" ${reAttrs} aria-label="Başka bir öneri">🔄</button></div>`;
 }
 function inspire3HTML(id, list){
   if (list.length < 4) return ""; // az tarifli kategoride öneriye gerek yok
@@ -2804,7 +2804,7 @@ function renderResults(){
     const note = !missNames.length ? `<small class="sug-ok">✓ Hepsi evde var</small>`
       : x.flexOk ? `<small class="sug-ok">✓ Bu malzemelerle yapılır · ${esc(missNames.join(", ").toLocaleLowerCase("tr"))} isteğe bağlı</small>`
       : `<small class="sug-miss">Eksik: ${esc(missNames.join(", "))}</small>`;
-    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}</span></button>`;
+    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}</span></button>`;
   };
   const readyS = ready.slice(0, 8), nearS = near.slice(0, 6);
   const sugBlock = (tag) => {
@@ -3742,7 +3742,14 @@ document.addEventListener("click", e => {
     case "prefKisi": prefs.kisi = Number(el.dataset.v); savePrefs(); renderPrefs(); break;
     case "prefSev": { const id = el.dataset.id; prefs.sev = prefs.sev.includes(id) ? prefs.sev.filter(x => x !== id) : [...prefs.sev, id]; savePrefs(); renderPrefs(); break; }
     case "prefsDone": case "prefsClose": closePrefs(); break;
-    case "kisiMinus": case "kisiPlus": prefs.kisi = Math.min(12, Math.max(1, kisiNow() + (act === "kisiPlus" ? 1 : -1))); savePrefs(); renderAll(); break;
+    case "kisiMinus": case "kisiPlus": {
+      prefs.kisi = Math.min(12, Math.max(1, kisiNow() + (act === "kisiPlus" ? 1 : -1))); savePrefs();
+      // Öneriler kişi sayısına bağlı değil: sayfayı yeniden çizmeden sadece sayıyı ve açık tarifi güncelle
+      document.querySelectorAll(".pref-row .pref-grp b").forEach(b => { b.textContent = `${kisiNow()} kişi`; });
+      if (sheetKey) renderSheet();
+      if (mode === "plan") renderPlan();
+      break;
+    }
     case "sureSet": pantryTime = Number(el.dataset.v) || 0; try { localStorage.setItem("pisir-sure", JSON.stringify(pantryTime)); } catch(e) {} renderAll(); break;
     case "bugOpen": Object.assign(bug, {key, tur:"", msg:"", sending:false, done:false, text:""}); renderSheet(); break;
     case "bugType": bug.text = $("bugText") ? $("bugText").value : bug.text; bug.tur = bug.tur === el.dataset.t ? "" : el.dataset.t; renderSheet(); break;
