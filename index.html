@@ -99,6 +99,42 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+.inspire{display:grid;gap:12px;padding:20px;border-radius:24px;background:linear-gradient(135deg,#FFF4E3 0%,#E8F0FF 100%);margin:0 0 26px}
+:root[data-theme="dark"] .inspire{background:linear-gradient(135deg,#2B2216 0%,#16244A 100%)}
+.inspire-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.inspire-head h2{margin:0 0 4px;font-size:1.35rem}
+.inspire-head .sub{margin:0}
+.inspire-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.insp{display:flex;align-items:stretch;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);overflow:hidden}
+.insp-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:8px;border:0;background:none;color:var(--ink);text-align:left;cursor:pointer}
+.insp-main .sug-img{background:var(--cbg)}
+.insp-cat{color:var(--c);font-weight:800;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em}
+.insp-meta{color:var(--muted);font-size:.78rem}
+.insp-re{flex:0 0 44px;border:0;border-left:1.5px solid var(--line);background:var(--bg);font-size:1.05rem;cursor:pointer}
+.insp-re:hover{background:var(--cbg)}
+@media (max-width:699px){.inspire{padding:16px}.inspire-grid{display:flex;overflow-x:auto;padding-bottom:6px}.insp{flex:0 0 260px}}
+.inspire-go{margin-top:14px;width:100%;text-align:center}
+.suggest-strip .inspire-go{margin:0}
+.guide{max-width:720px;padding-bottom:10px}
+.guide-emo{font-size:3.2rem;line-height:1}
+.guide-tag{margin:10px 0 0;font-weight:800;color:var(--cobalt);font-size:.9rem}
+.guide h2{font-size:clamp(1.6rem,4.5vw,2.1rem);line-height:1.2;margin:4px 0 10px}
+.guide-lead{font-size:1.05rem;color:var(--muted);margin:0 0 18px;line-height:1.55}
+.guide h3{font-size:1.15rem;margin:24px 0 8px}
+.guide ul,.guide ol{padding-left:22px;line-height:1.6}
+.guide li{margin:6px 0}
+.guide-table{overflow-x:auto;border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
+.guide-table table{width:100%;border-collapse:collapse;font-size:.95rem}
+.guide-table th,.guide-table td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.guide-table tr:last-child td{border-bottom:0}
+.guide-table th{color:var(--muted);font-size:.85rem}
+.guide-steps li{margin:10px 0}
+.guide-dl dt{font-weight:800;margin-top:14px}
+.guide-dl dd{margin:2px 0 0;color:var(--ink);line-height:1.55}
+.guide-tip{margin:22px 0 14px;padding:14px 16px;border-radius:16px;background:var(--bg);border:1.5px solid var(--line);line-height:1.55}
+.guide-more{margin-top:30px;padding-top:18px;border-top:1.5px solid var(--line)}
+.guide-more h3{margin-top:0}
+.guide-links{display:flex;flex-wrap:wrap;gap:8px}
 /* Bildirim baloncuğu */
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:80;background:#14213D;color:#fff;font-weight:800;padding:13px 20px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -443,7 +479,20 @@ body,.dish-card,.mybox,.acc,.chip,.tabs,.daily,.nut{transition:background-color 
 .detail-img img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;display:block;background:var(--line)}
 .detail-img figcaption{font-size:.82rem;margin-top:6px}
 .detail-img a{color:var(--muted)}
-.credits{color:var(--muted);font-size:.85rem;padding:24px 0 48px;border-top:1px solid var(--line);margin-top:24px}
+.site-foot{margin-top:40px;padding:32px 0 48px;border-top:1.5px solid var(--line);color:var(--muted)}
+.foot-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1.3fr;gap:28px}
+@media (max-width:1100px) and (min-width:900px){.foot-grid{grid-template-columns:1fr 1fr 1fr}.foot-brand{grid-column:1 / -1}}
+.foot-logo{display:flex;align-items:center;gap:10px;margin:0;font-weight:800;font-size:1.1rem;color:var(--ink)}
+.foot-logo .brand-logo{width:34px;height:34px;font-size:1.1rem;box-shadow:none}
+.foot-slogan{margin:10px 0 4px;font-weight:700;color:var(--ink)}
+.foot-text{margin:0;font-size:.9rem;line-height:1.55;max-width:300px}
+.foot-col h3{margin:4px 0 12px;font-size:.95rem;color:var(--ink)}
+.foot-col ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.foot-col button,.foot-col a{background:none;border:0;padding:0;font:inherit;font-size:.92rem;color:var(--muted);cursor:pointer;text-align:left;text-decoration:none}
+.foot-col button:hover,.foot-col a:hover{color:var(--cobalt);text-decoration:underline}
+.foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;margin-top:28px;padding-top:18px;border-top:1px solid var(--line);font-size:.8rem}
+@media (max-width:899px){.foot-grid{grid-template-columns:1fr 1fr}.foot-brand{grid-column:1 / -1}}
+@media (max-width:420px){.foot-grid{gap:22px 16px}.foot-col button,.foot-col a{font-size:.88rem}}
 
 .marquee{overflow:hidden;margin:0 0 14px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .marquee-track{display:flex;width:max-content;animation:kay 45s linear infinite}
@@ -702,7 +751,60 @@ header.hero{padding:28px 0 20px}
 
   <section class="plan" id="planMode" aria-label="Haftalık menü" hidden></section>
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
-  <footer class="credits"><p class="foot-links"><button type="button" class="link-btn" data-act="tourShow">❓ Nasıl kullanılır?</button> · <button type="button" class="link-btn" data-act="trOpen">🔄 Verilerini taşı</button> · <a href="gizlilik.html">📄 Gizlilik ve kullanım şartları</a></p>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
+  <footer class="site-foot">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <p class="foot-logo"><span class="brand-logo" aria-hidden="true">🍳</span> Bugün ne pişirsem?</p>
+        <p class="foot-slogan">Dolabındakiyle ne pişireceğini bul.</p>
+        <p class="foot-text">Evdeki malzemelerden yemek önerisi, adım adım sesli pişirme ve haftalık menü. Ücretsiz, reklamsız, üyeliksiz.</p>
+      </div>
+      <nav class="foot-col" aria-label="Keşfet">
+        <h3>Keşfet</h3>
+        <ul>
+          <li><button type="button" data-act="footGo" data-f="corba">Çorbalar</button></li>
+          <li><button type="button" data-act="footGo" data-f="etli">Etli yemekler</button></li>
+          <li><button type="button" data-act="footGo" data-f="sebze">Sebze yemekleri</button></li>
+          <li><button type="button" data-act="footGo" data-f="dunya">Dünya mutfağı</button></li>
+          <li><button type="button" data-act="footGo" data-f="spor">Sporcu yemekleri</button></li>
+          <li><button type="button" data-act="footGo" data-f="tatli">Tatlılar</button></li>
+          <li><button type="button" data-act="footGo" data-f="kahve">Kahveler</button></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Uygulama">
+        <h3>Uygulama</h3>
+        <ul>
+          <li><button type="button" data-act="footGo" data-mode="pantry">Dolabım</button></li>
+          <li><button type="button" data-act="footGo" data-mode="dish">Yemek ara</button></li>
+          <li><button type="button" data-act="footGo" data-mode="plan">Haftalık menü</button></li>
+          <li><button type="button" data-act="footGo" data-mode="fav">En sevilenler ve rozetler</button></li>
+          <li><button type="button" data-act="footGo" data-mode="recent">Geçmiş</button></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Destek">
+        <h3>Destek</h3>
+        <ul>
+          <li><button type="button" data-act="tourShow">Nasıl kullanılır?</button></li>
+          <li><button type="button" data-act="trOpen">Verilerini taşı</button></li>
+          <li><a href="gizlilik.html">Gizlilik ve kullanım şartları</a></li>
+          <li><a href="gizlilik.html#iletisim">İletişim</a></li>
+        </ul>
+      </nav>
+      <nav class="foot-col" aria-label="Rehberler">
+        <h3>Rehberler</h3>
+        <ul>
+          <li><button type="button" data-act="guide" data-id="olculer">Mutfak ölçüleri: 1 su bardağı kaç gram?</button></li>
+          <li><button type="button" data-act="guide" data-id="saklama">Sebze ve meyveler nasıl saklanır?</button></li>
+          <li><button type="button" data-act="guide" data-id="menu">Haftalık menü nasıl planlanır?</button></li>
+          <li><button type="button" data-act="guide" data-id="guvenlik">Artan yemekler ve gıda güvenliği</button></li>
+          <li><button type="button" data-act="guide" data-id="terimler">Mutfak terimleri sözlüğü</button></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Bugün ne pişirsem?</span>
+      <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
+    </div>
+  </footer>
 </div>
 
 <div class="lightbox" id="lightbox" data-act="lightboxClose" hidden><img id="lightboxImg" alt=""><p class="lightbox-hint">Kapatmak için dokun</p></div>
@@ -1063,7 +1165,7 @@ const FILTERS = CATS.map(c => [c[0], c[1]]);
 const CAT_BY_ID = Object.fromEntries(CATS.map(c => [c[0], c]));
 const FILTER_PROMPT = {spor:"yüksek proteinli, sporculara uygun", atistirmalik:"atıştırmalık olan", populer:"Türkiye'de çok sevilen klasik", kahve:"kahve içeceği olan", meze:"meze ya da başlangıç olan", dunya:"dünya mutfağından olan", hizli:"en fazla 15 dakikada hazırlanabilen", kahvalti:"kahvaltıda yenebilecek", etsiz:"et, tavuk ya da balık içermeyen", etli:"et, tavuk ya da balık içeren", sebze:"sebze yemeği olan", corba:"çorba olan", tatli:"tatlı olan"};
 const TAGS_OK = ["kahvalti","etsiz","etli","sebze","corba","tatli","meze","kahve","dunya","atistirmalik","spor"];
-const MEAT = new Set(["kiyma","tavuk","sucuk","kusbasi","balik","pastirma","somon"]);
+const MEAT = new Set(["kiyma","tavuk","sucuk","kusbasi","balik","pastirma","somon","ton_baligi"]);
 const ATIS = new Set(["Patates kızartması"]);
 const MEZE = new Set(["Cacık","Haydari","Acılı ezme","Havuç tarator","Piyaz","Sigara böreği","Patates salatası"]);
 const SEBZE = new Set(["Karnıyarık","Musakka","Kabak mücveri","Patates yemeği","Kıymalı patates","Zeytinyağlı taze fasulye","Türlü","İmam bayıldı","Ispanak yemeği","Zeytinyağlı pırasa","Kapuska","Mantar sote","Bezelye yemeği","Fırında sebze","Kıymalı ıspanak","Tavuklu bezelye","Patlıcan kebabı"]);
@@ -1915,6 +2017,140 @@ async function prefetchVoice(r, from){
   }
 }
 
+/* ---------- Rehberler: uygulama içinde açılan kısa yazılar ---------- */
+const GUIDES = [
+  {id:"olculer", emo:"📏", title:"Mutfak ölçüleri: 1 su bardağı kaç gram?", short:"Mutfak ölçüleri",
+   lead:"Tariflerdeki su bardağı ve kaşık ölçülerinin yaklaşık gram karşılıkları. Kaplar evden eve biraz değiştiği için değerler yaklaşıktır.",
+   body:`<h3>1 su bardağı (200 ml)</h3>
+<div class="guide-table"><table><tr><th>Malzeme</th><th>Yaklaşık</th></tr>
+<tr><td>Su, süt</td><td>200 ml</td></tr><tr><td>Sıvı yağ</td><td>180 g</td></tr>
+<tr><td>Un</td><td>110–120 g</td></tr><tr><td>Toz şeker</td><td>180 g</td></tr>
+<tr><td>Pirinç</td><td>180 g</td></tr><tr><td>Kırmızı mercimek</td><td>180 g</td></tr>
+<tr><td>Bulgur</td><td>160 g</td></tr><tr><td>Yulaf</td><td>90 g</td></tr>
+<tr><td>Ceviz içi</td><td>100 g</td></tr><tr><td>Yoğurt</td><td>200 g</td></tr></table></div>
+<h3>Kaşıklar</h3>
+<div class="guide-table"><table><tr><th>Ölçü</th><th>Hacim</th><th>Örnek</th></tr>
+<tr><td>1 yemek kaşığı</td><td>~15 ml</td><td>Un ~8 g, şeker ~12 g, tereyağı ~14 g, salça ~17 g</td></tr>
+<tr><td>1 tatlı kaşığı</td><td>~5–7 ml</td><td>Tuz ~6 g, şeker ~5 g</td></tr>
+<tr><td>1 çay kaşığı</td><td>~2,5–3 ml</td><td>Karabiber, kimyon gibi baharatlar</td></tr></table></div>
+<h3>Paketler ve diğerleri</h3>
+<ul><li>1 paket kabartma tozu ≈ 10 g, 1 paket vanilin ≈ 5 g, 1 paket kuru maya ≈ 10 g.</li>
+<li>1 fincan (Türk kahvesi) ≈ 70 ml.</li>
+<li>“1 tutam” iki parmak ucuyla alınan miktardır, yaklaşık yarım gram.</li></ul>
+<p class="guide-tip">💡 Hamur işlerinde unu kabı tepeleme doldurmak yerine kaşıkla doldurup üstünü sıyırırsan ölçü daha tutarlı olur.</p>`},
+  {id:"saklama", emo:"🥬", title:"Sebze ve meyveler nasıl saklanır?", short:"Sebze ve meyve saklama",
+   lead:"Doğru saklanan sebze ve meyve hem daha uzun dayanır hem de daha lezzetli kalır. Her şeyin yeri buzdolabı değil.",
+   body:`<h3>Buzdolabına koyma</h3>
+<ul><li><b>Domates:</b> Oda sıcaklığında daha lezzetli kalır; buzdolabı tadını ve dokusunu bozar. Çok olgunlaştıysa ancak o zaman buzdolabına al.</li>
+<li><b>Patates ve soğan:</b> Serin, kuru ve karanlık bir yerde, birbirinden ayrı sakla. Birlikte durduklarında daha çabuk filizlenip bozulabilirler.</li>
+<li><b>Sarımsak:</b> Serin ve kuru bir yerde, hava alan bir kapta.</li>
+<li><b>Muz ve avokado:</b> Oda sıcaklığında olgunlaşır. Olgunlaşan avokadoyu birkaç gün buzdolabında bekletebilirsin.</li>
+<li><b>Ekmek:</b> 2–3 gün oda sıcaklığında, daha uzun süre için dilimleyip dondurucuda. Buzdolabı ekmeği çabuk bayatlatır.</li></ul>
+<h3>Buzdolabında sakla</h3>
+<ul><li><b>Yeşillikler (maydanoz, dereotu, nane):</b> Yıkamadan, nemli kâğıt havluya sarıp kapalı bir kapta ya da saplarını bir bardak suya koyarak.</li>
+<li><b>Havuç:</b> Yeşil yapraklarını kesip sebze çekmecesinde.</li>
+<li><b>Mantar:</b> Plastik poşet yerine kâğıt torbada; terlemez ve kararmaz.</li>
+<li><b>Çilek ve meyveler:</b> Yıkamadan sakla, yemeden hemen önce yıka.</li>
+<li><b>Brokoli, marul, ıspanak:</b> Sebze çekmecesinde, mümkünse delikli bir poşette.</li></ul>
+<h3>Ayrı tut</h3>
+<p>Elma, muz ve domates olgunlaştırıcı bir gaz (etilen) yayar. Marul, brokoli ve salatalık gibi hassas sebzelerin yanında durursa onların çabuk bozulmasına yol açar.</p>
+<p class="guide-tip">💡 Elindeki malzemeleri bozulmadan kullanmak için Dolabım'da seç; uygulama sana onlarla yapabileceğin yemekleri göstersin.</p>
+<button type="button" class="ai-btn" data-act="footGo" data-mode="pantry">🧺 Dolabımdakilerle yemek bul</button>`},
+  {id:"menu", emo:"📅", title:"Haftalık menü nasıl planlanır?", short:"Haftalık menü planlama",
+   lead:"Haftaya planla başlamak hem zamandan hem paradan tasarruf ettirir; her akşam “ne pişirsem?” derdi de biter.",
+   body:`<ol class="guide-steps">
+<li><b>Önce dolabına bak.</b> Evde ne var, ne bitmek üzere? Bozulmak üzere olanları haftanın ilk günlerine koy.</li>
+<li><b>Hafta içi 5 akşam planla.</b> Kalan günleri artan yemekler ya da dışarıda yemek için boş bırak; plan esnek kalsın.</li>
+<li><b>Dengeyi kur.</b> Örneğin bir çorba, bir bakliyat, bir sebze yemeği, bir tavuk ya da et ve bir balık günü.</li>
+<li><b>Malzemeleri ortak kullan.</b> Aldığın kıymayı hem köftede hem karnıyarıkta, maydanozu hem salatada hem mercimek köftesinde kullan. İsraf azalır, liste kısalır.</li>
+<li><b>Yoğun günlere pratik yemek koy.</b> 30 dakikanın altındaki tarifleri en yorgun olduğun günlere ayır.</li>
+<li><b>Tek bir alışveriş listesi çıkar.</b> Bütün haftanın eksiklerini bir kerede al.</li>
+<li><b>Hafta sonu hazırlık yap.</b> Soğan doğramak, bakliyat haşlamak ya da sebze yıkamak gibi işleri önceden yaparsan hafta içi çok hızlanırsın.</li></ol>
+<p class="guide-tip">💡 Uygulamada “Menüyü benim için oluştur” kartına isteğini yaz (“4 kişiyiz, hafta içi pratik olsun” gibi); 7 günlük menün ve alışveriş listen hazırlansın.</p>
+<button type="button" class="ai-btn" data-act="footGo" data-mode="plan">📅 Haftalık menüme git</button>`},
+  {id:"guvenlik", emo:"🧊", title:"Artan yemekler ve gıda güvenliği", short:"Artan yemek ve gıda güvenliği",
+   lead:"Artan yemekleri doğru saklamak hem israfı hem de mide rahatsızlıklarını önler. Temel kurallar şunlar:",
+   body:`<ul><li><b>2 saat kuralı:</b> Pişmiş yemeği oda sıcaklığında en fazla 2 saat beklet; hava çok sıcaksa (32 °C üstü) 1 saat. Sonra buzdolabına kaldır.</li>
+<li><b>Hızlı soğut:</b> Büyük tencereyi küçük, sığ kaplara bölerek buzdolabına koy; daha çabuk soğur.</li>
+<li><b>Pilava dikkat:</b> Pişmiş pirinç uzun süre ılık bekletilirse bakteri üretebilir. Pilavı çabuk soğutup buzdolabına kaldır, bir günden fazla bekletme.</li>
+<li><b>Buzdolabında süre:</b> Pişmiş yemekler genellikle 3–4 gün dayanır. Buzdolabının sıcaklığı 4 °C ya da altında olmalı.</li>
+<li><b>Tekrar ısıtma:</b> Yemeğin her yeri buharı tütene kadar iyice ısınmalı (iç sıcaklık 74 °C). Yalnızca bir kez ısıtılacak kadarını ısıt.</li>
+<li><b>Dondurma:</b> Dondurucu −18 °C olmalı. Dondurduğun yemeği buzdolabında yavaşça çözdür; çözülen çiğ eti pişirmeden yeniden dondurma.</li>
+<li><b>Çiğ et ve tavuk:</b> Ayrı bir kesme tahtası kullan, değdiği yüzeyleri ve ellerini hemen yıka.</li></ul>
+<p class="guide-tip">⚠️ Kokusu, görüntüsü ya da tadı değişmiş bir yemeği tadına bakarak denemeye çalışma; şüphen varsa at.</p>`},
+  {id:"terimler", emo:"🔪", title:"Mutfak terimleri sözlüğü", short:"Mutfak terimleri",
+   lead:"Tariflerde geçen bazı terimler ilk okuyuşta kafa karıştırabilir. En sık karşılaşılanların kısa açıklamaları:",
+   body:`<dl class="guide-dl">
+<dt>Kavurmak</dt><dd>Malzemeyi az yağda, ara ara karıştırarak rengi dönene ve suyunu çekene kadar pişirmek.</dd>
+<dt>Sotelemek</dt><dd>Yüksek ateşte, az yağda, sürekli karıştırarak kısa sürede pişirmek. Sebzeler diri kalır.</dd>
+<dt>Söndürmek</dt><dd>Ispanak gibi sebzeleri yağda kısa süre pişirip hacmini azaltmak; ya da sıcak tavaya su ekleyerek pişmeyi durdurmak.</dd>
+<dt>Haşlamak</dt><dd>Kaynayan suda pişirmek.</dd>
+<dt>Demlendirmek</dt><dd>Pilav gibi yemekleri ocaktan aldıktan sonra kapağın altına kâğıt havlu koyup 10–15 dakika dinlendirmek.</dd>
+<dt>Mühürlemek</dt><dd>Eti çok kızgın tavada her yüzü renk alana kadar kısa süre pişirmek; suyunu içinde tutar.</dd>
+<dt>Közlemek</dt><dd>Biber ya da patlıcanı doğrudan ateşte veya ızgarada kabuğu kararana kadar pişirmek.</dd>
+<dt>Benmari</dt><dd>Kabı, içinde sıcak su olan daha büyük bir kaba koyarak dolaylı ısıyla pişirmek ya da eritmek (krem karamel, çikolata).</dd>
+<dt>Terbiye</dt><dd>Yumurta sarısı, limon suyu ve biraz unun çırpılarak çorbaya eklenmesi; çorbayı kıvamlı ve ekşimsi yapar.</dd>
+<dt>Alacalı soymak</dt><dd>Patlıcan gibi sebzelerin kabuğunu şerit şerit, bir soyup bir bırakarak soymak.</dd>
+<dt>Jülyen doğramak</dt><dd>Sebzeyi kibrit çöpü inceliğinde uzun şeritler hâlinde kesmek.</dd>
+<dt>Kayısı kıvamı</dt><dd>Yumurtanın sarısının akışkan, beyazının pişmiş olduğu kıvam; yaklaşık 6 dakika haşlama.</dd>
+<dt>Dinlendirmek</dt><dd>Hamurun ya da pişmiş etin bir süre bekletilmesi; hamur daha kolay açılır, et suyunu kaybetmez.</dd></dl>
+<p class="guide-tip">💡 Pişirme modunda tekniği geçen adımlarda “💡 Nasıl yapılır?” kutusu ve kısa video butonu çıkar.</p>`}
+];
+let guideKey = null;
+const GUIDE_BY = new Map(GUIDES.map(g => [g.id, g]));
+function guideHTML(g){
+  return `<article class="guide"><div class="guide-emo" aria-hidden="true">${g.emo}</div><p class="guide-tag">📚 Rehber</p><h2>${esc(g.title)}</h2><p class="guide-lead">${esc(g.lead)}</p>${g.body}
+    <div class="guide-more"><h3>Diğer rehberler</h3><div class="guide-links">${GUIDES.filter(x => x.id !== g.id).map(x => `<button type="button" class="diet" data-act="guide" data-id="${x.id}"><span aria-hidden="true">${x.emo}</span> ${esc(x.short)}</button>`).join("")}</div></div></article>`;
+}
+function openGuide(id, opt){
+  if (!GUIDE_BY.has(id)) return;
+  guideKey = id; sheetKey = null; renderSheet();
+  const inner = document.querySelector(".sheet-inner"); if (inner) inner.scrollTop = 0;
+  try { const h = "#rehber-" + id; if (opt && opt.root) history.replaceState({guide:id, root:true}, "", h); else if (location.hash !== h) history.pushState({guide:id}, "", h); } catch(e) {}
+}
+
+/* ---------- "Aklına bir şey gelmiyor mu?": her kategoriden bir öneri ---------- */
+const INSPIRE_CATS = [["kahvalti","Kahvaltı"],["corba","Çorba"],["etli","Etli yemek"],["sebze","Sebze yemeği"],["etsiz","Etsiz yemek"],["spor","Sporcu yemeği"],["dunya","Dünya mutfağı"],["meze","Meze"],["atistirmalik","Atıştırmalık"],["tatli","Tatlı"],["kahve","Kahve"]];
+const inspire = {picks:{}, quick:false, easy:false};
+function inspirePool(c){
+  let l = BUILTIN.filter(r => (c === "spor" ? catMatch(r, "spor") : recipeCat(r) === c) && dietPass(r));
+  if (inspire.quick) l = l.filter(r => (r.sure || 0) <= 30);
+  if (inspire.easy) l = l.filter(r => difficulty(r)[0] === "kolay");
+  return l;
+}
+function pickFor(c, avoid, used){
+  const pool = inspirePool(c).filter(r => !used || !used.has(r.key)); if (!pool.length) return null; // aynı yemek iki kategoride önerilmesin
+  // Son bakılan ve daha önce pişirilen tarifleri mümkünse önerme: yeni şeyler göster
+  const seen = new Set([...recents.slice(0, 10), ...Object.keys(cookCounts)]);
+  let cand = pool.filter(r => !seen.has(r.key) && r.key !== avoid);
+  if (!cand.length) cand = pool.filter(r => r.key !== avoid);
+  if (!cand.length) cand = pool;
+  return cand[Math.floor(Math.random() * cand.length)].key;
+}
+function inspireOrder(){
+  const h = new Date().getHours();
+  const list = INSPIRE_CATS.slice();
+  if (!(h >= 5 && h < 11)){ const k = list.shift(); list.splice(8, 0, k); } // sabah kahvaltı başta, diğer saatlerde sonlarda
+  return list;
+}
+function inspireHTML(){
+  const order = inspireOrder();
+  const used = new Set();
+  for (const [c] of order){
+    const k = inspire.picks[c];
+    if (!k || used.has(k) || !inspirePool(c).some(r => r.key === k)) inspire.picks[c] = pickFor(c, k, used);
+    if (inspire.picks[c]) used.add(inspire.picks[c]);
+  }
+  const items = order.map(([c, l]) => [c, l, REG.get(inspire.picks[c])]).filter(x => x[2]);
+  items.forEach(([, , r]) => { if (!wikiInfo(r) && needsWiki(r)) getWikiImage(r).then(v => { if (v && mode === "dish") renderDishList(); }); });
+  return `<section class="inspire"><div class="inspire-head"><div><h2>🎲 Aklına bir şey gelmiyor mu?</h2><p class="sub">Her kategoriden senin için bir öneri. Beğenmediğini 🔄 ile değiştir.</p></div><button type="button" class="ai-btn" data-act="inspireAll">🔄 Hepsini yenile</button></div>
+    <div class="plan-presets"><button type="button" class="diet" data-act="inspireOpt" data-o="quick" aria-pressed="${inspire.quick}">⚡ 30 dk altı</button><button type="button" class="diet" data-act="inspireOpt" data-o="easy" aria-pressed="${inspire.easy}">🟢 Sadece kolay</button></div>
+    ${items.length ? `<div class="inspire-grid">${items.map(([c, l, r]) => {
+      const wi = wikiInfo(r), n = nutrition(r);
+      return `<div class="insp cat-${recipeCat(r)}"><button type="button" class="insp-main" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><small class="insp-cat">${l}</small><b>${esc(r.ad)}</b><small class="insp-meta">${r.sure ? `⏱️ ${fmtDur(r.sure)}` : ""}${n && n.kcal ? ` · 🔥 ${n.kcal} kcal` : ""}</small></span></button><button type="button" class="insp-re" data-act="inspireOne" data-c="${c}" aria-label="${l} önerisini değiştir">🔄</button></div>`;
+    }).join("")}</div>` : `<p class="sub">Bu seçeneklere uyan tarif bulamadık; bir seçeneği kaldırmayı dene.</p>`}</section>`;
+}
+
 /* ---------- Bildirim baloncuğu ---------- */
 const toastQueue = []; let toastBusy = false;
 function showToast(text){
@@ -2282,13 +2518,13 @@ function renderResults(){
   else status.innerHTML = `Henüz tam eşleşme yok, ama <strong>${near.length} yemeğe</strong> çok yakınsın.`;
 
   const stripList = [...readyS, ...nearS].slice(0, 10);
-  if (strip && !mainSel){ strip.innerHTML = ""; strip.classList.remove("only-mobile"); } // hızlı başlangıç yalnızca öneriler bölümünde
+  if (strip && !mainSel){ strip.innerHTML = `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button>`; strip.classList.remove("only-mobile"); }
   else if (strip) strip.classList.remove("only-mobile");
   if (strip && mainSel) strip.innerHTML = stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "";
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}</div>`;
+    html = `${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button></div>`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -2331,6 +2567,7 @@ function renderDishList(){
     html += `<div class="ai-row"><button type="button" class="ai-btn" data-act="aiDish" ${dishState && dishState.state === "loading" ? "disabled" : ""}>✨ “${esc(raw)}” için tarif oluştur</button></div>`;
   }
   if (!q && !filters.size){
+    html += inspireHTML();
     // Her kategoriden en sevilen 8 tarif; tamamı için "Tümünü gör"
     html += CATS.filter(c => c[0] !== "hizli").map(([id, l, emo]) => {
       const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
@@ -2467,31 +2704,35 @@ function renderDaily(){
 let sheetKey = null;
 function renderSheet(){
   const sh = $("sheet"); if (!sh) return;
+  const g = guideKey ? GUIDE_BY.get(guideKey) : null;
+  if (g){ sh.hidden = false; document.documentElement.classList.add("sheet-open"); $("sheetBody").innerHTML = guideHTML(g); return; }
   const r = sheetKey ? REG.get(sheetKey) : null;
   if (!r){ sh.hidden = true; document.documentElement.classList.remove("sheet-open"); return; }
   sh.hidden = false; document.documentElement.classList.add("sheet-open");
   $("sheetBody").innerHTML = detailHTML(r, false);
 }
 function openSheet(key, opt){
-  sheetKey = key; addRecent(key); renderSheet();
+  guideKey = null; sheetKey = key; addRecent(key); renderSheet();
   const inner = document.querySelector(".sheet-inner"); if (inner) inner.scrollTop = 0;
   // Her tarifin kendi bağlantısı olur (#t=karniyarik); telefonun geri tuşu tarifi kapatır
   const sl = SLUG.get(key);
   try { if (sl){ const h = "#t=" + sl; if (opt && opt.root) history.replaceState({sheet:key, root:true}, "", h); else if (location.hash !== h) history.pushState({sheet:key}, "", h); } } catch(e) {}
 }
 function doCloseSheet(){
-  sheetKey = null; renderSheet();
+  sheetKey = null; guideKey = null; renderSheet();
   if (mode === "fav" || mode === "recent") renderSaved();
 }
 function closeSheet(){
   const st = history.state;
-  if (st && st.sheet && !st.root){ history.back(); return; }
-  if (/^#t=/.test(location.hash)){ try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {} }
+  if (st && (st.sheet || st.guide) && !st.root){ history.back(); return; }
+  if (/^#(t=|rehber-)/.test(location.hash)){ try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {} }
   doCloseSheet();
 }
 window.addEventListener("popstate", e => {
-  const k = e.state && e.state.sheet;
-  if (k && REG.has(k)){ sheetKey = k; renderSheet(); } else if (sheetKey) doCloseSheet();
+  const k = e.state && e.state.sheet, gk = e.state && e.state.guide;
+  if (gk && GUIDE_BY.has(gk)){ guideKey = gk; sheetKey = null; renderSheet(); }
+  else if (k && REG.has(k)){ guideKey = null; sheetKey = k; renderSheet(); }
+  else if (sheetKey || guideKey) doCloseSheet();
 });
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
@@ -3147,6 +3388,19 @@ document.addEventListener("click", e => {
     case "trClose": { const te = $("transfer"); if (te) te.hidden = true; break; }
     case "trMake": makeTransfer(); break;
     case "trGet": getTransfer(); break;
+    case "guide": openGuide(el.dataset.id); break;
+    case "footGo": {
+      if (guideKey || sheetKey){ guideKey = null; sheetKey = null; try { if (history.state && (history.state.sheet || history.state.guide)) history.replaceState(null, "", location.pathname + location.search); } catch(e) {} }
+      // alt bilgiden: bir kategoriyi ya da bölümü aç ve sayfanın başına git
+      if (el.dataset.f){ if (mode === "pantry") resetPantry(); mode = "dish"; planTarget = null; filters = new Set([el.dataset.f]); $("dishSearch").value = ""; }
+      else { if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; if (mode !== "dish"){ planTarget = null; filters = new Set(); } }
+      currentKey = null; dishState = null; renderAll(); window.scrollTo(0, 0);
+      break;
+    }
+    case "inspireAll": { const old = {...inspire.picks}, used = new Set(); inspireOrder().forEach(([c]) => { inspire.picks[c] = pickFor(c, old[c], used); if (inspire.picks[c]) used.add(inspire.picks[c]); }); renderDishList(); break; }
+    case "inspireOne": { const c = el.dataset.c, used = new Set(Object.entries(inspire.picks).filter(([k]) => k !== c).map(([, v]) => v)); inspire.picks[c] = pickFor(c, inspire.picks[c], used); renderDishList(); break; }
+    case "inspireOpt": { const o = el.dataset.o; inspire[o] = !inspire[o]; inspire.picks = {}; renderDishList(); break; }
+    case "inspireGo": if (mode === "pantry") resetPantry(); mode = "dish"; filters = new Set(); $("dishSearch").value = ""; currentKey = null; dishState = null; renderAll(); window.scrollTo(0, 0); break;
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
@@ -3276,7 +3530,7 @@ function loadStats(){
    Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
 let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
 const EN_EXACT = {
-  "Bugün ne pişirsem?":"What should I cook today?","🏅 Mutfak rozetlerin":"🏅 Your kitchen badges","Kazanıldı ✓":"Earned ✓","🔄 Verilerini başka cihaza taşı":"🔄 Move your data to another device","🔄 Verilerini taşı":"🔄 Move your data","📄 Gizlilik ve kullanım şartları":"📄 Privacy & terms","📤 Bu cihazdan gönder":"📤 Send from this device","📥 Başka cihazdan al":"📥 Receive from another device","Kod oluştur":"Create code","Aktar":"Transfer","Fotoğraftan tanı":"Scan a photo","📸 Fotoğrafta bunları buldum":"📸 Here's what I found","Kapat":"Close","Yanlış olanların işaretini kaldır, sonra seç.":"Untick anything that's wrong, then add.","Bunları da ekle":"Add these too","🤖 Menüyü benim için oluştur":"🤖 Plan my week","✨ Haftalık menümü oluştur":"✨ Create my weekly menu","Menün hazırlanıyor…":"Preparing your menu…","Geç":"Skip","İleri →":"Next →","Hadi başlayalım!":"Let's start!","❓ Nasıl kullanılır?":"❓ How it works","Malzemelerini seç":"Pick your ingredients","Önerileri gör":"See suggestions","Adım adım pişir":"Cook step by step","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
+  "Bugün ne pişirsem?":"What should I cook today?","🎲 Aklına bir şey gelmiyor mu?":"🎲 Out of ideas?","Her kategoriden senin için bir öneri. Beğenmediğini 🔄 ile değiştir.":"One idea from every category. Tap 🔄 to swap any you don't like.","🔄 Hepsini yenile":"🔄 Refresh all","⚡ 30 dk altı":"⚡ Under 30 min","🟢 Sadece kolay":"🟢 Easy only","🎲 Evde ne var bilmiyorum, bana öner":"🎲 Not sure what I have, suggest something","Kahvaltı":"Breakfast","Etli yemek":"Meat dish","Sebze yemeği":"Vegetable dish","Etsiz yemek":"Meat-free dish","Sporcu yemeği":"Fitness meal","Meze":"Meze","Atıştırmalık":"Snack","Rehberler":"Guides","📚 Rehber":"📚 Guide","Diğer rehberler":"More guides","Keşfet":"Explore","Uygulama":"App","Destek":"Support","Haftalık menü":"Weekly menu","En sevilenler ve rozetler":"Most loved & badges","Nasıl kullanılır?":"How it works","Verilerini taşı":"Move your data","Gizlilik ve kullanım şartları":"Privacy & terms","İletişim":"Contact","Dolabındakiyle ne pişireceğini bul.":"Find what to cook with what you have.","© 2026 Bugün ne pişirsem?":"© 2026 Bugün ne pişirsem?","🏅 Mutfak rozetlerin":"🏅 Your kitchen badges","Kazanıldı ✓":"Earned ✓","🔄 Verilerini başka cihaza taşı":"🔄 Move your data to another device","🔄 Verilerini taşı":"🔄 Move your data","📄 Gizlilik ve kullanım şartları":"📄 Privacy & terms","📤 Bu cihazdan gönder":"📤 Send from this device","📥 Başka cihazdan al":"📥 Receive from another device","Kod oluştur":"Create code","Aktar":"Transfer","Fotoğraftan tanı":"Scan a photo","📸 Fotoğrafta bunları buldum":"📸 Here's what I found","Kapat":"Close","Yanlış olanların işaretini kaldır, sonra seç.":"Untick anything that's wrong, then add.","Bunları da ekle":"Add these too","🤖 Menüyü benim için oluştur":"🤖 Plan my week","✨ Haftalık menümü oluştur":"✨ Create my weekly menu","Menün hazırlanıyor…":"Preparing your menu…","Geç":"Skip","İleri →":"Next →","Hadi başlayalım!":"Let's start!","❓ Nasıl kullanılır?":"❓ How it works","Malzemelerini seç":"Pick your ingredients","Önerileri gör":"See suggestions","Adım adım pişir":"Cook step by step","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
   "💡 Öneriler burada belirecek":"💡 Ideas will appear here","Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:":"As you pick ingredients, dishes you can make appear here instantly. Tap one to get started:","⚡ Hızlı başlangıç":"⚡ Quick start",
   "🗑️ Kaldır":"🗑️ Remove","Kaldırılıyor…":"Removing…","Fotoğrafın kaldırıldı.":"Your photo was removed.","Fotoğraf kaldırılamadı, tekrar dene.":"Couldn't remove the photo, please try again.","Fotoğrafı büyüt":"Enlarge photo","✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.":"✓ Your photo was added, well done! Tap it to enlarge, or remove it if you like.","Fotoğrafımı sil":"Delete my photo","Fotoğrafın silindi.":"Your photo was deleted.","Fotoğraf silinemedi, tekrar dene.":"Couldn't delete the photo, please try again.","✓ Fotoğrafın eklendi, ellerine sağlık!":"✓ Your photo was added, well done!","Fotoğraf hazırlanıyor…":"Preparing photo…","Fotoğraf kontrol ediliyor, bu birkaç saniye sürebilir…":"Checking your photo, this may take a few seconds…","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
   "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
@@ -3483,10 +3737,11 @@ if ("serviceWorker" in navigator){
 renderAll();
 // Bağlantıyla gelindiyse (…/#t=karniyarik) tarifi doğrudan aç
 { const mt = location.hash.match(/^#t=([a-z0-9-]+)/); if (mt && BY_SLUG.has(mt[1])) openSheet(BY_SLUG.get(mt[1]), {root:true}); }
+{ const mg = location.hash.match(/^#rehber-([a-z]+)/); if (mg && GUIDE_BY.has(mg[1])) openGuide(mg[1], {root:true}); }
 // Ana ekran kısayolu ile gelindiyse ilgili sekmeyi aç (?sekme=ara / menu / sevilen)
 { const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"recent"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
 // İlk kez gelen kişiye kısa tanıtım
-try { if (!localStorage.getItem("pisir-tur") && !/^#t=/.test(location.hash)) renderTour(); } catch(e) {}
+try { if (!localStorage.getItem("pisir-tur") && !/^#(t=|rehber-)/.test(location.hash)) renderTour(); } catch(e) {}
 // Ziyaretçi istatistikleri (Cloudflare Web Analytics, çerez kullanmaz). Anahtarı aldığında tırnakların arasına yaz.
 const CF_ANALYTICS_TOKEN = "";
 if (CF_ANALYTICS_TOKEN){ const sc = document.createElement("script"); sc.defer = true; sc.src = "https://static.cloudflareinsights.com/beacon.min.js"; sc.setAttribute("data-cf-beacon", JSON.stringify({token:CF_ANALYTICS_TOKEN, spa:true})); document.head.appendChild(sc); }
