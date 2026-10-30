@@ -901,6 +901,83 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   .sug-head,.sug-sec h2{animation:fadeIn .4s ease backwards}
   .toast.show{animation:fadeUp .3s ease backwards}
 }
+/* ---------- Ek animasyonlar ---------- */
+.hero-card{position:relative;overflow:hidden}
+.hero-float{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hero-card > :not(.hero-float){position:relative;z-index:1}
+.hero-float span{position:absolute;font-size:1.6rem;opacity:.0}
+.cat-acc{scroll-margin-top:74px}
+@media (prefers-reduced-motion: no-preference){
+  @keyframes drift{0%{opacity:0;transform:translateY(20px) rotate(0)}15%{opacity:.35}85%{opacity:.35}100%{opacity:0;transform:translateY(-70px) rotate(25deg)}}
+  @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg) scale(1.15)}75%{transform:rotate(12deg) scale(1.15)}}
+  @keyframes ring{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--cobalt) 45%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+  @keyframes heartBurst{0%{transform:scale(1)}30%{transform:scale(1.35)}55%{transform:scale(.9)}100%{transform:scale(1)}}
+  @keyframes sweep{0%{transform:translateX(-130%) skewX(-20deg)}55%,100%{transform:translateX(260%) skewX(-20deg)}}
+  @keyframes glow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  @keyframes accOpen{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  /* Başlıkta süzülen malzemeler */
+  .hero-float span{animation:drift 9s ease-in-out infinite}
+  .hero-float span:nth-child(1){right:6%;bottom:8%;animation-delay:0s}
+  .hero-float span:nth-child(2){right:18%;bottom:4%;animation-delay:1.5s}
+  .hero-float span:nth-child(3){right:30%;bottom:10%;animation-delay:3s}
+  .hero-float span:nth-child(4){right:11%;bottom:30%;animation-delay:4.5s}
+  .hero-float span:nth-child(5){right:24%;bottom:36%;animation-delay:6s}
+  .hero-float span:nth-child(6){right:3%;bottom:44%;animation-delay:7.5s}
+  /* Logo: sayfa açılınca tencere sallanır, üzerine gelince tekrar */
+  .brand-logo{animation:wiggle .7s ease .3s backwards}
+  .brand:hover .brand-logo{animation:wiggle .6s ease}
+  /* Malzeme seçince emojisi kıpırdar ve çevresinde halka yayılır */
+  .chip[aria-pressed="true"]{animation:pop .28s ease, ring .6s ease-out}
+  .chip[aria-pressed="true"] > span:first-child{display:inline-block;animation:wiggle .5s ease}
+  /* Favoriye eklenince kalp patlaması */
+  [data-act="fav"][aria-pressed="true"]{animation:heartBurst .5s ease, ring .7s ease-out}
+  .dc-fav{animation:heartBurst .5s ease backwards}
+  /* "Pişirmeye başla" butonunda parıltı */
+  .ai-btn[data-act="cook"]{position:relative;overflow:hidden}
+  .ai-btn[data-act="cook"]::after{content:"";position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);animation:sweep 3s ease-in-out 1s infinite;pointer-events:none}
+  /* Kategori kutuları: üzerine gelince/dokununca emoji zıplar */
+  .cat{transition:transform .18s ease,box-shadow .18s ease}
+  .cat:active > span:first-child,.cat:hover > span:first-child{display:inline-block;animation:bob .5s ease}
+  @media (hover:hover){.cat:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(29,36,51,.1)}}
+  /* Açılan kategori: başlık emojisi zıplar, içerik yukarıdan iner */
+  .acc-head[aria-expanded="true"] .acc-emo{animation:wiggle .5s ease}
+  .acc-body{animation:accOpen .3s ease backwards}
+  /* Bugünün sofrası etiketi hafifçe parlar */
+  .dm-tag{background:linear-gradient(90deg,#C2410C,#E8590C,#F59F00,#C2410C);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:glow 6s ease infinite}
+  /* Seçilen malzemeler sepete kayar */
+  .mybox + .chips > *{animation:slideIn .3s ease backwards}
+}
+/* Geri dönüş butonu */
+.back-cats{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+#filters[hidden]{display:none !important}
+/* ---------- Daha fazla animasyon ---------- */
+@media (prefers-reduced-motion: no-preference){
+  @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(-4px)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  @keyframes countPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+  @keyframes rise{from{opacity:0;transform:translateY(30px) scale(.98)}to{opacity:1;transform:none}}
+  @keyframes spinIn{from{opacity:0;transform:rotate(-90deg) scale(.5)}to{opacity:1;transform:none}}
+  /* Kategoriler sırayla gelir */
+  .cat-acc{animation:rise .45s cubic-bezier(.2,.8,.2,1) backwards}
+  .cat-acc:nth-child(2){animation-delay:.03s}.cat-acc:nth-child(3){animation-delay:.06s}.cat-acc:nth-child(4){animation-delay:.09s}
+  .cat-acc:nth-child(5){animation-delay:.12s}.cat-acc:nth-child(6){animation-delay:.15s}.cat-acc:nth-child(7){animation-delay:.18s}
+  .cat-acc:nth-child(8){animation-delay:.21s}.cat-acc:nth-child(9){animation-delay:.24s}.cat-acc:nth-child(n+10){animation-delay:.27s}
+  .acc-emo{animation:spinIn .5s ease backwards}
+  .acc-head[aria-expanded="true"] .acc-n{animation:countPop .4s ease}
+  .acc-head:active .acc-emo{transform:scale(.9)}
+  /* Geri butonunda ok sola dürtülür */
+  .back-cats .back-arrow{display:inline-block;animation:nudge 1.2s ease-in-out 3}
+  /* Arama kutusuna dokununca halka */
+  .search:focus{animation:ring .6s ease-out}
+  /* Beslenme ve süre seçimleri seçilince zıplar */
+  .diet[aria-pressed="true"]{animation:pop .28s ease}
+  /* "Bulunamadı" mesajı sallanır */
+  .empty{animation:shake .4s ease}
+  /* Tarif detayı yukarı doğru açılır */
+  .detail > *, #sheetBody > *{animation:rise .4s cubic-bezier(.2,.8,.2,1) backwards}
+  /* İstatistik sayıları büyüyerek belirir */
+  .stat b{display:inline-block;animation:countPop .5s ease .2s backwards}
+}
 </style>
 </head>
 <body>
@@ -916,6 +993,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
     <div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></nav>
   <header class="hero">
     <div class="hero-card">
+      <div class="hero-float" aria-hidden="true"><span>🍅</span><span>🥕</span><span>🧄</span><span>🍋</span><span>🫑</span><span>🧀</span></div>
       <div class="hero-text">
         <p class="greet" id="greet"></p>
         <h1 id="heroTitle">Dolabında ne var?</h1>
@@ -1007,7 +1085,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 60</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 62</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2019,7 +2097,7 @@ function renderHero(){
   $("planMode").hidden = mode !== "plan";
   $("savedMode").hidden = !listMode;
   $("status").hidden = true; // durum bilgisi artık öneri panelinde
-  $("filters").hidden = mode === "pantry"; // Dolabım'da asıl iş malzeme seçmek; kategoriler "Yemek ara"da
+  $("filters").hidden = true; // kategoriler yalnızca Yemek ara'daki açılır-kapanır listede
   const mainSel = [...selected].some(id => !GROUPS[0].items.some(([b]) => b === id)) || extras.size > 0;
   const step = mainSel ? 2 : 1;
   $("flow").hidden = true; // adımlar artık ilk açılış turunda anlatılıyor
@@ -3174,8 +3252,8 @@ function renderDishList(){
   }
   if (!q && !filters.size){
     // Her kategoriden en sevilen 8 tarif; tamamı için "Tümünü gör"
-    html += CATS.filter(c => c[0] !== "hizli").map(([id, l, emo]) => {
-      const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
+    html += CATS.map(([id, l, emo]) => {
+      const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : id === "hizli" ? sortRecipes(BUILTIN.filter(r => catMatch(r, "hizli"))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
       if (!items.length) return "";
       const more = items.length > 12 ? `<button type="button" class="see-all cat-${id}" data-act="filter" data-f="${id}">Tümünü gör · ${items.length} tarif</button>` : "";
       const open = openCats.has(id);
@@ -3185,7 +3263,7 @@ function renderDishList(){
   } else if (list.length){
     const c = filters.size ? CAT_BY_ID[[...filters][0]] : null;
     if (c && !q) html += inspire3HTML(c[0], list);
-    if (c) html += `<div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${c[1]}</h2><span class="sec-count">${list.length} tarif</span></div>`;
+    if (c) html += `<button type="button" class="back-cats" data-act="backCats" data-f="${c[0]}"><span class="back-arrow" aria-hidden="true">←</span> Tüm kategoriler</button><div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${c[1]}</h2><span class="sec-count">${list.length} tarif</span></div>`;
     const isSpor = filters.has("spor");
     html += `<div class="dish-grid">${(isSpor ? byProtein(list) : list).map(r => dishCard(r, "pickDish", isSpor ? proteinNote(r) : "")).join("")}</div>`;
   } else if (!hints.length && !(raw && sampleFn)){
@@ -3938,11 +4016,11 @@ document.addEventListener("click", e => {
       if (mode !== "dish"){
         // başka bir sekmedeyken kategoriye basılırsa "Yemek ara"da o kategoriyi aç
         mode = "dish"; planTarget = null; filters = new Set([f]); $("dishSearch").value = "";
-        renderAll(); $("filters").scrollIntoView({block:"start"});
+        renderAll(); $("dishMode").scrollIntoView({block:"start"});
       } else {
         filters = (filters.has(f) && filters.size === 1) ? new Set() : new Set([f]); // tek seçim
         renderAll();
-        if (el.classList.contains("see-all")) $("filters").scrollIntoView({block:"start"});
+        if (el.classList.contains("see-all")) $("dishMode").scrollIntoView({block:"start"});
       }
       break;
     }
@@ -4086,7 +4164,18 @@ document.addEventListener("click", e => {
         .catch(() => { bugAdmin.msg = "Silinemedi, tekrar dene."; renderBugAdmin(); });
       break;
     }
-    case "catToggle": { const f = el.dataset.f; openCats.has(f) ? openCats.delete(f) : openCats.add(f); renderDishList(); break; }
+    case "catToggle": {
+      const f = el.dataset.f; const wasOpen = openCats.has(f);
+      openCats.clear(); if (!wasOpen) openCats.add(f); // aynı anda yalnızca bir kategori açık
+      renderDishList();
+      if (!wasOpen){ const sec = document.querySelector(`[data-key="sec-${f}"]`); if (sec && sec.getBoundingClientRect().top < 70) sec.scrollIntoView({block:"start", behavior:"smooth"}); }
+      break;
+    }
+    case "backCats": {
+      const f = el.dataset.f; filters = new Set(); $("dishSearch").value = ""; openCats.clear(); openCats.add(f);
+      renderAll(); const sec = document.querySelector(`[data-key="sec-${f}"]`); if (sec) sec.scrollIntoView({block:"start"});
+      break;
+    }
     case "prefToggle": prefOpen = !prefOpen; renderGroups(); break;
     case "quickMore": quickAll = true; renderGroups(); break;
     case "focusSearch": { const se = $("search"); if (se){ se.scrollIntoView({block:"center", behavior:"smooth"}); se.focus({preventScroll:true}); } break; }
@@ -4235,7 +4324,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
