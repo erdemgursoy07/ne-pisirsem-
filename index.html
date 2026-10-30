@@ -130,6 +130,9 @@ header.hero{margin-bottom:22px}
   .pantry .toolbar{margin-bottom:16px}
 }
 .results .daily-mini{flex-direction:column;align-items:flex-start;gap:6px}
+.results-daily .daily{grid-template-columns:minmax(0,1fr) !important;margin-bottom:18px}
+.results-daily .daily .daily-media{aspect-ratio:16/9 !important;min-height:0 !important;border-radius:24px 24px 0 0 !important}
+@media (max-width:899px){.results-daily{display:none}}
 @media (max-width:899px){.results .daily-mini{display:none}}
 /* Ana sayfa: kompakt karşılama ve yol gösterici */
 header.hero .hero-card{padding:22px 26px 16px}
@@ -1632,7 +1635,7 @@ function renderResults(){
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `${dailyMiniHTML()}<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}</div>`;
+    html = `${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}</div>`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -1782,18 +1785,15 @@ function dailyMiniHTML(){
   const menu = dailyMenu(); if (!menu.length) return "";
   return `<button type="button" class="daily-mini" data-act="goDaily" aria-expanded="${dailyOpen}"><span class="dm-tag">🌟 Bugünün sofrası</span><span class="dm-items">${menu.map(([e, , r]) => `<span>${e} ${esc(r.ad)}</span>`).join("")}</span><span class="dm-go">${dailyOpen ? "Menüyü gizle ↑" : "Menüyü gör ↓"}</span></button>`;
 }
-function renderDaily(){
-  const box = $("daily");
-  const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
-  box.hidden = !show; if (!show) return;
-  const menu = dailyMenu(); if (!menu.length){ box.hidden = true; return; }
-  const mini = dailyMiniHTML();
-  if (!dailyOpen){ box.innerHTML = mini; return; }
+// Günün menüsü kartı (hem Yemek ara'da hem bilgisayarda öneriler panelinde kullanılır)
+function dailyCardHTML(){
+  const menu = dailyMenu(); if (!menu.length) return "";
   if (dailySel >= menu.length) dailySel = 0;
   const sel = menu[dailySel][2];
   const wi = wikiInfo(sel);
   const total = menu.reduce((sum, [, , r]) => sum + ((nutrition(r) || {}).kcal || 0), 0);
-  box.innerHTML = mini + `<div class="daily cat-${recipeCat(sel)}">
+  if (!wi && needsWiki(sel)) getWikiImage(sel).then(v => { if (v){ renderDaily(); if (mode === "pantry") renderResults(); } });
+  return `<div class="daily cat-${recipeCat(sel)}">
     <div class="daily-media">${wi ? `<img src="${esc(wi.s)}" alt="${esc(sel.ad)}">` : `<span class="daily-emo" aria-hidden="true">${recipeEmoji(sel)}</span>`}<span class="daily-sel">${esc(sel.ad)}</span></div>
     <div class="daily-body"><span class="daily-tag">🌟 Günün menüsü</span><h2>Bugünün sofrası</h2>
       <p class="daily-q">Önce hangisini yapmak istiyorsun?</p>
@@ -1801,7 +1801,13 @@ function renderDaily(){
       <p class="menu-total">Kişi başı toplam yaklaşık <b>${total.toLocaleString("tr-TR")} kcal</b></p>
       <div class="daily-actions"><button type="button" class="ai-btn" data-act="cook" data-key="${esc(sel.key)}">🍳 ${esc(sel.ad)} pişir</button><button type="button" class="fav" data-act="openSaved" data-key="${esc(sel.key)}">Tarife bak</button><button type="button" class="fav" data-act="menuToPlan">📅 Bugünün menüsüne ekle</button></div></div>
   </div>`;
-  if (!wi && needsWiki(sel)) getWikiImage(sel).then(v => { if (v) renderDaily(); });
+}
+function renderDaily(){
+  const box = $("daily");
+  const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
+  box.hidden = !show; if (!show) return;
+  if (!dailyMenu().length){ box.hidden = true; return; }
+  box.innerHTML = dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : "");
 }
 
 /* ---------- Tarif sayfası: yemeğe nereden dokunulursa dokunulsun üstte açılır ---------- */
@@ -2437,12 +2443,9 @@ document.addEventListener("click", e => {
       if (voiceOn && player){ player.src = SILENT; player.play().catch(() => {}); } // telefonda sesi çalmaya izin ver
       if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
-    case "goDaily":
-      if (el.closest("#results")){ resetPantry(); mode = "dish"; filters = new Set(); $("dishSearch").value = ""; dailyOpen = true; renderAll(); window.scrollTo(0, 0); }
-      else { dailyOpen = !dailyOpen; renderDaily(); }
-      break;
+    case "goDaily": dailyOpen = !dailyOpen; renderDaily(); if (mode === "pantry") renderResults(); break; // menü olduğu yerde açılır/kapanır
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
-    case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); break;
+    case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
     case "menuToPlan": {
       const di = (new Date().getDay() + 6) % 7;
