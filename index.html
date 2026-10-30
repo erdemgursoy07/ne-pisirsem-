@@ -1492,7 +1492,7 @@ function dietBarHTML(){
 
 /* ---------- Eksikleri marketten sipariş et ---------- */
 const MARKETS = [
-  {id:"tgo", ad:"Trendyol Go by Uber Eats", de:"Trendyol Go'da", i:"Trendyol Go'yu", ara:null, ana:null},
+  {id:"tgo", ad:"Trendyol Go by Uber Eats", de:"Trendyol Go'da", i:"Trendyol Go'yu", ara:null, ana:"https://www.trendyol.com/"}, // telefonda Trendyol uygulaması yüklüyse uygulamayı açar
   {id:"migros", ad:"Migros", de:"Migros'ta", i:"Migros'u", ara:q => `https://www.migros.com.tr/arama?q=${encodeURIComponent(q)}`, ana:"https://www.migros.com.tr/"},
   {id:"carrefour", ad:"CarrefourSA", de:"CarrefourSA'da", i:"CarrefourSA'yı", ara:q => `https://www.carrefoursa.com/search/?text=${encodeURIComponent(q)}`, ana:"https://www.carrefoursa.com/"},
   {id:"getir", ad:"Getir", de:"Getir'de", i:"Getir'i", ara:null, ana:"https://getir.com/"}
@@ -1510,7 +1510,7 @@ function orderHTML(id, names){
     <div class="order-items">${names.map(n => mk && mk.ara ? `<a class="order-item is-link" href="${esc(mk.ara(n))}" target="_blank" rel="noopener">🔎 ${esc(n)}</a>` : `<span class="order-item">${esc(n)}</span>`).join("")}</div>
     <p class="order-h">🏪 Nereden sipariş vermek istersin?</p>
     <div class="order-markets">${MARKETS.map(m => `<button type="button" class="market" data-act="orderMarket" data-id="${esc(id)}" data-m="${m.id}" aria-pressed="${orderMarket[id] === m.id}">${m.ad}</button>`).join("")}</div>
-    ${mk ? `<p class="order-tip">✓ Eksik listen kopyalandı. ${mk.ara ? `${mk.de} aramak için yukarıdaki eksiklere dokun.` : `${mk.ad} uygulamasını açıp arama kutusuna yapıştırarak eksikleri sırayla ekleyebilirsin.`}</p>${mk.ana ? `<a class="ai-btn market-open" href="${esc(mk.ana)}" target="_blank" rel="noopener">${mk.i} aç</a>` : ""}` : `<p class="order-tip">Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.</p>`}
+    ${mk ? `<p class="order-tip">✓ Eksik listen kopyalandı. ${mk.ara ? `${mk.de} aramak için yukarıdaki eksiklere dokun.` : `Aşağıdaki butonla ${mk.i} aç, arama kutusuna yapıştırarak eksikleri sırayla ekleyebilirsin.`}</p>${mk.ana ? `<a class="ai-btn market-open" href="${esc(mk.ana)}" target="_blank" rel="noopener">${mk.i} aç</a>` : ""}` : `<p class="order-tip">Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.</p>`}
   </div></div>`;
 }
 
