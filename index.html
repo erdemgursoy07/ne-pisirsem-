@@ -99,6 +99,53 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+/* Beslenme filtreleri */
+#dietBar:not([hidden]){margin-top:16px}
+.diet-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.diet-label{font-weight:700;color:var(--muted);font-size:.9rem;margin-right:2px}
+.diet{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 12px;font-weight:700;font-size:.88rem;cursor:pointer}
+.diet[aria-pressed="true"]{background:#2B8A3E;border-color:#2B8A3E;color:#fff}
+.diet-note{margin:8px 0 0;font-size:.85rem;color:#B35C00;font-weight:600}
+/* Sipariş */
+.order{margin-top:14px}
+.order-list{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.order-list li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
+.order-name{font-weight:700}
+.order-shops{display:flex;flex-wrap:wrap;gap:6px}
+.shop-link{font-size:.82rem;font-weight:700;padding:6px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink);text-decoration:none}
+.shop-link:hover{border-color:var(--cobalt)}
+/* Şef'e sor */
+.chef{margin-top:28px;padding:18px;border-radius:20px;background:var(--bg);border:1.5px solid var(--line);max-width:760px}
+.chef h3{margin-top:0}
+.chef-msgs{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto;margin:6px 0 12px}
+.msg{padding:10px 14px;border-radius:16px;max-width:88%;line-height:1.45;white-space:pre-wrap}
+.msg.user{align-self:flex-end;background:var(--cobalt);color:var(--cobalt-ink);border-bottom-right-radius:6px}
+.msg.chef{align-self:flex-start;background:var(--surface);border:1.5px solid var(--line);border-bottom-left-radius:6px}
+.msg.typing{color:var(--muted);font-style:italic}
+.chef-form{display:flex;gap:8px}
+.chef-form .search{flex:1;min-width:0}
+.cook .chef{margin:16px 0 0;text-align:left}
+/* Yorumlar */
+.reviews{margin-top:28px;max-width:760px}
+.rev-avg{display:flex;align-items:baseline;gap:6px}
+.stars{color:#F59F00;letter-spacing:1px}
+.rev-form{display:grid;gap:10px;margin:8px 0 6px;max-width:520px}
+.star-pick{display:flex;gap:4px}
+.star{border:0;background:none;font-size:1.9rem;line-height:1;color:var(--line);cursor:pointer;padding:2px}
+.star.on{color:#F59F00}
+.rev-text{width:100%;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;background:var(--surface);color:var(--ink);resize:vertical}
+.rev-form .ai-btn{justify-self:start}
+.rev-list{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+.rev-list li{padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
+.rev-list p{margin:6px 0}
+.rev-top{display:flex;justify-content:space-between;gap:8px}
+.rev-time{color:var(--muted);font-size:.82rem}
+.rev-acts{display:flex;gap:14px}
+.rev-acts .link-btn{font-size:.82rem}
+.ph-rep{position:absolute;left:6px;top:6px;width:30px;height:30px;border-radius:999px;border:0;background:rgba(0,0,0,.45);color:#fff;font-size:.85rem;cursor:pointer;opacity:.75}
+.ph-rep:hover{opacity:1}
+.foot-links{margin:0 0 8px}
+.foot-links a{color:var(--cobalt);font-weight:700}
 /* ===== Yeni ana sayfa düzeni ===== */
 .topbar{position:sticky;top:0;z-index:25;display:flex;align-items:center;gap:16px;padding:12px 0;margin:0 0 6px;background:var(--bg)}
 .topbar .brand{flex:0 0 auto}
@@ -567,6 +614,7 @@ header.hero{padding:28px 0 20px}
       <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
     </div>
     <div class="filters cats" id="filters" role="group" aria-label="Kategoriler"></div>
+    <div id="dietBar"></div>
     <div class="status" id="status" aria-live="polite"></div>
   </header>
   <div id="daily"></div>
@@ -590,7 +638,7 @@ header.hero{padding:28px 0 20px}
 
   <section class="plan" id="planMode" aria-label="Haftalık menü" hidden></section>
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
-  <footer class="credits">Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
+  <footer class="credits"><p class="foot-links"><a href="tarif/">📖 Tüm tarifler</a></p>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
 </div>
 
 <div class="lightbox" id="lightbox" data-act="lightboxClose" hidden><img id="lightboxImg" alt=""><p class="lightbox-hint">Kapatmak için dokun</p></div>
@@ -1146,6 +1194,7 @@ function toggleOwn(m){
   else manual[norm(m.ad)] = !owned(m);
 }
 function fpass(r){
+  if (!dietPass(r)) return false;
   for (const f of filters){
     if (f === "hizli"){ if (!(r.sure && r.sure <= 15)) return false; }
     else if (!(r.etiketler || []).includes(f)) return false;
@@ -1193,6 +1242,7 @@ function detailHTML(r, compact){
     ${r.orijinal && norm(r.orijinal) !== norm(r.ad) ? `<a class="yt-btn yt-alt" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.orijinal + " recipe")}" target="_blank" rel="noopener">▶ “${esc(r.orijinal)}” videoları</a>` : ""}
     ${planCtl(r)}
     <button type="button" class="fav" data-act="fav" data-key="${ek}" aria-pressed="${fav}">${fav ? "♥ Favorilerde" : "♡ Favorilere ekle"}</button>
+    ${r.src === "b" ? `<button type="button" class="fav" data-act="share" data-key="${ek}">📤 Paylaş</button>` : ""}
     <div class="serv" role="group" aria-label="Kişi sayısı">
       <button type="button" data-act="servMinus" data-key="${ek}" aria-label="Bir kişi azalt" ${serv <= 1 ? "disabled" : ""}>−</button>
       <span>${serv} kişilik</span>
@@ -1207,13 +1257,13 @@ function detailHTML(r, compact){
     }).join("")
   }</ul>`;
   h += miss.length
-    ? `<div class="shop"><h3>Alışveriş listen</h3><ul>${miss.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul><button type="button" class="ai-btn" data-act="copy" data-key="${ek}">Listeyi kopyala</button></div>`
+    ? `<div class="shop"><h3>Alışveriş listen</h3><ul>${miss.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul><div class="actions"><button type="button" class="ai-btn" data-act="copy" data-key="${ek}">Listeyi kopyala</button><button type="button" class="fav" data-act="shareList" data-key="${ek}">📤 Listeyi paylaş</button></div>${orderHTML(r.key, miss.map(m => m.ad))}</div>`
     : `<p class="done">Tüm malzemeler evde, hemen başlayabilirsin.</p>`;
   h += `<h3>Tarif</h3><ol class="steps">${r.adimlar.map(s => `<li>${esc(s)}</li>`).join("")}</ol>`;
   if (Math.abs(f - 1) > 0.001) h += `<p class="note">Malzemeler ${serv} kişiye göre ayarlandı. Adımlarda geçen miktarlar ${r.kisi} kişilik tarife göredir; malzeme listesindeki güncel miktarları kullan.</p>`;
   if (r.not) h += `<p class="note">${esc(r.not)}</p>`;
   if (r.src === "ai") h += `<p class="note">Bu tarif yapay zekâ tarafından oluşturuldu; miktarları ve pişirme sürelerini kendi tecrübenle kontrol et.</p>`;
-  if (!compact) h += photosHTML(r);
+  if (!compact) h += chefHTML(r, null) + reviewsHTML(r) + photosHTML(r);
   return h;
 }
 
@@ -1369,6 +1419,8 @@ function greeting(){
 }
 function renderHero(){
   document.body.dataset.mode = mode;
+  $("dietBar").hidden = !(mode === "pantry" || mode === "dish");
+  if (!$("dietBar").hidden) $("dietBar").innerHTML = dietBarHTML();
   $("greet").textContent = greeting();
   $("heroTitle").textContent = HERO[mode][0];
   $("heroText").textContent = HERO[mode][1];
@@ -1387,6 +1439,195 @@ function renderHero(){
   $("flow").hidden = mode !== "pantry";
   $("flow").innerHTML = mode !== "pantry" ? "" : [["1","Malzemeleri seç"],["2","Öneriyi gör"],["3","Pişir, afiyet olsun"]].map(([n, t], i) => `<li class="${i + 1 < step ? "done" : i + 1 === step ? "on" : ""}"><span class="flow-n">${i + 1 < step ? "✓" : n}</span><span>${t}</span></li>`).join("");
   $("filters").innerHTML = CATS.map(([id, l, emo]) => `<button type="button" class="cat cat-${id}" data-act="filter" data-f="${id}" aria-pressed="${filters.has(id)}"><span class="cat-emo" aria-hidden="true">${emo}</span><span class="cat-name">${l}</span></button>`).join("");
+}
+
+/* ---------- Tarif bağlantıları ve paylaşım ---------- */
+const SITE_URL = "https://erdemgursoy07.github.io/ne-pisirsem/";
+const slugify = t => t.toLocaleLowerCase("tr").replace(/ç/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u").replace(/[âà]/g, "a").replace(/[îì]/g, "i").replace(/û/g, "u").replace(/[éè]/g, "e").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const SLUG = new Map(), BY_SLUG = new Map();
+BUILTIN.forEach(r => { const sl = slugify(r.ad); SLUG.set(r.key, sl); BY_SLUG.set(sl, r.key); });
+const recipeUrl = r => SLUG.has(r.key) ? `${SITE_URL}tarif/${SLUG.get(r.key)}.html` : SITE_URL;
+async function shareText(title, text){
+  if (navigator.share){
+    try { await navigator.share({title, text}); return; } catch(e){ if (e && e.name === "AbortError") return; }
+  }
+  window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank", "noopener");
+}
+function shareRecipe(r){
+  const n = nutrition(r);
+  const head = `🍳 ${r.ad} tarifi${r.sure ? ` · ⏱️ ${fmtDur(r.sure)}` : ""}${n && n.kcal ? ` · 🔥 ${n.kcal} kcal` : ""}`;
+  return shareText(`${r.ad} tarifi`, `${head}\n\nMalzemeler:\n${r.malzemeler.map(m => "• " + m.ad).join("\n")}\n\nTarifin tamamı ve pişirme modu: ${recipeUrl(r)}`);
+}
+
+/* ---------- Beslenme filtreleri ---------- */
+const DIETS = [["glutensiz","🌾","Glütensiz"],["laktozsuz","🥛","Laktozsuz"],["vegan","🌱","Vegan"],["kuruyemissiz","🥜","Kuruyemişsiz"],["hafif","🔥","500 kcal altı"]];
+const GLUTEN = new Set(["un","bulgur","makarna","lazanya","sehriye","irmik","ekmek","hamburger_ekmegi","lavas","yufka","baklava_yufkasi","kadayif","gullac","galeta_unu","biskuvi","soya_sosu","yulaf"]);
+const LACTOSE = new Set(["sut","yogurt","peynir","kasar","mozzarella","labne","krema","tereyagi","dondurma","kunefe_peyniri","lor"]);
+const NUTS = new Set(["ceviz","fistik","fistik_ezmesi","menengic"]);
+const NON_VEGAN = new Set(["kiyma","tavuk","sucuk","kusbasi","balik","pastirma","somon","ton_baligi","yumurta","bal", ...LACTOSE]);
+let diets = new Set((Array.isArray(load("pisir-diyet", [])) ? load("pisir-diyet", []) : []).filter(d => DIETS.some(x => x[0] === d)));
+const saveDiets = () => { try { localStorage.setItem("pisir-diyet", JSON.stringify([...diets])); } catch(e) {} };
+function dietPass(r){
+  if (!diets.size) return true;
+  if ([...diets].some(d => d !== "hafif") && r.malzemeler.some(m => !m.id)) return false; // içeriği bilinmeyen (yapay zekâ) tarifleri alerjide gösterme
+  const ids = r.malzemeler.map(m => m.id);
+  for (const d of diets){
+    if (d === "glutensiz" && ids.some(i => GLUTEN.has(i))) return false;
+    if (d === "laktozsuz" && ids.some(i => LACTOSE.has(i))) return false;
+    if (d === "vegan" && ids.some(i => NON_VEGAN.has(i))) return false;
+    if (d === "kuruyemissiz" && ids.some(i => NUTS.has(i))) return false;
+    if (d === "hafif"){ const n = nutrition(r); if (!n || n.kcal >= 500) return false; }
+  }
+  return true;
+}
+function dietBarHTML(){
+  const allergy = ["glutensiz","laktozsuz","kuruyemissiz"].some(d => diets.has(d));
+  return `<div class="diet-bar" role="group" aria-label="Beslenme tercihim"><span class="diet-label">Beslenme tercihim:</span>${DIETS.map(([id, e, l]) => `<button type="button" class="diet" data-act="diet" data-d="${id}" aria-pressed="${diets.has(id)}"><span aria-hidden="true">${e}</span> ${l}</button>`).join("")}</div>${allergy ? `<p class="diet-note">⚠️ Alerjin varsa kullandığın ürünlerin ambalaj etiketini mutlaka kontrol et.</p>` : ""}`;
+}
+
+/* ---------- Eksikleri marketten sipariş et ---------- */
+const MARKETS = [
+  ["Trendyol", q => `https://www.trendyol.com/sr?q=${encodeURIComponent(q)}`],
+  ["Migros", q => `https://www.migros.com.tr/arama?q=${encodeURIComponent(q)}`],
+  ["CarrefourSA", q => `https://www.carrefoursa.com/search/?text=${encodeURIComponent(q)}`],
+  ["Getir", () => "https://getir.com/"]
+];
+const orderOpen = new Set();
+function orderHTML(id, names){
+  if (!names.length) return "";
+  const isOpen = orderOpen.has(id);
+  return `<div class="order"><button type="button" class="fav order-btn" data-act="orderToggle" data-id="${esc(id)}" aria-expanded="${isOpen}">🛒 Eksikleri sipariş et ${isOpen ? "↑" : "↓"}</button>${isOpen ? `<ul class="order-list">${names.map(n => `<li><span class="order-name">${esc(n)}</span><span class="order-shops">${MARKETS.map(([m, u]) => `<a class="shop-link" href="${esc(u(n))}" target="_blank" rel="noopener">${m}</a>`).join("")}</span></li>`).join("")}</ul><p class="note">Butonlar marketin arama sayfasını açar; ürünü sepete sen eklersin. Getir'de açılan sayfada malzemeyi aratman gerekebilir.</p>` : ""}</div>`;
+}
+
+/* ---------- Şef'e sor ---------- */
+const chefChats = {};
+const chefFor = key => chefChats[key] || (chefChats[key] = {msgs:[], loading:false});
+function chefHTML(r, step){
+  if (!sampleFn) return "";
+  const c = chefFor(r.key);
+  return `<section class="chef"><h3>👨‍🍳 Şef'e sor</h3>
+    ${c.msgs.length ? "" : `<p class="sub">Tarifle ilgili takıldığın her şeyi sor: “Hamurum cıvık oldu”, “Fırınım yok, ne yapayım?”</p>`}
+    <div class="chef-msgs">${c.msgs.map(m => `<div class="msg ${m.role}">${esc(m.text)}</div>`).join("")}${c.loading ? `<div class="msg chef typing">Şef düşünüyor…</div>` : ""}</div>
+    <div class="chef-form"><input type="text" class="search chef-input" data-chef-key="${esc(r.key)}"${step != null ? ` data-step="${step}"` : ""} placeholder="Sorunu yaz…" maxlength="300" aria-label="Şef'e sorun"><button type="button" class="ai-btn" data-act="chefAsk" data-key="${esc(r.key)}"${step != null ? ` data-step="${step}"` : ""} ${c.loading ? "disabled" : ""}>Sor</button></div></section>`;
+}
+async function chefAsk(r, q, step){
+  q = (q || "").trim(); if (!q || !sampleFn) return;
+  const c = chefFor(r.key); if (c.loading) return;
+  c.msgs.push({role:"user", text:q}); c.loading = true; refreshChef(r.key);
+  const past = c.msgs.slice(-7, -1).map(m => `${m.role === "user" ? "Kullanıcı" : "Şef"}: ${m.text}`).join("\n");
+  const prompt = `Sen sıcakkanlı, pratik bir ev aşçısı şefsin. Kullanıcı "${r.ad}" tarifini yapıyor${step != null && r.adimlar[step] ? ` ve şu an ${step + 1}. adımda: "${r.adimlar[step]}"` : ""}.
+Malzemeler: ${r.malzemeler.map(m => m.ad).join(", ")}.
+Adımlar: ${r.adimlar.map((x, i) => `${i + 1}) ${x}`).join(" ")}
+${past ? "Önceki konuşma:\n" + past + "\n" : ""}Kullanıcının sorusu: "${q}"
+En fazla 4 cümleyle kısa, net, uygulanabilir ve ${lang === "en" ? "İngilizce" : "Türkçe"} cevap ver. Gıda güvenliğiyle ilgili bir risk varsa belirt. Yemekle ilgisiz sorularda kibarca yalnızca yemek konusunda yardımcı olabileceğini söyle.`;
+  try { const out = await sampleFn(prompt); c.msgs.push({role:"chef", text:str(out && out.text).trim() || "Şu an cevap veremedim, tekrar dener misin?"}); }
+  catch(e){ c.msgs.push({role:"chef", text:"Şu an cevap veremedim; biraz sonra tekrar dener misin?"}); }
+  c.loading = false; refreshChef(r.key);
+}
+function refreshChef(key){
+  if (sheetKey === key) renderSheet();
+  if (cook.open && cook.key === key) renderCook();
+  if (mode === "dish" && currentKey === key) renderDishDetail();
+  const box = document.querySelector(".chef-msgs"); if (box) box.scrollTop = box.scrollHeight;
+}
+document.addEventListener("keydown", e => {
+  const inp = e.target && e.target.closest ? e.target.closest(".chef-input") : null;
+  if (!inp || e.key !== "Enter") return;
+  e.preventDefault();
+  const r = REG.get(inp.dataset.chefKey); if (r) chefAsk(r, inp.value, inp.dataset.step != null ? Number(inp.dataset.step) : null);
+});
+
+/* ---------- Puan ve yorumlar ---------- */
+const revCache = {}, revDraft = {}, revState = {};
+let myReviews = load("pisir-yorumlarim", {}); if (!myReviews || typeof myReviews !== "object") myReviews = {}; // tarif → {id, token}
+const saveMyReviews = () => { try { localStorage.setItem("pisir-yorumlarim", JSON.stringify(myReviews)); } catch(e) {} };
+let reported = load("pisir-sikayet", {}); if (!reported || typeof reported !== "object") reported = {};
+const saveReported = () => { try { localStorage.setItem("pisir-sikayet", JSON.stringify(reported)); } catch(e) {} };
+const REV_URL = () => PHOTO_URL ? PHOTO_URL.replace(/\/foto$/, "/yorum") : "";
+const starsText = n => "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n);
+function timeAgo(t){
+  const m = Math.max(1, Math.round((Date.now() - t) / 60000));
+  if (m < 60) return `${m} dk önce`; const h = Math.round(m / 60); if (h < 24) return `${h} saat önce`;
+  const d = Math.round(h / 24); return d < 30 ? `${d} gün önce` : new Date(t).toLocaleDateString("tr-TR");
+}
+async function loadReviews(r){
+  revCache[r.key] = {state:"loading", list:[]};
+  try {
+    const res = await fetch(`${REV_URL()}?tarif=${encodeURIComponent(r.key)}&_=${Date.now()}`, {cache:"no-store"});
+    const d = res.ok ? await res.json() : null;
+    let list = (d && Array.isArray(d.yorumlar)) ? d.yorumlar.filter(x => x && typeof x.id === "string") : [];
+    const mine = myReviews[r.key];
+    if (mine && mine.local && !list.some(x => x.id === mine.id) && Date.now() - mine.local.t < 15 * 60e3) list = [mine.local, ...list];
+    revCache[r.key] = {state:"done", list:list.filter(x => !reported["yorum:" + x.id])};
+  } catch(e){ revCache[r.key] = {state:"done", list:[]}; }
+  if (sheetKey === r.key) renderSheet();
+}
+function reviewsHTML(r){
+  if (!PHOTO_URL || r.src !== "b") return "";
+  const st = revCache[r.key]; if (!st) loadReviews(r);
+  const list = (st && st.list) || [];
+  const rated = list.filter(x => x.s >= 1);
+  const avg = rated.length ? rated.reduce((a, x) => a + x.s, 0) / rated.length : 0;
+  const mine = myReviews[r.key];
+  const dr = revDraft[r.key] || {s:0, m:""};
+  let h = `<section class="reviews"><div class="photos-head"><h3>⭐ Değerlendirmeler</h3>${rated.length ? `<span class="rev-avg"><b>${avg.toLocaleString("tr-TR", {maximumFractionDigits:1})}</b> <span class="stars">${starsText(Math.round(avg))}</span> <span class="sec-count">(${rated.length})</span></span>` : ""}</div>`;
+  if (mine) h += `<p class="sub">Bu tarifi değerlendirdin, teşekkürler!</p>`;
+  else h += `<div class="rev-form"><div class="star-pick" role="group" aria-label="Puanın">${[1,2,3,4,5].map(v => `<button type="button" class="star${v <= dr.s ? " on" : ""}" data-act="revStar" data-key="${esc(r.key)}" data-v="${v}" aria-label="${v} yıldız">★</button>`).join("")}</div>
+    <textarea class="rev-text" data-rev-key="${esc(r.key)}" maxlength="300" rows="2" placeholder="Nasıl oldu? Kısa bir not bırak (isteğe bağlı)">${esc(dr.m)}</textarea>
+    <button type="button" class="ai-btn" data-act="revSend" data-key="${esc(r.key)}" ${!dr.s || revState[r.key] === "sending" ? "disabled" : ""}>${revState[r.key] === "sending" ? "Kontrol ediliyor…" : "Gönder"}</button></div>`;
+  if (revState[r.key] && revState[r.key] !== "sending") h += `<p class="photo-msg">${esc(revState[r.key])}</p>`;
+  const shown = list.filter(x => x.m).slice(0, 15);
+  if (shown.length) h += `<ul class="rev-list">${shown.map(x => {
+    const isMine = mine && mine.id === x.id;
+    return `<li><div class="rev-top"><span class="stars">${starsText(x.s || 0)}</span><span class="rev-time">${isMine ? "Senin yorumun · " : ""}${timeAgo(x.t)}</span></div><p>${esc(x.m)}</p><div class="rev-acts">${isMine || adminKey ? `<button type="button" class="link-btn" data-act="revDel" data-key="${esc(r.key)}" data-id="${esc(x.id)}">🗑️ Kaldır</button>` : ""}${!isMine ? `<button type="button" class="link-btn rep" data-act="report" data-tur="yorum" data-key="${esc(r.key)}" data-id="${esc(x.id)}">🚩 Şikâyet et</button>` : ""}</div></li>`;
+  }).join("")}</ul>`;
+  else if (st && st.state === "loading") h += `<p class="sub">Yorumlar yükleniyor…</p>`;
+  else if (!rated.length) h += `<p class="sub">Henüz değerlendirme yok. İlk puanı sen ver!</p>`;
+  return h + `<p class="note">Yorumlar herkese görünür ve yayınlanmadan önce yapay zekâ ile kontrol edilir.</p></section>`;
+}
+document.addEventListener("input", e => {
+  const t = e.target && e.target.closest ? e.target.closest("textarea[data-rev-key]") : null;
+  if (!t) return;
+  const k = t.dataset.revKey; revDraft[k] = {...(revDraft[k] || {s:0}), m:t.value};
+});
+async function sendReview(r){
+  const dr = revDraft[r.key] || {}; if (!dr.s) return;
+  revState[r.key] = "sending"; renderSheet();
+  try {
+    const res = await fetch(REV_URL(), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:r.key, yildiz:dr.s, metin:(dr.m || "").trim()})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && d.id){
+      const item = {id:d.id, s:dr.s, m:(dr.m || "").trim(), t:Date.now()};
+      myReviews[r.key] = {id:d.id, token:d.token, local:item}; saveMyReviews();
+      const st = revCache[r.key] || {list:[]}; revCache[r.key] = {state:"done", list:[item, ...st.list.filter(x => x.id !== d.id)]};
+      delete revDraft[r.key]; revState[r.key] = "✓ Değerlendirmen eklendi, teşekkürler!";
+    } else revState[r.key] = (d && d.error) || "Gönderilemedi, tekrar dene.";
+  } catch(e){ revState[r.key] = "Gönderilemedi, internet bağlantını kontrol edip tekrar dene."; }
+  renderSheet();
+}
+async function deleteReview(r, id){
+  const mine = myReviews[r.key];
+  const token = mine && mine.id === id ? mine.token : "";
+  if (!token && !adminKey) return;
+  if (!confirm(lang === "en" ? "Remove this review?" : "Bu yorumu kaldırmak istiyor musun?")) return;
+  try {
+    const res = await fetch(REV_URL() + "/sil", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:r.key, id, token, admin:adminKey || undefined})});
+    if (res.ok || res.status === 404){
+      if (mine && mine.id === id){ delete myReviews[r.key]; saveMyReviews(); }
+      reported["yorum:" + id] = Date.now(); saveReported(); // bu cihazda hemen gizle
+      const st = revCache[r.key]; if (st) st.list = st.list.filter(x => x.id !== id);
+      revState[r.key] = "Yorum kaldırıldı.";
+    } else revState[r.key] = "Kaldırılamadı, tekrar dene.";
+  } catch(e){ revState[r.key] = "Kaldırılamadı, tekrar dene."; }
+  renderSheet();
+}
+async function reportItem(tur, r, id){
+  if (!confirm(lang === "en" ? "Report this as inappropriate?" : "Bunu uygunsuz olarak şikâyet etmek istiyor musun?")) return;
+  reported[tur + ":" + id] = Date.now(); saveReported();
+  if (tur === "yorum"){ const st = revCache[r.key]; if (st) st.list = st.list.filter(x => x.id !== id); revState[r.key] = "Şikâyetin alındı, teşekkürler. Bu yorum artık sana gösterilmeyecek."; }
+  else { const st = photoCache[r.key]; if (st) st.list = st.list.filter(x => x.id !== id); uploadState[r.key] = "Şikâyetin alındı, teşekkürler. Bu fotoğraf artık sana gösterilmeyecek."; }
+  fetch(PHOTO_URL.replace(/\/foto$/, "/sikayet"), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tur, tarif:r.key, id})}).catch(() => {});
+  if (sheetKey === r.key) renderSheet();
 }
 
 /* ---------- Kullanıcı fotoğrafları: "Bu yemeği yapanlar" ---------- */
@@ -1426,7 +1667,7 @@ function photosHTML(r){
   const list = (st && st.list) || [];
   const up = uploadState[r.key];
   return `<section class="photos"><div class="photos-head"><h3>📸 Bu yemeği yapanlar</h3>${list.length ? `<span class="sec-count">${list.length} fotoğraf</span>` : ""}</div>
-    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy" onerror="this.closest('.ph').hidden=true"></button>${myPhotos[ph.id] || adminKey ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}</div>`; }).join("")}</div>`
+    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy" onerror="this.closest('.ph').hidden=true"></button>${myPhotos[ph.id] || adminKey ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}${!myPhotos[ph.id] ? `<button type="button" class="ph-rep" data-act="report" data-tur="foto" data-key="${esc(r.key)}" data-id="${esc(ph.id)}" aria-label="Fotoğrafı şikâyet et">🚩</button>` : ""}</div>`; }).filter(Boolean).join("")}</div>`
       : `<p class="sub">${st && st.state === "loading" ? "Fotoğraflar yükleniyor…" : "Henüz fotoğraf yok. Bu yemeği yaptıysan ilk fotoğrafı sen ekle!"}</p>`}
     ${photoInput(r, "📷 Fotoğrafını ekle", false)}
     ${up ? `<p class="photo-msg">${esc(up)}</p>` : ""}
@@ -1437,7 +1678,7 @@ async function loadPhotos(r){
   try {
     const res = await fetch(`${PHOTO_URL}?tarif=${encodeURIComponent(r.key)}&_=${Date.now()}`, {cache:"no-store"});
     const d = res.ok ? await res.json() : null;
-    photoCache[r.key] = {state:"done", list:mergePhotos(r.key, (d && Array.isArray(d.fotos)) ? d.fotos.filter(x => x && typeof x.id === "string") : [])};
+    photoCache[r.key] = {state:"done", list:mergePhotos(r.key, (d && Array.isArray(d.fotos)) ? d.fotos.filter(x => x && typeof x.id === "string" && !reported["foto:" + x.id]) : [])};
   } catch(e){ photoCache[r.key] = {state:"done", list:mergePhotos(r.key, [])}; }
   refreshPhotoViews(r.key);
 }
@@ -1819,14 +2060,27 @@ function renderSheet(){
   sh.hidden = false; document.documentElement.classList.add("sheet-open");
   $("sheetBody").innerHTML = detailHTML(r, false);
 }
-function openSheet(key){
+function openSheet(key, opt){
   sheetKey = key; addRecent(key); renderSheet();
   const inner = document.querySelector(".sheet-inner"); if (inner) inner.scrollTop = 0;
+  // Her tarifin kendi bağlantısı olur (#t=karniyarik); telefonun geri tuşu tarifi kapatır
+  const sl = SLUG.get(key);
+  try { if (sl){ const h = "#t=" + sl; if (opt && opt.root) history.replaceState({sheet:key, root:true}, "", h); else if (location.hash !== h) history.pushState({sheet:key}, "", h); } } catch(e) {}
 }
-function closeSheet(){
+function doCloseSheet(){
   sheetKey = null; renderSheet();
   if (mode === "fav" || mode === "recent") renderSaved();
 }
+function closeSheet(){
+  const st = history.state;
+  if (st && st.sheet && !st.root){ history.back(); return; }
+  if (/^#t=/.test(location.hash)){ try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {} }
+  doCloseSheet();
+}
+window.addEventListener("popstate", e => {
+  const k = e.state && e.state.sheet;
+  if (k && REG.has(k)){ sheetKey = k; renderSheet(); } else if (sheetKey) doCloseSheet();
+});
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (!$("lightbox").hidden){ $("lightbox").hidden = true; return; }
@@ -2153,7 +2407,7 @@ function renderCook(){
     const s = r.adimlar[cook.step];
     const min = stepMinutes(s);
     const tech = stepTechnique(r, s);
-    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}</div></div>
+    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
       <p class="cook-wake"><span id="cookWake">${wakeText()}</span> <span id="voiceKind" class="voice-kind"></span></p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
@@ -2365,7 +2619,7 @@ function renderPlan(){
     const list = planShopping();
     h += `<div class="section"><div class="actions" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Haftalık alışveriş listen</h2><button type="button" class="fav" data-act="planClear">Menüyü temizle</button></div>`;
     h += list.length
-      ? `<p class="sub">Menündeki ${total} yemeğin eksikleri tek listede. Aldıkça “Aldım”a dokun.</p><ul class="need">${list.map(e => `<li><div class="need-row"><span>${esc(e.ad)}${e.amountText ? ` <span class="amt">${esc(e.amountText)}</span>` : ""}<span class="for">${esc([...e.dishes].join(", "))} için</span></span><button type="button" class="state buy" data-act="bought" data-k="${esc(e.id)}">Aldım</button></div></li>`).join("")}</ul><button type="button" class="ai-btn" data-act="copyPlan" style="margin-top:14px">Listeyi kopyala</button>`
+      ? `<p class="sub">Menündeki ${total} yemeğin eksikleri tek listede. Aldıkça “Aldım”a dokun.</p><ul class="need">${list.map(e => `<li><div class="need-row"><span>${esc(e.ad)}${e.amountText ? ` <span class="amt">${esc(e.amountText)}</span>` : ""}<span class="for">${esc([...e.dishes].join(", "))} için</span></span><button type="button" class="state buy" data-act="bought" data-k="${esc(e.id)}">Aldım</button></div></li>`).join("")}</ul><div class="actions" style="margin-top:14px"><button type="button" class="ai-btn" data-act="copyPlan">Listeyi kopyala</button><button type="button" class="fav" data-act="sharePlan">📤 Listeyi paylaş</button></div>${orderHTML("plan", list.map(e => e.ad))}`
       : `<p class="done">Menündeki tüm yemeklerin malzemeleri evde, alışverişe gerek yok!</p>`;
     h += `</div>`;
   }
@@ -2444,6 +2698,17 @@ document.addEventListener("click", e => {
       if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
     case "goDaily": dailyOpen = !dailyOpen; renderDaily(); if (mode === "pantry") renderResults(); break; // menü olduğu yerde açılır/kapanır
+    case "diet": { const dd = el.dataset.d; diets.has(dd) ? diets.delete(dd) : diets.add(dd); saveDiets(); renderAll(); break; }
+    case "share": if (r) shareRecipe(r); break;
+    case "shareList": if (r) shareText(`${r.ad} alışveriş listesi`, `🛒 ${r.ad} için alışveriş listesi\n${shopText(r)}\n\nTarif: ${recipeUrl(r)}`); break;
+    case "sharePlan": shareText("Haftalık alışveriş listesi", `🛒 Haftalık alışveriş listem\n${planShopText()}`); break;
+    case "orderToggle": { const oid = el.dataset.id; orderOpen.has(oid) ? orderOpen.delete(oid) : orderOpen.add(oid); renderAll(); if (mode === "plan") renderPlan(); break; }
+    case "chefToggle": cook.chef = !cook.chef; renderCook(); break;
+    case "chefAsk": if (r){ const inp = el.closest(".chef-form").querySelector("input"); chefAsk(r, inp.value, el.dataset.step != null ? Number(el.dataset.step) : null); } break;
+    case "revStar": if (r){ revDraft[key] = {...(revDraft[key] || {m:""}), s:Number(el.dataset.v)}; renderSheet(); } break;
+    case "revSend": if (r) sendReview(r); break;
+    case "revDel": if (r) deleteReview(r, el.dataset.id); break;
+    case "report": if (r) reportItem(el.dataset.tur, r, el.dataset.id); break;
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
@@ -2573,7 +2838,7 @@ function loadStats(){
    Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
 let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
 const EN_EXACT = {
-  "Bugün ne pişirsem?":"What should I cook today?","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
+  "Bugün ne pişirsem?":"What should I cook today?","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
   "💡 Öneriler burada belirecek":"💡 Ideas will appear here","Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:":"As you pick ingredients, dishes you can make appear here instantly. Tap one to get started:","⚡ Hızlı başlangıç":"⚡ Quick start",
   "🗑️ Kaldır":"🗑️ Remove","Kaldırılıyor…":"Removing…","Fotoğrafın kaldırıldı.":"Your photo was removed.","Fotoğraf kaldırılamadı, tekrar dene.":"Couldn't remove the photo, please try again.","Fotoğrafı büyüt":"Enlarge photo","✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.":"✓ Your photo was added, well done! Tap it to enlarge, or remove it if you like.","Fotoğrafımı sil":"Delete my photo","Fotoğrafın silindi.":"Your photo was deleted.","Fotoğraf silinemedi, tekrar dene.":"Couldn't delete the photo, please try again.","✓ Fotoğrafın eklendi, ellerine sağlık!":"✓ Your photo was added, well done!","Fotoğraf hazırlanıyor…":"Preparing photo…","Fotoğraf kontrol ediliyor, bu birkaç saniye sürebilir…":"Checking your photo, this may take a few seconds…","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
   "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
@@ -2778,6 +3043,11 @@ if ("serviceWorker" in navigator){
 }
 
 renderAll();
+// Bağlantıyla gelindiyse (…/#t=karniyarik) tarifi doğrudan aç
+{ const mt = location.hash.match(/^#t=([a-z0-9-]+)/); if (mt && BY_SLUG.has(mt[1])) openSheet(BY_SLUG.get(mt[1]), {root:true}); }
+// Ziyaretçi istatistikleri (Cloudflare Web Analytics, çerez kullanmaz). Anahtarı aldığında tırnakların arasına yaz.
+const CF_ANALYTICS_TOKEN = "";
+if (CF_ANALYTICS_TOKEN){ const sc = document.createElement("script"); sc.defer = true; sc.src = "https://static.cloudflareinsights.com/beacon.min.js"; sc.setAttribute("data-cf-beacon", JSON.stringify({token:CF_ANALYTICS_TOKEN, spa:true})); document.head.appendChild(sc); }
 applyLang();
 if (lang === "en") trTree(document.documentElement);
 // Görselleri arka planda hazırla (sayfa açıldıktan hemen sonra)
