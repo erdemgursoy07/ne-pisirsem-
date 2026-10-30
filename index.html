@@ -1486,9 +1486,10 @@ function renderResults(){
   const ev = BUILTIN.filter(fpass).map(r => {
     const main = r.malzemeler.filter(m => !BASIC.has(m.id));
     const have = main.filter(m => selected.has(m.id)).length;
-    const missList = r.malzemeler.filter(m => !selected.has(m.id));
+    // Tuz, yağ, su gibi temel malzemeler her evde olur: seçili olmasalar da yemeği engellemez
+    const missList = r.malzemeler.filter(m => !selected.has(m.id) && !BASIC.has(m.id));
     const flexMiss = missList.filter(m => FLEX.has(m.id)).map(m => m.ad);
-    const coreMiss = missList.filter(m => !FLEX.has(m.id)).length; // temel malzemeler de dahil
+    const coreMiss = missList.filter(m => !FLEX.has(m.id)).length;
     // Asıl malzemelerin hepsi var, eksikler sadece isteğe bağlı olanlar (en fazla 2): bu malzemelerle yapılır
     const flexOk = missList.length > 0 && coreMiss === 0 && flexMiss.length <= 2 && have >= 2 && have > flexMiss.length;
     return {r, miss:missList.length, have, main:main.length, flexMiss, flexOk};
@@ -1500,7 +1501,7 @@ function renderResults(){
   // Canlı öneriler
   const sugCard = x => {
     const r = x.r, wi = wikiInfo(r);
-    const missNames = r.malzemeler.filter(m => !selected.has(m.id)).map(m => m.ad);
+    const missNames = r.malzemeler.filter(m => !selected.has(m.id) && !BASIC.has(m.id)).map(m => m.ad);
     const note = !missNames.length ? `<small class="sug-ok">✓ Hepsi evde var</small>`
       : x.flexOk ? `<small class="sug-ok">✓ Bu malzemelerle yapılır · ${esc(missNames.join(", ").toLocaleLowerCase("tr"))} isteğe bağlı</small>`
       : `<small class="sug-miss">Eksik: ${esc(missNames.join(", "))}</small>`;
