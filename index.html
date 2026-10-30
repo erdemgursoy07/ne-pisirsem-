@@ -99,6 +99,18 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+/* Tarif sayfası */
+html.sheet-open{overflow:hidden}
+.sheet{position:fixed;inset:0;z-index:45;display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.sheet-backdrop{position:absolute;inset:0;background:rgba(10,16,30,.55)}
+.sheet-inner{position:relative;width:100%;max-width:880px;max-height:94vh;overflow:auto;background:var(--bg);border-radius:24px 24px 0 0;padding:0 22px calc(32px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 40px rgba(0,0,0,.25)}
+@media (min-width:700px){.sheet{align-items:center;padding:20px}.sheet-inner{border-radius:24px;max-height:92vh}}
+.sheet-top{position:sticky;top:0;z-index:3;display:flex;justify-content:flex-end;padding:14px 0 8px;background:var(--bg)}
+.sheet-close{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 16px;font-weight:700;cursor:pointer}
+.sug-h{font-size:1.15rem;font-weight:800;margin:0 0 10px}
+.sug-h2{margin-top:22px}
+.sug-head b{color:#2B8A3E}
 /* Üst çubuk ve karşılama kartı */
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0 16px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;letter-spacing:-.01em}
@@ -146,7 +158,14 @@ button:disabled{opacity:.45;cursor:default}
 .photos{margin-top:30px;padding-top:20px;border-top:1.5px solid var(--line);max-width:760px}
 .photos-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin:10px 0 14px}
-.photo-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;background:var(--line)}
+.photo-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;background:var(--line);display:block}
+.ph{position:relative}
+.ph-img{display:block;width:100%;padding:0;border:0;background:none;cursor:zoom-in;border-radius:14px}
+.ph-del{position:absolute;right:6px;bottom:6px;border:0;border-radius:999px;padding:5px 10px;font-size:.78rem;font-weight:700;background:rgba(201,42,42,.92);color:#fff;cursor:pointer}
+.lightbox{position:fixed;inset:0;z-index:70;background:rgba(5,8,15,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;cursor:zoom-out}
+.lightbox[hidden]{display:none}
+.lightbox img{max-width:100%;max-height:85vh;border-radius:16px;object-fit:contain;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.lightbox-hint{color:#fff;opacity:.75;margin:0;font-size:.9rem}
 .photo-btn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;margin-top:4px}
 .photo-msg{margin:10px 0 0;font-weight:700}
 .badges{display:flex;flex-wrap:wrap;gap:4px;padding:0 4px}
@@ -507,6 +526,16 @@ header.hero{padding:28px 0 20px}
   <section class="plan" id="planMode" aria-label="Haftalık menü" hidden></section>
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
   <footer class="credits">Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
+</div>
+
+<div class="lightbox" id="lightbox" data-act="lightboxClose" hidden><img id="lightboxImg" alt=""><p class="lightbox-hint">Kapatmak için dokun</p></div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-backdrop" data-act="sheetClose"></div>
+  <div class="sheet-inner" role="dialog" aria-modal="true" aria-label="Tarif">
+    <div class="sheet-top"><button type="button" class="sheet-close" data-act="sheetClose">✕ Kapat</button></div>
+    <div class="detail" id="sheetBody"></div>
+  </div>
 </div>
 
 <div class="bar" id="bar">
@@ -1089,7 +1118,7 @@ function detailHTML(r, compact){
       ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a></figcaption></figure>`
       : `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
     h += `<h2>${esc(r.ad)}</h2>${badgesHTML(r)}`;
-    if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (v && mode === "dish" && currentKey === r.key) renderDishDetail(); });
+    if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (!v) return; if (sheetKey === r.key) renderSheet(); if (mode === "dish" && currentKey === r.key) renderDishDetail(); });
     const meta = [r.mutfak, r.sure ? r.sure + " dakika" : ""].filter(Boolean).join(", ");
     h += `<p class="sub">${esc(meta)}${meta ? ". " : ""}${r.malzemeler.length} malzemenin ${have} tanesi evde.</p>`;
   }
@@ -1292,6 +1321,8 @@ function renderHero(){
 
 /* ---------- Kullanıcı fotoğrafları: "Bu yemeği yapanlar" ---------- */
 const photoCache = {};
+let myPhotos = load("pisir-fotolarim", {}); if (!myPhotos || typeof myPhotos !== "object") myPhotos = {}; // yüklediğin fotoğrafların kaldırma anahtarları
+const saveMyPhotos = () => { try { localStorage.setItem("pisir-fotolarim", JSON.stringify(myPhotos)); } catch(e) {} };
 const uploadState = {};
 function photoInput(r, label, capture){
   return `<label class="ai-btn photo-btn">${label}<input type="file" accept="image/*" ${capture ? 'capture="environment"' : ""} data-photo-key="${esc(r.key)}" hidden></label>`;
@@ -1303,7 +1334,7 @@ function photosHTML(r){
   const list = (st && st.list) || [];
   const up = uploadState[r.key];
   return `<section class="photos"><div class="photos-head"><h3>📸 Bu yemeği yapanlar</h3>${list.length ? `<span class="sec-count">${list.length} fotoğraf</span>` : ""}</div>
-    ${list.length ? `<div class="photo-grid">${list.map(ph => `<img src="${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy">`).join("")}</div>`
+    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy"></button>${myPhotos[ph.id] ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}</div>`; }).join("")}</div>`
       : `<p class="sub">${st && st.state === "loading" ? "Fotoğraflar yükleniyor…" : "Henüz fotoğraf yok. Bu yemeği yaptıysan ilk fotoğrafı sen ekle!"}</p>`}
     ${photoInput(r, "📷 Fotoğrafını ekle", false)}
     ${up ? `<p class="photo-msg">${esc(up)}</p>` : ""}
@@ -1319,6 +1350,7 @@ async function loadPhotos(r){
   refreshPhotoViews(r.key);
 }
 function refreshPhotoViews(key){
+  if (sheetKey === key) renderSheet();
   if (mode === "dish" && currentKey === key && !dishState) renderDishDetail();
   if (cook.open && cook.key === key) renderCook();
 }
@@ -1348,7 +1380,8 @@ document.addEventListener("change", async e => {
     const res = await fetch(PHOTO_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:key, image})});
     const d = await res.json().catch(() => null);
     if (res.ok && d && d.id){
-      uploadState[key] = "✓ Fotoğrafın eklendi, ellerine sağlık!";
+      if (d.token){ myPhotos[d.id] = d.token; saveMyPhotos(); }
+      uploadState[key] = "✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.";
       const old = (photoCache[key] && photoCache[key].list) || [];
       photoCache[key] = {state:"done", list:[{id:d.id, t:Date.now()}, ...old]};
     } else uploadState[key] = (d && d.error) || "Fotoğraf eklenemedi, tekrar dene.";
@@ -1442,6 +1475,8 @@ function renderGroups(){
   $("groups").innerHTML = html;
 }
 
+// Çoğu yemekte olmasa da olur: lezzet verir ama yemeğin kendisi değildir
+const FLEX = new Set(["biber","kapya","maydanoz","dereotu","nane","pul_biber","limon","sarimsak","salca","sogan"]);
 function renderResults(){
   cardSeq = 0;
   const any = selected.size + extras.size > 0;
@@ -1450,19 +1485,33 @@ function renderResults(){
   const ev = BUILTIN.filter(fpass).map(r => {
     const main = r.malzemeler.filter(m => !BASIC.has(m.id));
     const have = main.filter(m => selected.has(m.id)).length;
-    const miss = r.malzemeler.filter(m => !selected.has(m.id)).length;
-    return {r, miss, have, main:main.length};
+    const missList = r.malzemeler.filter(m => !selected.has(m.id));
+    const flexMiss = missList.filter(m => FLEX.has(m.id)).map(m => m.ad);
+    const coreMiss = missList.filter(m => !FLEX.has(m.id)).length; // temel malzemeler de dahil
+    // Asıl malzemelerin hepsi var, eksikler sadece isteğe bağlı olanlar (en fazla 2): bu malzemelerle yapılır
+    const flexOk = missList.length > 0 && coreMiss === 0 && flexMiss.length <= 2 && have >= 2 && have > flexMiss.length;
+    return {r, miss:missList.length, have, main:main.length, flexMiss, flexOk};
   });
-  const ready = ev.filter(x => x.miss === 0 && x.have > 0).sort((a, b) => b.have - a.have);
+  const ready = ev.filter(x => (x.miss === 0 && x.have > 0) || x.flexOk).sort((a, b) => (a.miss ? 1 : 0) - (b.miss ? 1 : 0) || b.have - a.have);
   // "Bir iki eksik": seçtiklerinden en az 2'sini ve asıl malzemelerinin en az yarısını içerenler
-  const near = ev.filter(x => x.miss > 0 && x.miss <= 2 && x.have >= 2 && x.have * 2 >= x.main).sort((a, b) => a.miss - b.miss || b.have - a.have).slice(0, 12);
+  const near = ev.filter(x => !x.flexOk && x.miss > 0 && x.miss <= 2 && x.have >= 2 && x.have * 2 >= x.main).sort((a, b) => a.miss - b.miss || b.have - a.have).slice(0, 12);
 
-  // Canlı öneriler: önce hepsi evde olanlar, sonra 1-2 malzemesi eksik olanlar
-  const sugg = [...ready, ...near].slice(0, 8);
+  // Canlı öneriler
   const sugCard = x => {
     const r = x.r, wi = wikiInfo(r);
-    const missNames = r.malzemeler.filter(m => !owned(m)).map(m => m.ad);
-    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b><small class="${missNames.length ? "sug-miss" : "sug-ok"}">${missNames.length ? `Eksik: ${esc(missNames.join(", "))}` : "✓ Hepsi evde var"}</small></span></button>`;
+    const missNames = r.malzemeler.filter(m => !selected.has(m.id)).map(m => m.ad);
+    const note = !missNames.length ? `<small class="sug-ok">✓ Hepsi evde var</small>`
+      : x.flexOk ? `<small class="sug-ok">✓ Bu malzemelerle yapılır · ${esc(missNames.join(", ").toLocaleLowerCase("tr"))} isteğe bağlı</small>`
+      : `<small class="sug-miss">Eksik: ${esc(missNames.join(", "))}</small>`;
+    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}</span></button>`;
+  };
+  const readyS = ready.slice(0, 8), nearS = near.slice(0, 6);
+  const sugBlock = (tag) => {
+    if (!readyS.length && !nearS.length) return "";
+    let h = "";
+    if (readyS.length) h += `<${tag} class="sug-h">✅ Bu malzemelerle hemen yapabilirsin</${tag}><div class="sug-list">${readyS.map(sugCard).join("")}</div>`;
+    if (nearS.length) h += `<${tag} class="sug-h sug-h2">🛒 1-2 malzeme alırsan</${tag}><div class="sug-list">${nearS.map(sugCard).join("")}</div>`;
+    return h;
   };
   const strip = $("sugStrip");
   const status = $("status");
@@ -1472,18 +1521,14 @@ function renderResults(){
   else if (ready.length) status.innerHTML = `Seçtiklerinle <strong>${ready.length} yemek</strong> hemen yapılır.`;
   else status.innerHTML = `Henüz tam eşleşme yok, ama <strong>${near.length} yemeğe</strong> çok yakınsın.`;
 
-  if (strip) strip.innerHTML = mainSel && sugg.length ? `<div class="sug-head">💡 Bu malzemelerle yapabileceklerin</div><div class="sug-row">${sugg.map(sugCard).join("")}</div>` : "";
+  const stripList = [...readyS, ...nearS].slice(0, 10);
+  if (strip) strip.innerHTML = mainSel && stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "";
   let html = "";
-  if (mainSel && sugg.length) html += `<div class="section sug-sec"><h2>💡 Bu malzemelerle yapabileceklerin</h2><div class="sug-list">${sugg.map(sugCard).join("")}</div></div>`;
+  if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!any){
     html = `<div class="empty">Malzeme seçtikçe yapabileceğin yemekler burada belirecek. Başlamak için yumurta, domates ve biberi seçmeyi dene.</div>`;
   } else {
-    html += `<div class="section"><h2>Hemen yapabilirsin</h2>`;
-    html += ready.length
-      ? `<p class="sub">Tarifi görmek için dokun.</p>${ready.map(x => cardHTML(x.r)).join("")}`
-      : `<div class="empty">${filters.size ? "Seçtiğin filtrelere uyan tam eşleşme yok. Bir filtreyi kaldırmayı ya da malzeme eklemeyi dene." : "Bu malzemelerle tam eşleşen bir yemek yok. Soğan, salça ya da yumurta gibi temel malzemeleri eklemeyi dene."}</div>`;
-    html += `</div>`;
-    if (near.length) html += `<div class="section"><h2>Bir iki malzeme eksik</h2>${near.map(x => cardHTML(x.r)).join("")}</div>`;
+    if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
   }
   $("results").innerHTML = html;
@@ -1543,6 +1588,7 @@ function renderDishList(){
   hydrateImages($("dishList"));
 }
 function renderDishDetail(){
+  renderSheet();
   const box = $("dishDetail");
   if (dishState && dishState.state === "loading"){ box.innerHTML = `<div class="empty">“${esc(dishState.query)}” için tarif hazırlanıyor. Bu birkaç saniye sürebilir…</div>`; return; }
   if (dishState && dishState.state === "error"){ box.innerHTML = `<div class="empty">${esc(dishState.msg)}</div>`; return; }
@@ -1621,6 +1667,7 @@ const MENUS = [
 ];
 const MENU_SLOTS = [["🍲","Çorba"],["🍽️","Ana yemek"],["🥗","Yanında"],["🍰","Tatlı"]];
 let dailySel = 1; // varsayılan: ana yemek
+let dailyOpen = false; // menü kartı açık mı
 function dailyMenu(){
   const m = MENUS[daySeed(MENUS.length, 0)];
   return m.map((n, i) => [MENU_SLOTS[i][0], MENU_SLOTS[i][1], REG.get("b:" + n)]).filter(x => x[2]);
@@ -1630,15 +1677,13 @@ function renderDaily(){
   const show = mode === "pantry" || (mode === "dish" && !filters.size && !$("dishSearch").value.trim());
   box.hidden = !show; if (!show) return;
   const menu = dailyMenu(); if (!menu.length){ box.hidden = true; return; }
-  if (mode === "pantry"){ // Dolabım'da asıl iş malzeme seçmek: menü kısa bir şerit olarak
-    box.innerHTML = `<button type="button" class="daily-mini" data-act="goDaily"><span class="dm-tag">🌟 Bugünün sofrası</span><span class="dm-items">${menu.map(([e, , r]) => `<span>${e} ${esc(r.ad)}</span>`).join("")}</span><span class="dm-go">Menüyü gör →</span></button>`;
-    return;
-  }
+  const mini = `<button type="button" class="daily-mini" data-act="goDaily" aria-expanded="${dailyOpen}"><span class="dm-tag">🌟 Bugünün sofrası</span><span class="dm-items">${menu.map(([e, , r]) => `<span>${e} ${esc(r.ad)}</span>`).join("")}</span><span class="dm-go">${dailyOpen ? "Menüyü gizle ↑" : "Menüyü gör ↓"}</span></button>`;
+  if (!dailyOpen){ box.innerHTML = mini; return; }
   if (dailySel >= menu.length) dailySel = 0;
   const sel = menu[dailySel][2];
   const wi = wikiInfo(sel);
   const total = menu.reduce((sum, [, , r]) => sum + ((nutrition(r) || {}).kcal || 0), 0);
-  box.innerHTML = `<div class="daily cat-${recipeCat(sel)}">
+  box.innerHTML = mini + `<div class="daily cat-${recipeCat(sel)}">
     <div class="daily-media">${wi ? `<img src="${esc(wi.s)}" alt="${esc(sel.ad)}">` : `<span class="daily-emo" aria-hidden="true">${recipeEmoji(sel)}</span>`}<span class="daily-sel">${esc(sel.ad)}</span></div>
     <div class="daily-body"><span class="daily-tag">🌟 Günün menüsü</span><h2>Bugünün sofrası</h2>
       <p class="daily-q">Önce hangisini yapmak istiyorsun?</p>
@@ -1649,6 +1694,29 @@ function renderDaily(){
   if (!wi && needsWiki(sel)) getWikiImage(sel).then(v => { if (v) renderDaily(); });
 }
 
+/* ---------- Tarif sayfası: yemeğe nereden dokunulursa dokunulsun üstte açılır ---------- */
+let sheetKey = null;
+function renderSheet(){
+  const sh = $("sheet"); if (!sh) return;
+  const r = sheetKey ? REG.get(sheetKey) : null;
+  if (!r){ sh.hidden = true; document.documentElement.classList.remove("sheet-open"); return; }
+  sh.hidden = false; document.documentElement.classList.add("sheet-open");
+  $("sheetBody").innerHTML = detailHTML(r, false);
+}
+function openSheet(key){
+  sheetKey = key; addRecent(key); renderSheet();
+  const inner = document.querySelector(".sheet-inner"); if (inner) inner.scrollTop = 0;
+}
+function closeSheet(){
+  sheetKey = null; renderSheet();
+  if (mode === "fav" || mode === "recent") renderSaved();
+}
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (!$("lightbox").hidden){ $("lightbox").hidden = true; return; }
+  if (sheetKey && !cook.open) closeSheet();
+});
+
 function renderAll(){
   renderHero();
   renderDaily();
@@ -1657,6 +1725,7 @@ function renderAll(){
   if (mode === "plan") renderPlan();
   if (mode === "fav" || mode === "recent") renderSaved();
   renderBar();
+  renderSheet();
   if (cook.open) renderCook();
   renderTimers();
 }
@@ -2196,7 +2265,7 @@ document.addEventListener("click", e => {
   const key = el.dataset.key;
   const r = key ? REG.get(key) : null;
   switch (act){
-    case "tab": mode = el.dataset.mode; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
+    case "tab": mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
     case "filter": {
       const f = el.dataset.f;
       if (mode !== "dish"){
@@ -2226,14 +2295,34 @@ document.addEventListener("click", e => {
     case "fav": if (r){ favs = favs.includes(key) ? favs.filter(k => k !== key) : [key, ...favs]; save(); renderAll(); } break;
     case "servMinus": case "servPlus": if (r){ servMap[key] = Math.min(12, Math.max(1, getServ(r) + (act === "servPlus" ? 1 : -1))); save(); renderAll(); } break;
     case "copy": if (r) copyText(shopText(r), el); break;
-    case "openSaved": mode = "dish"; $("dishSearch").value = ""; dishState = null; currentKey = key; addRecent(key); renderAll(); window.scrollTo(0, 0); break;
+    case "openSaved": if (r) openSheet(key); break;
+    case "sheetClose": closeSheet(); break;
+    case "photoZoom": $("lightboxImg").src = el.dataset.src; $("lightbox").hidden = false; break;
+    case "lightboxClose": $("lightbox").hidden = true; $("lightboxImg").removeAttribute("src"); break;
+    case "photoDel": {
+      const id = el.dataset.id, token = myPhotos[id];
+      if (!r || !token || !confirm("Bu fotoğrafı kaldırmak istiyor musun?")) break;
+      el.disabled = true; el.textContent = "Kaldırılıyor…";
+      fetch(PHOTO_URL + "/sil", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:key, id, token})})
+        .then(res => res.json().then(d => ({ok:res.ok, d})).catch(() => ({ok:res.ok, d:null})))
+        .then(({ok, d}) => {
+          if (ok){
+            delete myPhotos[id]; saveMyPhotos();
+            const st = photoCache[key]; if (st) st.list = st.list.filter(x => x.id !== id);
+            uploadState[key] = "Fotoğrafın kaldırıldı.";
+          } else uploadState[key] = (d && d.error) || "Fotoğraf kaldırılamadı, tekrar dene.";
+          refreshPhotoViews(key);
+        })
+        .catch(() => { uploadState[key] = "Fotoğraf kaldırılamadı, bağlantını kontrol et."; refreshPhotoViews(key); });
+      break;
+    }
     case "theme": theme = theme === "dark" ? "light" : "dark"; try { localStorage.setItem("pisir-tema", theme); } catch(e) {} applyTheme(); break;
     case "voice":
       voiceOn = !voiceOn; try { localStorage.setItem("pisir-ses", voiceOn ? "1" : "0"); } catch(e) {}
       if (voiceOn && player){ player.src = SILENT; player.play().catch(() => {}); } // telefonda sesi çalmaya izin ver
       if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
-    case "goDaily": mode = "dish"; filters = new Set(); $("dishSearch").value = ""; dishState = null; currentKey = null; renderAll(); $("daily").scrollIntoView({block:"start"}); break;
+    case "goDaily": dailyOpen = !dailyOpen; renderDaily(); break;
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
     case "menuToPlan": {
