@@ -99,6 +99,32 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+/* Ana sayfa: kompakt karşılama ve yol gösterici */
+header.hero .hero-card{padding:22px 26px 16px}
+header.hero .hero-card h1{font-size:clamp(1.9rem,4vw,2.7rem);margin:0 0 6px;line-height:1.1;max-width:none}
+header.hero .hero-card .marquee-track span{font-size:1.55rem}
+header.hero .hero-card #heroText{margin:0;font-size:1rem;max-width:none}
+header.hero .hero-card .marquee{margin:14px 0 0}
+.flow{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.flow li{display:flex;align-items:center;gap:8px;padding:7px 14px 7px 7px;border-radius:999px;background:rgba(255,255,255,.7);font-weight:700;font-size:.92rem;color:var(--muted)}
+.flow-n{width:26px;height:26px;border-radius:999px;display:grid;place-items:center;background:var(--line);color:var(--ink);font-size:.85rem;font-weight:800}
+.flow li.on{color:var(--ink);background:#fff;box-shadow:0 2px 10px rgba(13,21,40,.08)}
+.flow li.on .flow-n{background:var(--cobalt);color:#fff}
+.flow li.done .flow-n{background:#2B8A3E;color:#fff}
+:root[data-theme="dark"] .flow li{background:rgba(255,255,255,.06)}
+:root[data-theme="dark"] .flow li.on{background:var(--surface)}
+.toolbar .search{width:100%;flex:1 1 100%;font-size:1.05rem;padding:15px 18px;border-radius:16px}
+.mybox-right{display:flex;align-items:baseline;gap:10px}
+.mybox-head .link-btn{font-size:.88rem}
+/* Hızlı başlangıç */
+.start-card h2{margin-bottom:4px}
+.combos{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:12px}
+.combo{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:.92rem;cursor:pointer;text-align:left}
+.combo:hover{border-color:var(--cobalt)}
+.combo-e{font-size:1.4rem}
+.suggest-strip .combos{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:900px){.suggest-strip.only-mobile{display:none}}
+@media (max-width:699px){header.hero .hero-card h1{font-size:1.8rem}header.hero .hero-card{padding:18px 16px 14px}.flow li{font-size:.82rem;padding:6px 12px 6px 6px}.flow-n{width:22px;height:22px}.hero-card .marquee{display:none}}
 /* Tarif sayfası */
 html.sheet-open{overflow:hidden}
 .sheet{position:fixed;inset:0;z-index:45;display:flex;align-items:flex-end;justify-content:center}
@@ -492,6 +518,7 @@ header.hero{padding:28px 0 20px}
       <p class="greet" id="greet"></p>
       <h1 id="heroTitle">Dolabında ne var?</h1>
       <p id="heroText"></p>
+      <ol class="flow" id="flow" aria-label="Nasıl çalışır"></ol>
       <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
     </div>
     <div class="tabs" role="tablist" aria-label="Görünüm">
@@ -509,8 +536,7 @@ header.hero{padding:28px 0 20px}
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="Malzeme ya da yemek ara: “patlıcan”, “mantı”…" aria-label="Malzeme ara">
-        <button class="clear" type="button" data-act="clear">Seçimleri temizle</button>
+        <input class="search" id="search" type="search" placeholder="🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…" aria-label="Malzeme ara">
       </div>
       <div id="groups"></div>
     </section>
@@ -1315,14 +1341,29 @@ function renderHero(){
   $("dishMode").hidden = mode !== "dish";
   $("planMode").hidden = mode !== "plan";
   $("savedMode").hidden = !listMode;
-  $("status").hidden = mode !== "pantry";
-  $("filters").hidden = false; // kategoriler her sekmede görünür
+  $("status").hidden = true; // durum bilgisi artık öneri panelinde
+  $("filters").hidden = mode === "pantry"; // Dolabım'da asıl iş malzeme seçmek; kategoriler "Yemek ara"da
+  const mainSel = [...selected].some(id => !GROUPS[0].items.some(([b]) => b === id)) || extras.size > 0;
+  const step = mainSel ? 2 : 1;
+  $("flow").hidden = mode !== "pantry";
+  $("flow").innerHTML = mode !== "pantry" ? "" : [["1","Malzemeleri seç"],["2","Öneriyi gör"],["3","Pişir, afiyet olsun"]].map(([n, t], i) => `<li class="${i + 1 < step ? "done" : i + 1 === step ? "on" : ""}"><span class="flow-n">${i + 1 < step ? "✓" : n}</span><span>${t}</span></li>`).join("");
   $("filters").innerHTML = CATS.map(([id, l, emo]) => `<button type="button" class="cat cat-${id}" data-act="filter" data-f="${id}" aria-pressed="${filters.has(id)}"><span class="cat-emo" aria-hidden="true">${emo}</span><span class="cat-name">${l}</span></button>`).join("");
 }
 
 /* ---------- Kullanıcı fotoğrafları: "Bu yemeği yapanlar" ---------- */
 const photoCache = {};
 let myPhotos = load("pisir-fotolarim", {}); if (!myPhotos || typeof myPhotos !== "object") myPhotos = {}; // yüklediğin fotoğrafların kaldırma anahtarları
+// Site sahibi için yönetici anahtarı: siteyi bir kez "?yonetici=ANAHTAR" ile açınca bu cihazda saklanır
+let adminKey = (() => { try { return localStorage.getItem("pisir-yonetici") || ""; } catch(e){ return ""; } })();
+(() => {
+  try {
+    const u = new URL(location.href), k = u.searchParams.get("yonetici");
+    if (k != null){
+      adminKey = k.trim(); if (adminKey) localStorage.setItem("pisir-yonetici", adminKey); else localStorage.removeItem("pisir-yonetici");
+      u.searchParams.delete("yonetici"); history.replaceState(null, "", u.pathname + u.search + u.hash); // anahtar adres çubuğunda kalmasın
+    }
+  } catch(e) {}
+})();
 const saveMyPhotos = () => { try { localStorage.setItem("pisir-fotolarim", JSON.stringify(myPhotos)); } catch(e) {} };
 const uploadState = {};
 function photoInput(r, label, capture){
@@ -1335,7 +1376,7 @@ function photosHTML(r){
   const list = (st && st.list) || [];
   const up = uploadState[r.key];
   return `<section class="photos"><div class="photos-head"><h3>📸 Bu yemeği yapanlar</h3>${list.length ? `<span class="sec-count">${list.length} fotoğraf</span>` : ""}</div>
-    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy"></button>${myPhotos[ph.id] ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}</div>`; }).join("")}</div>`
+    ${list.length ? `<div class="photo-grid">${list.map(ph => { const src = `${PHOTO_URL}/img?id=${encodeURIComponent(ph.id)}`; return `<div class="ph"><button type="button" class="ph-img" data-act="photoZoom" data-src="${esc(src)}" aria-label="Fotoğrafı büyüt"><img src="${esc(src)}" alt="${esc(r.ad)}, bir kullanıcının fotoğrafı" loading="lazy"></button>${myPhotos[ph.id] || adminKey ? `<button type="button" class="ph-del" data-act="photoDel" data-key="${esc(r.key)}" data-id="${esc(ph.id)}">🗑️ Kaldır</button>` : ""}</div>`; }).join("")}</div>`
       : `<p class="sub">${st && st.state === "loading" ? "Fotoğraflar yükleniyor…" : "Henüz fotoğraf yok. Bu yemeği yaptıysan ilk fotoğrafı sen ekle!"}</p>`}
     ${photoInput(r, "📷 Fotoğrafını ekle", false)}
     ${up ? `<p class="photo-msg">${esc(up)}</p>` : ""}
@@ -1438,7 +1479,7 @@ function renderGroups(){
   let html = "";
 
   // 1) Dolabındakiler: seçtiklerin tek bakışta, ✕ ile çıkar
-  html += `<div class="mybox"><div class="mybox-head"><b>🧺 Dolabındakiler</b><span class="sec-count">${total} malzeme</span></div>`;
+  html += `<div class="mybox"><div class="mybox-head"><b>🧺 Dolabındakiler</b><span class="mybox-right"><span class="sec-count">${total} malzeme</span>${total ? `<button type="button" class="link-btn" data-act="clear">Temizle</button>` : ""}</span></div>`;
   html += total
     ? `<div class="chips">${mine.map(id => `<button type="button" class="chip on" data-act="ing" data-id="${id}" aria-label="${LABEL[id]} malzemesini çıkar"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]} ✕</button>`).join("")}${[...extras].map(x => `<button type="button" class="chip on" data-act="rmExtra" data-name="${esc(x)}" aria-label="${esc(x)} malzemesini çıkar">${esc(x)} ✕</button>`).join("")}</div>`
     : `<p class="sub" style="margin:0">Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.</p>`;
@@ -1476,6 +1517,11 @@ function renderGroups(){
   $("groups").innerHTML = html;
 }
 
+// Hızlı başlangıç: tek dokunuşla seçilen hazır malzeme kombinasyonları
+const COMBOS = [["🍳",["yumurta","domates","sogan"]],["🥣",["mercimek","sogan","havuc"]],["🍝",["makarna","domates","sarimsak"]],["🍗",["tavuk","biber","domates"]],["🍆",["patlican","kiyma","domates","sogan"]],["🥗",["domates","salatalik","sogan","limon"]]];
+function combosHTML(){
+  return `<div class="combos">${COMBOS.map(([e, ids], i) => `<button type="button" class="combo" data-act="combo" data-i="${i}"><span class="combo-e" aria-hidden="true">${e}</span><span>${ids.map(id => LABEL[id]).join(" + ")}</span></button>`).join("")}</div>`;
+}
 // Çoğu yemekte olmasa da olur: lezzet verir ama yemeğin kendisi değildir
 const FLEX = new Set(["biber","kapya","maydanoz","dereotu","nane","pul_biber","limon","sarimsak","salca","sogan"]);
 function renderResults(){
@@ -1524,11 +1570,13 @@ function renderResults(){
   else status.innerHTML = `Henüz tam eşleşme yok, ama <strong>${near.length} yemeğe</strong> çok yakınsın.`;
 
   const stripList = [...readyS, ...nearS].slice(0, 10);
-  if (strip) strip.innerHTML = mainSel && stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "";
+  if (strip && !mainSel){ strip.innerHTML = `<div class="sug-head">⚡ Hızlı başlangıç</div>${combosHTML()}`; strip.classList.add("only-mobile"); }
+  else if (strip) strip.classList.remove("only-mobile");
+  if (strip && mainSel) strip.innerHTML = stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "";
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
-  if (!any){
-    html = `<div class="empty">Malzeme seçtikçe yapabileceğin yemekler burada belirecek. Başlamak için yumurta, domates ve biberi seçmeyi dene.</div>`;
+  if (!mainSel){
+    html = `<div class="section start-card"><h2>💡 Öneriler burada belirecek</h2><p class="sub">Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:</p>${combosHTML()}</div>`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -2303,10 +2351,10 @@ document.addEventListener("click", e => {
     case "photoZoom": $("lightboxImg").src = el.dataset.src; $("lightbox").hidden = false; break;
     case "lightboxClose": $("lightbox").hidden = true; $("lightboxImg").removeAttribute("src"); break;
     case "photoDel": {
-      const id = el.dataset.id, token = myPhotos[id];
-      if (!r || !token || !confirm("Bu fotoğrafı kaldırmak istiyor musun?")) break;
+      const id = el.dataset.id, token = myPhotos[id] || "";
+      if (!r || (!token && !adminKey) || !confirm(lang === "en" ? "Remove this photo?" : "Bu fotoğrafı kaldırmak istiyor musun?")) break;
       el.disabled = true; el.textContent = "Kaldırılıyor…";
-      fetch(PHOTO_URL + "/sil", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:key, id, token})})
+      fetch(PHOTO_URL + "/sil", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:key, id, token, admin:adminKey || undefined})})
         .then(res => res.json().then(d => ({ok:res.ok, d})).catch(() => ({ok:res.ok, d:null})))
         .then(({ok, d}) => {
           if (ok){
@@ -2327,6 +2375,7 @@ document.addEventListener("click", e => {
       if (!voiceOn) stopSpeech();
       lastSpoken = ""; renderCook(); break;
     case "goDaily": dailyOpen = !dailyOpen; renderDaily(); break;
+    case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
     case "menuToPlan": {
@@ -2455,7 +2504,9 @@ function loadStats(){
    Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
 let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
 const EN_EXACT = {
-  "Bugün ne pişirsem?":"What should I cook today?","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
+  "Bugün ne pişirsem?":"What should I cook today?","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
+  "💡 Öneriler burada belirecek":"💡 Ideas will appear here","Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:":"As you pick ingredients, dishes you can make appear here instantly. Tap one to get started:","⚡ Hızlı başlangıç":"⚡ Quick start",
+  "🗑️ Kaldır":"🗑️ Remove","Kaldırılıyor…":"Removing…","Fotoğrafın kaldırıldı.":"Your photo was removed.","Fotoğraf kaldırılamadı, tekrar dene.":"Couldn't remove the photo, please try again.","Fotoğrafı büyüt":"Enlarge photo","✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.":"✓ Your photo was added, well done! Tap it to enlarge, or remove it if you like.","Fotoğrafımı sil":"Delete my photo","Fotoğrafın silindi.":"Your photo was deleted.","Fotoğraf silinemedi, tekrar dene.":"Couldn't delete the photo, please try again.","✓ Fotoğrafın eklendi, ellerine sağlık!":"✓ Your photo was added, well done!","Fotoğraf hazırlanıyor…":"Preparing photo…","Fotoğraf kontrol ediliyor, bu birkaç saniye sürebilir…":"Checking your photo, this may take a few seconds…","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
   "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
   "Ne pişirelim?":"What shall we cook?","Bir kategori seç ya da yemek ara.":"Pick a category or search for a dish.","Haftalık menü":"Weekly menu","Günlere yemek ekle, alışveriş listen hazır.":"Add dishes to days and your shopping list is ready.",
   "Türk ve dünya mutfağının en sevilenleri, senin favorilerin.":"The most-loved Turkish and world dishes, plus your favorites.","Son baktıkların":"Recently viewed","En son açtığın tarifler.":"Recipes you opened recently.",
