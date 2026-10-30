@@ -99,6 +99,30 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+/* Bildirim baloncuğu */
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);z-index:80;background:#14213D;color:#fff;font-weight:800;padding:13px 20px;border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media (min-width:700px){.toast{bottom:32px}}
+/* Rozetler */
+.badge-bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden;margin:0 0 14px}
+.badge-bar span{display:block;height:100%;background:linear-gradient(90deg,#F59F00,#2B8A3E);border-radius:999px}
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.badge{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:14px 10px;border-radius:18px;border:1.5px dashed var(--line);background:var(--surface);color:var(--muted)}
+.badge .badge-emo{font-size:2rem;filter:grayscale(1);opacity:.45}
+.badge b{color:var(--ink);font-size:.95rem}
+.badge small{font-size:.78rem;line-height:1.35}
+.badge.ok{border-style:solid;border-color:#F59F00;background:linear-gradient(180deg,#FFF9DB,var(--surface))}
+.badge.ok .badge-emo{filter:none;opacity:1}
+.badge.ok small{color:#2B8A3E;font-weight:800}
+:root[data-theme="dark"] .badge.ok{background:linear-gradient(180deg,#3A3115,var(--surface))}
+.badge-foot{margin:12px 0 0}
+/* Verilerini taşı */
+.transfer-card{text-align:left}
+.tr-sec{display:grid;gap:8px;margin:16px 0;padding:14px;border-radius:16px;background:var(--bg);border:1.5px solid var(--line)}
+.tr-sec .sub{margin:0}
+.tr-sec .ai-btn{justify-self:start}
+.tr-code{font-size:2rem;font-weight:800;letter-spacing:.25em;text-align:center;padding:10px;border-radius:12px;background:var(--surface);border:2px dashed var(--cobalt);color:var(--cobalt)}
+#trInput{text-transform:uppercase;letter-spacing:.15em;font-weight:700}
 .share-box{display:flex;flex-wrap:wrap;gap:8px;margin:-4px 0 18px;padding:12px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface)}
 .share-box .photo-msg{flex-basis:100%;margin:2px 0 0}
 .actions .share-box{flex-basis:100%;margin:0}
@@ -678,7 +702,7 @@ header.hero{padding:28px 0 20px}
 
   <section class="plan" id="planMode" aria-label="Haftalık menü" hidden></section>
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
-  <footer class="credits"><p class="foot-links"><button type="button" class="link-btn" data-act="tourShow">❓ Nasıl kullanılır?</button></p>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
+  <footer class="credits"><p class="foot-links"><button type="button" class="link-btn" data-act="tourShow">❓ Nasıl kullanılır?</button> · <button type="button" class="link-btn" data-act="trOpen">🔄 Verilerini taşı</button> · <a href="gizlilik.html">📄 Gizlilik ve kullanım şartları</a></p>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.</footer>
 </div>
 
 <div class="lightbox" id="lightbox" data-act="lightboxClose" hidden><img id="lightboxImg" alt=""><p class="lightbox-hint">Kapatmak için dokun</p></div>
@@ -1319,8 +1343,8 @@ function shopText(r){
   return `${r.ad} (${getServ(r)} kişilik) için alınacaklar:\n` + miss.map(m => { const a = amountText(m, f); return "- " + m.ad + (a ? " (" + a + ")" : ""); }).join("\n");
 }
 async function copyText(text, btn){
-  try { await navigator.clipboard.writeText(text); btn.textContent = "Kopyalandı"; }
-  catch(e){ btn.textContent = "Kopyalanamadı, listeyi elle seç"; }
+  const ok = await copyToClipboard(text);
+  btn.textContent = ok ? "Kopyalandı" : "Kopyalanamadı, listeyi elle seç";
 }
 
 /* ---------- Tarif görünümleri ---------- */
@@ -1570,7 +1594,7 @@ function shareBoxHTML(r){
   if (shareOpen !== r.key) return "";
   return `<div class="share-box"><a class="share-opt wa" href="https://wa.me/?text=${encodeURIComponent(recipeShareText(r))}" target="_blank" rel="noopener">🟢 WhatsApp</a><button type="button" class="share-opt" data-act="shareCopy" data-key="${esc(r.key)}">🔗 Bağlantıyı kopyala</button>${navigator.share ? `<button type="button" class="share-opt" data-act="shareNative" data-key="${esc(r.key)}">📱 Diğer uygulamalar</button>` : ""}${shareMsg ? `<p class="photo-msg">${esc(shareMsg)}</p>` : ""}</div>`;
 }
-function copyText(t){
+function copyToClipboard(t){
   if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(() => true, () => fallbackCopy(t));
   return Promise.resolve(fallbackCopy(t));
 }
@@ -1647,7 +1671,7 @@ function chefHTML(r, step){
 async function chefAsk(r, q, step){
   q = (q || "").trim(); if (!q || !sampleFn) return;
   const c = chefFor(r.key); if (c.loading) return;
-  c.msgs.push({role:"user", text:q}); c.loading = true; refreshChef(r.key);
+  c.msgs.push({role:"user", text:q}); c.loading = true; refreshChef(r.key); bumpStat("sef");
   const past = c.msgs.slice(-7, -1).map(m => `${m.role === "user" ? "Kullanıcı" : "Şef"}: ${m.text}`).join("\n");
   const prompt = `Sen sıcakkanlı, pratik bir ev aşçısı şefsin. Kullanıcı "${r.ad}" tarifini yapıyor${step != null && r.adimlar[step] ? ` ve şu an ${step + 1}. adımda: "${r.adimlar[step]}"` : ""}.
 Malzemeler: ${r.malzemeler.map(m => m.ad).join(", ")}.
@@ -1734,7 +1758,7 @@ async function sendReview(r){
       const item = {id:d.id, s:dr.s, m:(dr.m || "").trim(), t:Date.now()};
       myReviews[r.key] = {id:d.id, token:d.token, local:item}; saveMyReviews();
       const st = revCache[r.key] || {list:[]}; revCache[r.key] = {state:"done", list:[item, ...st.list.filter(x => x.id !== d.id)]};
-      delete revDraft[r.key]; revState[r.key] = "✓ Değerlendirmen eklendi, teşekkürler!";
+      delete revDraft[r.key]; revState[r.key] = "✓ Değerlendirmen eklendi, teşekkürler!"; bumpStat("yorum");
     } else revState[r.key] = (d && d.error) || "Gönderilemedi, tekrar dene.";
   } catch(e){ revState[r.key] = "Gönderilemedi, internet bağlantını kontrol edip tekrar dene."; }
   renderSheet();
@@ -1789,7 +1813,7 @@ document.addEventListener("change", async e => {
       fridge.found = d.bulunan.filter(id => LABEL[id] && !GROUPS[0].items.some(([b]) => b === id));
       fridge.picked = new Set(fridge.found.filter(id => !selected.has(id)));
       fridge.other = (Array.isArray(d.diger) ? d.diger : []).filter(x => typeof x === "string" && x.trim()).slice(0, 10);
-      fridge.state = "done";
+      fridge.state = "done"; bumpStat("tara");
     } else { fridge.state = "error"; fridge.msg = (d && d.error) || "Fotoğraf incelenemedi, biraz sonra tekrar dene."; }
   } catch(err){ fridge.state = "error"; fridge.msg = "Fotoğraf incelenemedi, internet bağlantını kontrol edip tekrar dene."; }
   renderGroups();
@@ -1891,6 +1915,133 @@ async function prefetchVoice(r, from){
   }
 }
 
+/* ---------- Bildirim baloncuğu ---------- */
+const toastQueue = []; let toastBusy = false;
+function showToast(text){
+  toastQueue.push(text); if (toastBusy) return;
+  const next = () => {
+    const t = toastQueue.shift(); if (!t){ toastBusy = false; return; }
+    toastBusy = true;
+    let el = $("toast"); if (!el){ el = document.createElement("div"); el.id = "toast"; el.className = "toast"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+    el.textContent = t; el.classList.add("show");
+    setTimeout(() => { el.classList.remove("show"); setTimeout(next, 350); }, 3200);
+  };
+  next();
+}
+
+/* ---------- Mutfak rozetleri ---------- */
+let badgeStats = load("pisir-rozet-veri", {}); if (!badgeStats || typeof badgeStats !== "object") badgeStats = {};
+const badgesFirstRun = (() => { try { return localStorage.getItem("pisir-rozetler") === null; } catch(e){ return false; } })();
+let badgesEarned = load("pisir-rozetler", {}); if (!badgesEarned || typeof badgesEarned !== "object") badgesEarned = {};
+function bumpStat(k){ badgeStats[k] = (badgeStats[k] || 0) + 1; try { localStorage.setItem("pisir-rozet-veri", JSON.stringify(badgeStats)); } catch(e) {} checkBadges(); }
+const cookedList = () => Object.keys(cookCounts).map(k => REG.get(k)).filter(Boolean);
+const catCount = c => cookedList().filter(r => c === "spor" ? catMatch(r, "spor") : recipeCat(r) === c).length;
+const BADGES = [
+  ["ilk", "🥄", "İlk adım", "İlk tarifini pişirme modunda sonuna kadar tamamla.", () => [cookedList().length, 1]],
+  ["cirak", "👩‍🍳", "Mutfak çırağı", "5 farklı tarif pişir.", () => [cookedList().length, 5]],
+  ["usta", "🧑‍🍳", "Usta aşçı", "15 farklı tarif pişir.", () => [cookedList().length, 15]],
+  ["sef", "🏆", "Şef", "30 farklı tarif pişir.", () => [cookedList().length, 30]],
+  ["corbaci", "🍲", "Çorbacı", "3 farklı çorba pişir.", () => [catCount("corba"), 3]],
+  ["tatlici", "🍰", "Tatlı krizi", "3 farklı tatlı yap.", () => [catCount("tatli"), 3]],
+  ["kahveci", "☕️", "Kahve tutkunu", "5 farklı kahve hazırla.", () => [catCount("kahve"), 5]],
+  ["fit", "💪", "Fit yaşam", "5 sporcu yemeği pişir.", () => [catCount("spor"), 5]],
+  ["gezgin", "🌍", "Dünya gezgini", "5 farklı ülke mutfağından yemek pişir.", () => [new Set(cookedList().map(r => r.mutfak).filter(m => m && m !== "Türk mutfağı" && m !== "Dünya mutfağı")).size, 5]],
+  ["sadik", "🔁", "Vazgeçilmez", "Aynı tarifi 3 kez pişir.", () => [Math.max(0, ...Object.values(cookCounts).map(Number).filter(n => n > 0)), 3]],
+  ["koleksiyon", "❤️", "Koleksiyoncu", "10 tarifi favorilerine ekle.", () => [favs.length, 10]],
+  ["planli", "📅", "Planlı aşçı", "Haftalık menüne 5 yemek ekle.", () => [plan.reduce((n, d) => n + d.length, 0), 5]],
+  ["dedektif", "🔎", "Dolap dedektifi", "Fotoğraftan malzemelerini tanıt.", () => [badgeStats.tara || 0, 1]],
+  ["merakli", "💬", "Meraklı", "Şef'e bir soru sor.", () => [badgeStats.sef || 0, 1]],
+  ["fotografci", "📸", "Fotoğrafçı", "Yaptığın bir yemeğin fotoğrafını paylaş.", () => [Math.max(badgeStats.foto || 0, Object.keys(myPhotos).length), 1]],
+  ["elestirmen", "⭐", "Eleştirmen", "Bir tarifi değerlendir.", () => [Math.max(badgeStats.yorum || 0, Object.keys(myReviews).length), 1]]
+];
+function badgeState(b){ const [have, need] = b[4](); return {have:Math.min(have, need), need, ok:!!badgesEarned[b[0]] || have >= need}; }
+function checkBadges(){
+  let changed = false;
+  for (const b of BADGES){
+    if (badgesEarned[b[0]]) continue;
+    if (badgeState(b).ok){
+      badgesEarned[b[0]] = Date.now(); changed = true;
+      if (!badgesFirstRun) showToast(`🏅 Yeni rozet: ${b[1]} ${b[2]}`);
+    }
+  }
+  if (changed || badgesFirstRun){ try { localStorage.setItem("pisir-rozetler", JSON.stringify(badgesEarned)); } catch(e) {} }
+}
+function kitchenBadgesHTML(){
+  const list = BADGES.map(b => ({b, ...badgeState(b)}));
+  const n = list.filter(x => x.ok).length;
+  return `<section class="dish-sec badges-sec"><div class="sec-head"><h2>🏅 Mutfak rozetlerin</h2><span class="sec-count">${n}/${BADGES.length}</span></div>
+    <div class="badge-bar" aria-hidden="true"><span style="width:${Math.round(n / BADGES.length * 100)}%"></span></div>
+    <div class="badge-grid">${list.map(x => `<div class="badge${x.ok ? " ok" : ""}"><span class="badge-emo" aria-hidden="true">${x.b[1]}</span><b>${esc(x.b[2])}</b><small>${x.ok ? "Kazanıldı ✓" : esc(x.b[3]) + (x.need > 1 ? ` (${x.have}/${x.need})` : "")}</small></div>`).join("")}</div>
+    <p class="badge-foot"><button type="button" class="link-btn" data-act="trOpen">🔄 Verilerini başka cihaza taşı</button></p></section>`;
+}
+
+/* ---------- Verilerini taşı (aktarma kodu, 24 saat geçerli) ---------- */
+const AKTAR_URL = () => PHOTO_URL ? PHOTO_URL.replace(/\/foto$/, "/aktar") : "";
+const TRANSFER_KEYS = ["pisir-fav","pisir-son","pisir-kisi","pisir-plan","pisir-pisirilen","pisir-ai","pisir-diyet","pisir-tema","pisir-dil","pisir-ses","pisir-fotolarim","pisir-yorumlarim","pisir-rozetler","pisir-rozet-veri","pisir-tur"];
+const transfer = {code:"", state:"", msg:""};
+function renderTransfer(){
+  let el = $("transfer");
+  if (!el){ el = document.createElement("div"); el.id = "transfer"; el.className = "tour"; document.body.appendChild(el); }
+  const busy = transfer.state === "busy";
+  el.innerHTML = `<div class="tour-card transfer-card" role="dialog" aria-modal="true" aria-label="Verilerini taşı">
+    <h2>🔄 Verilerini taşı</h2><p class="tour-text">Favorilerin, haftalık menün, pişirdiklerin, rozetlerin ve tercihlerin başka bir cihaza taşınır.</p>
+    <div class="tr-sec"><b>📤 Bu cihazdan gönder</b>${transfer.code ? `<div class="tr-code" aria-label="Aktarma kodu">${transfer.code}</div><p class="sub">Diğer cihazda bu kodu gir. Kod 24 saat geçerli.</p>` : `<p class="sub">Bir kod oluştur, sonra diğer cihaza gir.</p><button type="button" class="ai-btn" data-act="trMake" ${busy ? "disabled" : ""}>Kod oluştur</button>`}</div>
+    <div class="tr-sec"><b>📥 Başka cihazdan al</b><div class="chef-form"><input class="search" id="trInput" maxlength="8" placeholder="Örn: K7P9QX" autocapitalize="characters" autocomplete="off" aria-label="Aktarma kodu"><button type="button" class="ai-btn" data-act="trGet" ${busy ? "disabled" : ""}>Aktar</button></div></div>
+    ${transfer.msg ? `<p class="photo-msg">${esc(transfer.msg)}</p>` : ""}
+    <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="trClose">Kapat</button></div></div>`;
+  el.hidden = false;
+}
+async function makeTransfer(){
+  const data = {}; TRANSFER_KEYS.forEach(k => { try { const v = localStorage.getItem(k); if (v != null) data[k] = v; } catch(e) {} });
+  transfer.state = "busy"; transfer.msg = "Kod hazırlanıyor…"; renderTransfer();
+  try {
+    const res = await fetch(AKTAR_URL(), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({veri:JSON.stringify(data)})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && d.kod){ transfer.code = d.kod; transfer.msg = ""; }
+    else transfer.msg = (d && d.error) || "Kod oluşturulamadı, tekrar dene.";
+  } catch(e){ transfer.msg = "Kod oluşturulamadı, internet bağlantını kontrol et."; }
+  transfer.state = ""; renderTransfer();
+}
+function mergeTransfer(remote){
+  const get = k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } };
+  const rem = k => { try { return JSON.parse(remote[k]); } catch(e){ return null; } };
+  const put = (k, v) => { try { localStorage.setItem(k, typeof v === "string" ? v : JSON.stringify(v)); } catch(e) {} };
+  const arr = x => Array.isArray(x) ? x : [], obj = x => x && typeof x === "object" && !Array.isArray(x) ? x : {};
+  for (const k of TRANSFER_KEYS){
+    if (remote[k] == null) continue;
+    const r = rem(k), l = get(k);
+    if (k === "pisir-fav" || k === "pisir-son" || k === "pisir-diyet") put(k, [...new Set([...arr(l), ...arr(r)])]);
+    else if (k === "pisir-pisirilen" || k === "pisir-rozet-veri"){ const o = {...obj(l)}; Object.entries(obj(r)).forEach(([a, b]) => { o[a] = Math.max(Number(o[a]) || 0, Number(b) || 0); }); put(k, o); }
+    else if (k === "pisir-plan"){ const lp = arr(l), rp = arr(r); put(k, Array.from({length:7}, (_, i) => [...new Set([...arr(lp[i]), ...arr(rp[i])])])); }
+    else if (["pisir-kisi","pisir-ai","pisir-fotolarim","pisir-yorumlarim","pisir-rozetler"].includes(k)) put(k, {...obj(r), ...obj(l)});
+    else put(k, remote[k]); // tema, dil, ses: gönderen cihazın tercihi
+  }
+}
+async function getTransfer(){
+  const code = ($("trInput") && $("trInput").value || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (code.length !== 6){ transfer.msg = "Kod 6 karakter olmalı."; renderTransfer(); return; }
+  transfer.state = "busy";
+  // Cloudflare yeni kodu dünyaya ~1 dakikada dağıtır: bulunamazsa birkaç kez yeniden dener
+  for (let i = 0; i < 5; i++){
+    transfer.msg = i ? "Kod aranıyor, birkaç saniye daha…" : "Veriler alınıyor…"; renderTransfer();
+    try {
+      const res = await fetch(`${AKTAR_URL()}?kod=${code}&_=${Date.now()}`, {cache:"no-store"});
+      const d = await res.json().catch(() => null);
+      if (res.ok && d && typeof d.veri === "string"){
+        let remote; try { remote = JSON.parse(d.veri); } catch(e){ remote = null; }
+        if (!remote || typeof remote !== "object"){ transfer.msg = "Veriler okunamadı."; break; }
+        mergeTransfer(remote);
+        transfer.msg = "✓ Veriler aktarıldı, uygulama yenileniyor…"; renderTransfer();
+        setTimeout(() => location.reload(), 900); return;
+      }
+      if (res.status !== 404){ transfer.msg = (d && d.error) || "Aktarılamadı, tekrar dene."; break; }
+    } catch(e){ transfer.msg = "Aktarılamadı, internet bağlantını kontrol et."; break; }
+    if (i < 4) await new Promise(r => setTimeout(r, 12000));
+    else transfer.msg = "Kod bulunamadı ya da süresi dolmuş. Kodu kontrol edip tekrar dene.";
+  }
+  transfer.state = ""; renderTransfer();
+}
+
 /* ---------- Kullanıcı fotoğrafları: "Bu yemeği yapanlar" ---------- */
 const photoCache = {};
 let myPhotos = load("pisir-fotolarim", {}); if (!myPhotos || typeof myPhotos !== "object") myPhotos = {}; // yüklediğin fotoğrafların kaldırma anahtarları
@@ -1975,7 +2126,7 @@ document.addEventListener("change", async e => {
     const d = await res.json().catch(() => null);
     if (res.ok && d && d.id){
       if (d.token){ myPhotos[d.id] = d.token; saveMyPhotos(); }
-      photoLocal.add[key] = [{id:d.id, t:Date.now()}, ...(photoLocal.add[key] || [])]; savePhotoLocal();
+      photoLocal.add[key] = [{id:d.id, t:Date.now()}, ...(photoLocal.add[key] || [])]; savePhotoLocal(); bumpStat("foto");
       uploadState[key] = "✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.";
       const old = (photoCache[key] && photoCache[key].list) || [];
       photoCache[key] = {state:"done", list:[{id:d.id, t:Date.now()}, ...old]};
@@ -2214,7 +2365,7 @@ function renderSaved(){
   if (mode === "fav"){
     const grid = (list, note) => `<div class="dish-grid">${list.map(r => dishCard(r, "openSaved", note ? note(r) : "")).join("")}</div>`;
     const sec = (title, sub, list, note) => list.length ? `<section class="dish-sec"><div class="sec-head"><h2>${title}</h2></div>${sub ? `<p class="sub">${sub}</p>` : ""}${grid(list, note)}</section>` : "";
-    let h = "";
+    let h = kitchenBadgesHTML();
     // Gerçek veri: tüm kullanıcıların tamamladığı tarifler (en az 5 farklı tarif birikince görünür)
     const app = (statsState.top || []).map(([k, n]) => [REG.get(k), n]).filter(([r]) => r);
     if (app.length >= 5){
@@ -2359,6 +2510,7 @@ function renderAll(){
   renderSheet();
   if (cook.open) renderCook();
   renderTimers();
+  checkBadges();
 }
 
 /* ---------- Pişirme modu ---------- */
@@ -2968,12 +3120,12 @@ document.addEventListener("click", e => {
     case "orderMarket": {
       // Bağlantı kendiliğinden açılır; biz listeyi kopyalayıp ekranı sonra güncelleriz
       const oid = el.dataset.id, mid = el.dataset.m;
-      copyText((orderNames[oid] || []).join(", "));
+      copyToClipboard((orderNames[oid] || []).join(", "));
       setTimeout(() => { orderMarket[oid] = mid; renderAll(); if (mode === "plan") renderPlan(); }, 50);
       break;
     }
     case "shareMenu": shareOpen = shareOpen === key ? null : key; shareMsg = ""; renderSheet(); if (mode === "dish") renderDishDetail(); break;
-    case "shareCopy": if (r) copyText(recipeUrl(r)).then(ok => { shareMsg = ok ? "✓ Bağlantı kopyalandı; istediğin yere yapıştırabilirsin." : recipeUrl(r); renderSheet(); }); break;
+    case "shareCopy": if (r) copyToClipboard(recipeUrl(r)).then(ok => { shareMsg = ok ? "✓ Bağlantı kopyalandı; istediğin yere yapıştırabilirsin." : recipeUrl(r); renderSheet(); }); break;
     case "shareNative": if (r && navigator.share) navigator.share({title:`${r.ad} tarifi`, text:recipeShareText(r)}).catch(() => {}); break;
     case "orderToggle": { const oid = el.dataset.id; orderOpen.has(oid) ? orderOpen.delete(oid) : orderOpen.add(oid); renderAll(); if (mode === "plan") renderPlan(); break; }
     case "chefToggle": cook.chef = !cook.chef; renderCook(); break;
@@ -2991,6 +3143,10 @@ document.addEventListener("click", e => {
     case "tourNext": if (tourStep < TOUR.length - 1){ tourStep++; renderTour(); } else closeTour(); break;
     case "tourSkip": closeTour(); break;
     case "tourShow": tourStep = 0; renderTour(); break;
+    case "trOpen": transfer.msg = ""; renderTransfer(); break;
+    case "trClose": { const te = $("transfer"); if (te) te.hidden = true; break; }
+    case "trMake": makeTransfer(); break;
+    case "trGet": getTransfer(); break;
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
@@ -3120,7 +3276,7 @@ function loadStats(){
    Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
 let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
 const EN_EXACT = {
-  "Bugün ne pişirsem?":"What should I cook today?","Fotoğraftan tanı":"Scan a photo","📸 Fotoğrafta bunları buldum":"📸 Here's what I found","Kapat":"Close","Yanlış olanların işaretini kaldır, sonra seç.":"Untick anything that's wrong, then add.","Bunları da ekle":"Add these too","🤖 Menüyü benim için oluştur":"🤖 Plan my week","✨ Haftalık menümü oluştur":"✨ Create my weekly menu","Menün hazırlanıyor…":"Preparing your menu…","Geç":"Skip","İleri →":"Next →","Hadi başlayalım!":"Let's start!","❓ Nasıl kullanılır?":"❓ How it works","Malzemelerini seç":"Pick your ingredients","Önerileri gör":"See suggestions","Adım adım pişir":"Cook step by step","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
+  "Bugün ne pişirsem?":"What should I cook today?","🏅 Mutfak rozetlerin":"🏅 Your kitchen badges","Kazanıldı ✓":"Earned ✓","🔄 Verilerini başka cihaza taşı":"🔄 Move your data to another device","🔄 Verilerini taşı":"🔄 Move your data","📄 Gizlilik ve kullanım şartları":"📄 Privacy & terms","📤 Bu cihazdan gönder":"📤 Send from this device","📥 Başka cihazdan al":"📥 Receive from another device","Kod oluştur":"Create code","Aktar":"Transfer","Fotoğraftan tanı":"Scan a photo","📸 Fotoğrafta bunları buldum":"📸 Here's what I found","Kapat":"Close","Yanlış olanların işaretini kaldır, sonra seç.":"Untick anything that's wrong, then add.","Bunları da ekle":"Add these too","🤖 Menüyü benim için oluştur":"🤖 Plan my week","✨ Haftalık menümü oluştur":"✨ Create my weekly menu","Menün hazırlanıyor…":"Preparing your menu…","Geç":"Skip","İleri →":"Next →","Hadi başlayalım!":"Let's start!","❓ Nasıl kullanılır?":"❓ How it works","Malzemelerini seç":"Pick your ingredients","Önerileri gör":"See suggestions","Adım adım pişir":"Cook step by step","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
   "💡 Öneriler burada belirecek":"💡 Ideas will appear here","Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:":"As you pick ingredients, dishes you can make appear here instantly. Tap one to get started:","⚡ Hızlı başlangıç":"⚡ Quick start",
   "🗑️ Kaldır":"🗑️ Remove","Kaldırılıyor…":"Removing…","Fotoğrafın kaldırıldı.":"Your photo was removed.","Fotoğraf kaldırılamadı, tekrar dene.":"Couldn't remove the photo, please try again.","Fotoğrafı büyüt":"Enlarge photo","✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.":"✓ Your photo was added, well done! Tap it to enlarge, or remove it if you like.","Fotoğrafımı sil":"Delete my photo","Fotoğrafın silindi.":"Your photo was deleted.","Fotoğraf silinemedi, tekrar dene.":"Couldn't delete the photo, please try again.","✓ Fotoğrafın eklendi, ellerine sağlık!":"✓ Your photo was added, well done!","Fotoğraf hazırlanıyor…":"Preparing photo…","Fotoğraf kontrol ediliyor, bu birkaç saniye sürebilir…":"Checking your photo, this may take a few seconds…","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
   "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
@@ -3327,6 +3483,8 @@ if ("serviceWorker" in navigator){
 renderAll();
 // Bağlantıyla gelindiyse (…/#t=karniyarik) tarifi doğrudan aç
 { const mt = location.hash.match(/^#t=([a-z0-9-]+)/); if (mt && BY_SLUG.has(mt[1])) openSheet(BY_SLUG.get(mt[1]), {root:true}); }
+// Ana ekran kısayolu ile gelindiyse ilgili sekmeyi aç (?sekme=ara / menu / sevilen)
+{ const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"recent"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
 // İlk kez gelen kişiye kısa tanıtım
 try { if (!localStorage.getItem("pisir-tur") && !/^#t=/.test(location.hash)) renderTour(); } catch(e) {}
 // Ziyaretçi istatistikleri (Cloudflare Web Analytics, çerez kullanmaz). Anahtarı aldığında tırnakların arasına yaz.

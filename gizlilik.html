@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gizlilik Politikası ve Kullanım Şartları – Bugün ne pişirsem?</title>
+<meta name="description" content="Bugün ne pişirsem? uygulamasının gizlilik politikası ve kullanım şartları.">
+<meta name="theme-color" content="#1E4FA8">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#FAFBFD;--surface:#fff;--ink:#14213D;--muted:#5B6B85;--line:#E3E8F0;--cobalt:#1E4FA8}
+@media (prefers-color-scheme:dark){:root{--bg:#0A101E;--surface:#141D30;--ink:#F1F5FB;--muted:#A8B4CA;--line:#27334B;--cobalt:#8DB2FF}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}
+.wrap{max-width:780px;margin:0 auto;padding:20px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 0 18px}
+header a{color:var(--ink);font-weight:800;text-decoration:none}
+h1{font-size:clamp(1.8rem,5vw,2.4rem);line-height:1.2;margin:8px 0 6px}
+h2{font-size:1.3rem;margin:34px 0 8px}
+h3{font-size:1.05rem;margin:20px 0 4px}
+.muted{color:var(--muted)}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:16px 20px;margin:16px 0}
+nav.toc a{color:var(--cobalt);font-weight:700;margin-right:14px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:700}
+.wide{overflow-x:auto}
+a{color:var(--cobalt)}
+.back{display:inline-block;margin-top:30px;background:var(--cobalt);color:#fff;font-weight:800;padding:12px 18px;border-radius:14px;text-decoration:none}
+</style>
+</head>
+<body><div class="wrap">
+<header><a href="./">🍳 Bugün ne pişirsem?</a><a href="./" style="color:var(--cobalt);font-weight:600">Uygulamaya dön →</a></header>
+
+<h1>Gizlilik Politikası ve Kullanım Şartları</h1>
+<p class="muted">Son güncelleme: 30 Ekim 2026</p>
+<nav class="toc"><a href="#gizlilik">Gizlilik</a><a href="#sartlar">Kullanım şartları</a><a href="#iletisim">İletişim</a><a href="#english">English</a></nav>
+
+<div class="card"><b>Kısaca:</b> Hesap açmana gerek yok, reklam yok, seni takip eden çerez yok. Tercihlerin ve favorilerin yalnızca kendi cihazında saklanır. Fotoğraf, yorum ya da yapay zekâ özelliklerini kullandığında ilgili bilgiler aşağıda açıklanan hizmetlere gönderilir. Paylaştığın fotoğraf ve yorumlar herkese açıktır ve istediğin zaman kaldırabilirsin.</div>
+
+<h2 id="gizlilik">1. Gizlilik Politikası</h2>
+<p>“Bugün ne pişirsem?” (bundan sonra “uygulama”), evdeki malzemelere göre yemek önerisi sunan ücretsiz bir web uygulamasıdır. Bu metin, uygulamayı kullanırken hangi bilgilerin nerede işlendiğini açıklar.</p>
+
+<h3>1.1. Yalnızca cihazında saklanan bilgiler</h3>
+<p>Seçtiğin malzemeler, favorilerin, son baktığın tarifler, haftalık menün, kişi sayısı tercihlerin, pişirdiğin tarifler, rozetlerin, dil ve tema tercihlerin tarayıcının yerel depolama alanında (localStorage) saklanır. Bu bilgiler bize ya da başka birine gönderilmez. Tarayıcının site verilerini temizlersen silinir.</p>
+
+<h3>1.2. Başka hizmetlere gönderilen bilgiler</h3>
+<div class="wide"><table>
+<tr><th>Ne zaman?</th><th>Ne gönderilir?</th><th>Nereye?</th></tr>
+<tr><td>Yapay zekâ özellikleri: tarif oluşturma, “Yerine ne koyabilirim?”, Şef'e sor, haftalık menü, sesli anlatım, İngilizce çeviri</td><td>Yazdığın soru ya da istek ve ilgili tarifin bilgileri</td><td>Cloudflare üzerinden Google Gemini</td></tr>
+<tr><td>Buzdolabı fotoğrafından malzeme tanıma</td><td>Çektiğin fotoğraf (küçültülmüş hâli)</td><td>Cloudflare üzerinden Google Gemini; fotoğraf saklanmaz</td></tr>
+<tr><td>Yemek fotoğrafı paylaşma</td><td>Fotoğraf ve ilgili tarif adı</td><td>Önce uygunluk kontrolü için Google Gemini'ye, sonra herkese açık olarak Cloudflare'de saklanır</td></tr>
+<tr><td>Puan ve yorum</td><td>Yıldız ve yazdığın not</td><td>Uygunluk kontrolü için Google Gemini'ye, sonra herkese açık olarak Cloudflare'de saklanır</td></tr>
+<tr><td>Şikâyet etme</td><td>Şikâyet edilen içeriğin kimliği</td><td>Cloudflare (30 gün)</td></tr>
+<tr><td>Pişirme modunu tamamlama</td><td>Yalnızca tarifin adı (kim olduğun değil)</td><td>Cloudflare: “en çok pişirilenler” sayacı</td></tr>
+<tr><td>Verilerini taşı</td><td>Favori, menü, tercih ve rozet bilgilerin</td><td>Cloudflare; aktarma kodu 24 saat sonra otomatik silinir</td></tr>
+<tr><td>Yemek görsellerini gösterme</td><td>Tarayıcının standart bağlantı bilgileri (IP adresi gibi)</td><td>Vikipedi / Wikimedia Commons</td></tr>
+<tr><td>Video, market ve WhatsApp bağlantıları</td><td>Bağlantıya dokunduğunda ilgili site açılır</td><td>YouTube, Trendyol, Migros, CarrefourSA, Getir, WhatsApp; bu sitelerin kendi gizlilik politikaları geçerlidir</td></tr>
+</table></div>
+<p>Uygulama hizmetleri ücretsiz kullanım koşullarıyla kullanmaktadır. Google, ücretsiz kullanımda gönderilen metin ve görselleri kendi hizmetlerini geliştirmek için kullanabilir. Bu nedenle soru, yorum ve fotoğraflarda <b>kişisel bilgi (ad soyad, telefon, adres, yüz vb.) paylaşmamanı</b> rica ederiz.</p>
+
+<h3>1.3. Hesap, reklam ve takip</h3>
+<p>Uygulamada kullanıcı hesabı, reklam, reklam amaçlı takip ya da çerez bulunmaz. Fotoğraf ve yorumlar anonim olarak yayınlanır; kim tarafından gönderildiği gösterilmez.</p>
+
+<h3>1.4. Paylaştığın içeriği kaldırma</h3>
+<p>Yüklediğin fotoğrafı ya da yorumunu, gönderdiğin cihazdan “🗑️ Kaldır” butonuyla istediğin zaman silebilirsin. Başka bir cihazdan silmek ya da herhangi bir içerikle ilgili talepte bulunmak için <a href="#iletisim">iletişim</a> bölümündeki yolla bize ulaşabilirsin.</p>
+
+<h3>1.5. Haklarına dair (KVKK)</h3>
+<p>6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında, hakkında işlenen veriler hakkında bilgi isteme, düzeltilmesini ya da silinmesini talep etme haklarına sahipsin. Uygulama seni tanıyan bir hesap tutmadığı için talebinde ilgili içeriği (örneğin hangi tarifin altındaki fotoğraf) belirtmen yeterlidir.</p>
+
+<h3>1.6. Çocuklar</h3>
+<p>Uygulama genel kullanıma yöneliktir. 13 yaşından küçük kullanıcıların fotoğraf ve yorum paylaşmadan önce ebeveynlerinden izin almasını öneririz.</p>
+
+<h2 id="sartlar">2. Kullanım Şartları</h2>
+<h3>2.1. Hizmet</h3>
+<p>Uygulama ücretsizdir ve “olduğu gibi” sunulur. Özellikler önceden haber verilmeden değişebilir ya da kaldırılabilir; yapay zekâ özellikleri ücretsiz kullanım sınırlarına bağlı olduğundan zaman zaman çalışmayabilir.</p>
+<h3>2.2. Tarifler, kalori ve alerji bilgileri</h3>
+<p>Tarifler, kalori ve besin değerleri ile beslenme filtreleri bilgilendirme amaçlıdır; değerler yaklaşık olarak hesaplanmıştır. Alerjin ya da özel bir sağlık durumun varsa kullandığın ürünlerin etiketini mutlaka kontrol et ve gerektiğinde bir uzmana danış. Pişirme sırasında gıda güvenliğine (pişme dereceleri, saklama koşulları) dikkat etmek kullanıcının sorumluluğundadır.</p>
+<h3>2.3. Yapay zekâ</h3>
+<p>Yapay zekânın oluşturduğu tarifler, cevaplar, çeviriler ve öneriler hatalı ya da eksik olabilir. Bu içerikleri kendi değerlendirmenle kullanmalısın.</p>
+<h3>2.4. Paylaştığın içerik</h3>
+<p>Fotoğraf ve yorum paylaşırken: yalnızca kendi çektiğin ve paylaşma hakkına sahip olduğun fotoğrafları yükle; fotoğraf ilgili tarife ait olmalı; hakaret, küfür, nefret söylemi, cinsellik, şiddet, reklam, bağlantı ve kişisel bilgi içeren içerik paylaşma. Paylaştığın içeriğin uygulamada herkese açık olarak gösterilmesine izin vermiş olursun. Kurallara uymayan içerikler yapay zekâ kontrolüyle reddedilebilir, kullanıcı şikâyetleriyle gizlenebilir ya da yönetici tarafından kaldırılabilir.</p>
+<h3>2.5. Dış bağlantılar</h3>
+<p>Market, video ve mesajlaşma bağlantıları başka şirketlerin sitelerini açar. Bu sitelerdeki alışveriş ve işlemler o şirketlerin kendi şartlarına tabidir; uygulama bu işlemlere aracılık etmez.</p>
+<h3>2.6. Sorumluluk</h3>
+<p>Uygulamanın kullanımından doğabilecek doğrudan ya da dolaylı zararlardan, yürürlükteki mevzuatın izin verdiği ölçüde sorumluluk kabul edilmez.</p>
+<h3>2.7. Değişiklikler</h3>
+<p>Bu metin güncellenebilir; güncel hâli her zaman bu sayfada yayımlanır. Uygulamayı kullanmaya devam etmen, güncel şartları kabul ettiğin anlamına gelir.</p>
+
+<h2 id="iletisim">3. İletişim</h2>
+<p>Soru, öneri, içerik kaldırma ve veri talepleri için: <a href="https://github.com/erdemgursoy07/ne-pisirsem-/issues" target="_blank" rel="noopener">GitHub üzerinden bize yaz</a>.</p>
+
+<h2 id="english">English summary</h2>
+<p>“Bugün ne pişirsem?” is a free recipe web app. There are no accounts, no ads and no tracking cookies. Your preferences, favorites, menus and badges are stored only on your device. When you use AI features (recipe generation, substitutions, “Ask the chef”, weekly menu planning, voice narration, translation, fridge photo scanning), your input is sent via Cloudflare to Google Gemini; fridge photos are not stored. Photos and reviews you choose to share are checked by AI and published anonymously on Cloudflare; you can remove them from the device you posted from, or contact us. Transfer codes expire after 24 hours. Dish images load from Wikimedia Commons. Recipes, nutrition values and diet filters are approximate and for information only; always check product labels if you have allergies. AI output may be inaccurate. Contact: <a href="https://github.com/erdemgursoy07/ne-pisirsem-/issues" target="_blank" rel="noopener">GitHub issues</a>.</p>
+
+<a class="back" href="./">🍳 Uygulamaya dön</a>
+</div></body></html>
