@@ -1775,7 +1775,7 @@ const MENUS = [
   ["Düğün çorbası","Etli kuru fasulye","Pirinç pilavı","Baklava"]
 ];
 const MENU_SLOTS = [["🍲","Çorba"],["🍽️","Ana yemek"],["🥗","Yanında"],["🍰","Tatlı"]];
-let dailySel = 1; // varsayılan: ana yemek
+let dailySel = 0; // varsayılan: menüdeki ilk yemek (çorba)
 let dailyOpen = false; // menü kartı açık mı
 function dailyMenu(){
   const m = MENUS[daySeed(MENUS.length, 0)];
