@@ -1,5 +1,5 @@
 /* Bugün ne pişirsem? çevrimdışı önbellek. Büyük bir güncellemede sürüm numarasını artır. */
-const CACHE = "pisir-v53";
+const CACHE = "pisir-v56";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
@@ -23,7 +23,8 @@ self.addEventListener("fetch", e => {
     return;
   }
   if (req.mode === "navigate") {
-    e.respondWith(fetch(req).then(save).catch(() => caches.match(req).then(hit => hit || caches.match("./index.html"))));
+    // Sayfayı her zaman sunucudan en güncel hâliyle iste (GitHub Pages'in 10 dakikalık önbelleğini atla)
+    e.respondWith(fetch(req.url, {cache:"no-cache", credentials:"same-origin"}).then(res => { if (res.ok){ const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; }).catch(() => caches.match(req).then(hit => hit || caches.match("./index.html"))));
     return;
   }
   // Görseller, yazı tipleri vb.: önce kayıtlı olan
