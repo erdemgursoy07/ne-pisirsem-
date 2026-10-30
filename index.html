@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Evdeki malzemelerden yemek önerisi, alışveriş listesi, pişirme modu ve haftalık menü.">
-<meta name="theme-color" content="#1E4FA8">
+<meta name="theme-color" content="#C2410C">
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -423,7 +423,7 @@ header.hero{position:relative}
 .theme-btn{flex:0 0 auto;height:42px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:.92rem;cursor:pointer;box-shadow:0 2px 10px rgba(13,21,40,.08);white-space:nowrap}
 .theme-btn:hover{border-color:var(--cobalt)}
 .top-actions{display:flex;gap:8px;flex:0 0 auto}
-:root[data-theme="dark"] .theme-btn{background:#FFD43B;color:#1A1300;border-color:#FFD43B}
+:root[data-theme="dark"] #themeBtn{background:#FFD43B;color:#1A1300;border-color:#FFD43B}
 body,.dish-card,.mybox,.acc,.chip,.tabs,.daily,.nut{transition:background-color .25s,color .25s,border-color .25s}
 .daily{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border-radius:24px;background:var(--cbg);margin:0 0 24px}
 @media (min-width:700px){.daily{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}.daily .daily-media{aspect-ratio:auto;min-height:320px;border-radius:24px 0 0 24px}}
@@ -717,10 +717,24 @@ header.hero{padding:28px 0 20px}
 .banner{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--turq-soft);color:var(--turq);border-radius:14px;padding:12px 16px;margin-bottom:14px;font-weight:600}
 .banner button{border:0;background:transparent;color:inherit;font-weight:700;cursor:pointer;text-decoration:underline}
 /* ===== Yeni görünüm: sıcak krem zemin, beyaz kartlar, yumuşak gölgeler ===== */
-:root:not([data-theme="dark"]){--bg:#FBF7F2;--surface:#FFFFFF;--line:#EDE4D9;--ink:#1D2433;--muted:#636B7C}
+:root:not([data-theme="dark"]){
+  /* Beyaz zemin + marka turuncusu. Turuncu, beyaz üzerinde okunaklı olsun diye koyu tonda (kontrast 5:1) */
+  --bg:#FFFFFF;--surface:#FFFFFF;--line:#ECE6E0;--ink:#1F2430;--muted:#646B78;
+  --cobalt:#C2410C;--cobalt-ink:#FFFFFF;--brand-soft:#FFF1E6
+}
+:root[data-theme="dark"]{--cobalt:#FF9354;--cobalt-ink:#1B120C;--brand-soft:#2E1E14}
 body{background:var(--bg)}
 .topbar{background:var(--bg)}
-header.hero .hero-card{background:linear-gradient(135deg,#FFE7D2 0%,#FFF5EA 55%,#FDEDE8 100%)}
+:root:not([data-theme="dark"]) header.hero .hero-card{background:linear-gradient(135deg,#FFEBDC 0%,#FFF7F1 60%,#FFFFFF 100%);border:1px solid #F7E6D9}
+:root[data-theme="dark"] header.hero .hero-card{border:1px solid transparent}
+/* Video butonu ikincil: ana eylem "Pişirmeye başla" öne çıksın */
+:root:not([data-theme="dark"]) .actions .yt-btn{background:#FFFFFF;color:#C92A2A;border:1.5px solid #F3C7C7}
+:root:not([data-theme="dark"]) .actions .yt-btn:hover{background:#FFF5F5}
+.ai-btn:hover{filter:brightness(.93)}
+.tab[aria-selected="true"]{box-shadow:0 2px 8px rgba(194,65,12,.25)}
+.ai-plan{background:linear-gradient(135deg,#FFEEE2 0%,#FFF8F3 100%)}
+.dish-card{border:1px solid var(--line)}
+.link-btn,.dm-go,.foot-col button:hover,.foot-col a:hover{color:var(--cobalt)}
 :root[data-theme="dark"] header.hero .hero-card{background:linear-gradient(135deg,#2A1E14 0%,#1A2238 100%)}
 .tabs{background:var(--surface);border-color:transparent;box-shadow:0 1px 2px rgba(29,36,51,.05),0 4px 14px rgba(29,36,51,.06)}
 @media (min-width:900px){.pantry,.results{border-color:transparent !important;box-shadow:0 1px 2px rgba(29,36,51,.04),0 10px 30px rgba(29,36,51,.07)}}
@@ -730,7 +744,7 @@ header.hero .hero-card{background:linear-gradient(135deg,#FFE7D2 0%,#FFF5EA 55%,
 .dish-card{box-shadow:0 1px 2px rgba(29,36,51,.05);transition:transform .15s ease,box-shadow .15s ease}
 @media (hover:hover){.dish-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(29,36,51,.12)}}
 .sug,.insp,.combo,.daily-mini,.mybox,.order-box,.share-box,.badge,.nut,.chef{box-shadow:0 1px 2px rgba(29,36,51,.04)}
-.inspire{background:linear-gradient(135deg,#FFF1E2 0%,#FFF9F2 100%)}
+.inspire{background:linear-gradient(135deg,#FFEEE2 0%,#FFF8F3 100%)}
 :root[data-theme="dark"] .inspire{background:linear-gradient(135deg,#2B2216 0%,#16244A 100%)}
 .sheet-inner,.sheet-top{background:var(--bg)}
 .quick-hint{margin:14px 0 0;color:var(--muted);font-size:.9rem}
@@ -2567,7 +2581,7 @@ let theme = (() => { try { return localStorage.getItem("pisir-tema") === "dark" 
 function applyTheme(){
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
-  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = theme === "dark" ? "#0D1528" : "#1E4FA8";
+  const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = theme === "dark" ? "#0D1528" : "#C2410C";
   const b = $("themeBtn"); if (b){ b.textContent = theme === "dark" ? "☀️ Aydınlık" : "🌙 Karanlık"; b.setAttribute("aria-label", theme === "dark" ? "Aydınlık moda geç" : "Karanlık moda geç"); }
 }
 applyTheme();
