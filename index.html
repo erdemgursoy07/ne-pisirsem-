@@ -100,6 +100,19 @@ button:disabled{opacity:.45;cursor:default}
 .cat-dunya{--c:#0E7490;--cbg:#E0F4F8}
 .cat-atistirmalik{--c:#334E68;--cbg:#E8EEF5}
 .cat-spor{--c:#364FC7;--cbg:#EDF2FF}
+.pref-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:4px 0 18px;padding:12px 14px;border-radius:16px;background:var(--brand-soft, #FFF1E6)}
+.pref-grp{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.pref-l{font-size:1.1rem}
+.pref-step{width:32px;height:32px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:800;font-size:1.05rem;cursor:pointer;line-height:1}
+.pref-grp b{min-width:54px;text-align:center}
+.pref-open{margin-left:auto;font-size:.9rem}
+.tour-card.prefs-card{text-align:left;max-height:88vh;overflow:auto}
+.prefs-card .chip.on{background:#C92A2A;border-color:#C92A2A;color:#fff} /* sevmediğin: kırmızı (yeşil "evde var" demek) */
+.prefs-card .chips{margin:4px 0}
+.pref-people{display:flex;flex-wrap:wrap;gap:8px}
+.pref-people .diet{min-width:48px;text-align:center}
+.bug-link{margin:18px 0 0}
+.bug-box{display:grid;gap:10px;margin:22px 0 0;padding:16px;border-radius:18px;border:1.5px solid var(--line);background:var(--surface);max-width:620px}
 .inspire-mini{margin:0 0 22px;padding:16px}
 .inspire-mini h2{font-size:1.15rem}
 @media (min-width:700px){.inspire-mini .inspire-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -835,7 +848,9 @@ body{background:var(--bg)}
         <h3>Destek</h3>
         <ul>
           <li><button type="button" data-act="tourShow">Nasıl kullanılır?</button></li>
+          <li><button type="button" data-act="prefsOpen">Tercihlerim</button></li>
           <li><button type="button" data-act="trOpen">Verilerini taşı</button></li>
+          <li id="footBugs" hidden><button type="button" data-act="bugAdminOpen">🛠️ Hata bildirimleri</button></li>
           <li><a href="gizlilik.html">Gizlilik ve kullanım şartları</a></li>
           <li><a href="gizlilik.html#iletisim">İletişim</a></li>
         </ul>
@@ -1560,6 +1575,7 @@ function toggleOwn(m){
   else manual[norm(m.ad)] = !owned(m);
 }
 function fpass(r){
+  if (!dislikePass(r)) return false; // sevmediğin malzemeyi içeren yemekler önerilmez
   if (mode === "dish" && !dietPass(r)) return false; // beslenme tercihi yalnızca Yemek ara'da geçerli
   for (const f of filters){
     if (f === "hizli"){ if (!(r.sure && r.sure <= 15)) return false; }
@@ -1567,7 +1583,7 @@ function fpass(r){
   }
   return true;
 }
-const getServ = r => servMap[r.key] || r.kisi || 4;
+const getServ = r => servMap[r.key] || prefs.kisi || r.kisi || 4; // tarife özel ayar > kullanıcının kişi sayısı > tarifin kendi kişi sayısı
 function addRecent(key){
   recents = [key, ...recents.filter(k => k !== key)].slice(0, 10);
   save();
@@ -1629,7 +1645,7 @@ function detailHTML(r, compact){
   if (Math.abs(f - 1) > 0.001) h += `<p class="note">Malzemeler ${serv} kişiye göre ayarlandı. Adımlarda geçen miktarlar ${r.kisi} kişilik tarife göredir; malzeme listesindeki güncel miktarları kullan.</p>`;
   if (r.not) h += `<p class="note">${esc(r.not)}</p>`;
   if (r.src === "ai") h += `<p class="note">Bu tarif yapay zekâ tarafından oluşturuldu; miktarları ve pişirme sürelerini kendi tecrübenle kontrol et.</p>`;
-  if (!compact) h += chefHTML(r, null) + reviewsHTML(r) + photosHTML(r);
+  if (!compact) h += bugHTML(r) + chefHTML(r, null) + reviewsHTML(r) + photosHTML(r);
   return h;
 }
 
@@ -2304,6 +2320,7 @@ const MIX_SLOTS = [["Çorba", r => recipeCat(r) === "corba"], ["Ana yemek", r =>
 // Öneriler kategorinin asıl yemeklerinden seçilir (ör. "Etli"de tavuklu çorba değil, ana yemek)
 const corePool = (id, list) => { const p = list.filter(r => id === "spor" || id === "hizli" || recipeCat(r) === id); return p.length >= 3 ? p : list; };
 function pickFrom(list, exclude){
+  list = list.filter(dislikePass);
   const seen = new Set([...recents.slice(0, 10), ...Object.keys(cookCounts)]);
   let cand = list.filter(r => !exclude.has(r.key) && !seen.has(r.key));
   if (!cand.length) cand = list.filter(r => !exclude.has(r.key));
@@ -2327,6 +2344,124 @@ function mixHTML(){
   MIX_SLOTS.forEach(([, fn], i) => { const k = mixPicks[i]; if (!k || !REG.has(k)) mixPicks[i] = pickFrom(BUILTIN.filter(fn), new Set(mixPicks.filter(Boolean))); });
   return `<section class="inspire inspire-mini inspire-mix"><div class="inspire-head"><div><h2>🎲 Senin için öneriler</h2><p class="sub">Bir çorba, bir ana yemek ve bir tatlı. Beğenmediğini 🔄 ile değiştir.</p></div><div class="mix-acts"><button type="button" class="fav" data-act="mixAll">🔄 Yenile</button><button type="button" class="link-btn" data-act="mixClose">Kapat</button></div></div>
     <div class="inspire-grid">${MIX_SLOTS.map(([l], i) => mixPicks[i] ? inspCardHTML(REG.get(mixPicks[i]), l, "mixOne", `data-i="${i}"`) : "").join("")}</div></section>`;
+}
+
+/* ---------- Tercihlerim: kişi sayısı ve sevmediğim malzemeler ---------- */
+let prefs = load("pisir-tercih", {kisi:0, sev:[]}); if (!prefs || typeof prefs !== "object") prefs = {kisi:0, sev:[]};
+if (!Array.isArray(prefs.sev)) prefs.sev = []; prefs.sev = prefs.sev.filter(id => LABEL[id]);
+const savePrefs = () => { try { localStorage.setItem("pisir-tercih", JSON.stringify(prefs)); } catch(e) {} };
+const dislikePass = r => !prefs.sev.length || !r.malzemeler.some(m => prefs.sev.includes(m.id));
+const kisiNow = () => prefs.kisi || 4;
+const DISLIKE_QUICK = ["patlican","mantar","balik","ispanak","pirasa","sogan","sarimsak","biber","kabak","nohut","lahana","bezelye","kiyma","ceviz","fistik"];
+let pantryTime = Number(load("pisir-sure", 0)) || 0;
+let prefsOnb = false, prefSearchText = "";
+
+/* Türkçe karakter ve küçük yazım hatalarına dayanıklı arama ("karniyarik", "menmen", "mercmek") */
+const fold = t => String(t || "").toLocaleLowerCase("tr").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[âàá]/g, "a").replace(/[îìí]/g, "i").replace(/[ûù]/g, "u").replace(/[éè]/g, "e").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+function lev(a, b, max){
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({length:b.length + 1}, (_, i) => i);
+  for (let i = 1; i <= a.length; i++){
+    const cur = [i]; let best = i;
+    for (let j = 1; j <= b.length; j++){
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (cur[j] < best) best = cur[j];
+    }
+    if (best > max) return max + 1;
+    prev = cur;
+  }
+  return prev[b.length];
+}
+function fuzzyHit(text, q){
+  const t = fold(text), f = fold(q);
+  if (!f) return true;
+  if (t.includes(f)) return true;
+  const words = t.split(" ");
+  return f.split(" ").every(qw => {
+    if (qw.length < 4) return words.some(w => w.startsWith(qw));
+    const tol = qw.length >= 7 ? 2 : 1;
+    return words.some(w => w.startsWith(qw) || lev(qw, w.slice(0, qw.length), tol) <= tol || lev(qw, w, tol) <= tol);
+  });
+}
+
+function prefsHTML(){
+  const hits = prefSearchText.trim() ? Object.entries(LABEL).filter(([id, l]) => !prefs.sev.includes(id) && fuzzyHit(l, prefSearchText)).slice(0, 8) : [];
+  const chip = (id, on) => `<button type="button" class="chip${on ? " on" : ""}" data-act="prefSev" data-id="${id}"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]}${on ? " ✕" : ""}</button>`;
+  return `<div class="tour-card prefs-card" role="dialog" aria-modal="true" aria-label="Tercihlerim">
+    <h2>${prefsOnb ? "👋 Seni biraz tanıyalım" : "⚙️ Tercihlerim"}</h2>
+    <p class="tour-text">${prefsOnb ? "İki kısa soru; önerileri sana göre ayarlayalım. İstediğin zaman değiştirebilirsin." : "Önerileri ve tarifleri sana göre ayarla."}</p>
+    <div class="tr-sec"><b>👥 Kaç kişisiniz?</b><div class="pref-people">${[1,2,3,4,5,6].map(n => `<button type="button" class="diet" data-act="prefKisi" data-v="${n}" aria-pressed="${prefs.kisi === n}">${n === 6 ? "6+" : n}</button>`).join("")}</div><p class="sub">Malzeme miktarları ve alışveriş listesi buna göre ayarlanır.</p></div>
+    <div class="tr-sec"><b>🚫 Sevmediğin ya da yiyemediğin bir şey var mı?</b>
+      ${prefs.sev.length ? `<div class="chips">${prefs.sev.map(id => chip(id, true)).join("")}</div>` : ""}
+      <div class="chips">${DISLIKE_QUICK.filter(id => LABEL[id] && !prefs.sev.includes(id)).map(id => chip(id, false)).join("")}</div>
+      <input class="search" id="prefSearch" placeholder="🔎 Başka bir malzeme ara…" autocomplete="off" value="${esc(prefSearchText)}" aria-label="Malzeme ara">
+      ${hits.length ? `<div class="chips">${hits.map(([id]) => chip(id, false)).join("")}</div>` : ""}
+      <p class="sub">Bu malzemeleri içeren yemekler sana önerilmez.</p></div>
+    <div class="tour-acts">${prefsOnb ? `<button type="button" class="link-btn" data-act="prefsClose">Geç</button>` : `<span></span>`}<button type="button" class="ai-btn" data-act="prefsDone">${prefsOnb ? "Kaydet ve başla" : "Tamam"}</button></div></div>`;
+}
+function renderPrefs(){
+  let el = $("prefs");
+  if (!el){ el = document.createElement("div"); el.id = "prefs"; el.className = "tour"; document.body.appendChild(el); }
+  const had = document.activeElement && document.activeElement.id === "prefSearch";
+  el.innerHTML = prefsHTML(); el.hidden = false;
+  if (had){ const i = $("prefSearch"); if (i){ i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }
+}
+function openPrefs(onb){ prefsOnb = !!onb; prefSearchText = ""; renderPrefs(); }
+function closePrefs(){ const el = $("prefs"); if (el) el.hidden = true; renderAll(); }
+document.addEventListener("input", e => { if (e.target && e.target.id === "prefSearch"){ prefSearchText = e.target.value; renderPrefs(); } });
+function prefRowHTML(){
+  return `<div class="pref-row">
+    <div class="pref-grp" aria-label="Kişi sayısı"><span class="pref-l" aria-hidden="true">👥</span><button type="button" class="pref-step" data-act="kisiMinus" aria-label="Bir kişi azalt">−</button><b>${kisiNow()} kişi</b><button type="button" class="pref-step" data-act="kisiPlus" aria-label="Bir kişi artır">+</button></div>
+    <div class="pref-grp" role="group" aria-label="Ne kadar vaktin var?"><span class="pref-l" aria-hidden="true">⏱️</span>${[[0,"Hepsi"],[15,"15 dk"],[30,"30 dk"],[60,"1 saat"]].map(([v, l]) => `<button type="button" class="diet" data-act="sureSet" data-v="${v}" aria-pressed="${pantryTime === v}">${l}</button>`).join("")}</div>
+    <button type="button" class="link-btn pref-open" data-act="prefsOpen">⚙️ ${prefs.sev.length ? `${prefs.sev.length} sevmediğin` : "Tercihlerim"}</button>
+  </div>`;
+}
+
+/* ---------- Tarifte hata bildir ---------- */
+const HATA_URL = () => PHOTO_URL ? PHOTO_URL.replace(/\/foto$/, "/hata") : "";
+const bug = {key:null, tur:"", msg:"", sending:false};
+const BUG_TYPES = ["Malzeme ya da miktar", "Adımlar", "Süre", "Kalori", "Diğer"];
+function bugHTML(r){
+  if (!PHOTO_URL || r.src !== "b") return "";
+  if (bug.key !== r.key) return `<p class="bug-link"><button type="button" class="link-btn" data-act="bugOpen" data-key="${esc(r.key)}">🛠️ Bu tarifte bir hata mı var? Bildir</button></p>`;
+  if (bug.msg && !bug.sending && bug.done) return `<p class="photo-msg bug-link">${esc(bug.msg)}</p>`;
+  return `<section class="bug-box"><b>🛠️ Tarifte ne yanlış?</b>
+    <div class="plan-presets">${BUG_TYPES.map(t => `<button type="button" class="diet" data-act="bugType" data-t="${esc(t)}" aria-pressed="${bug.tur === t}">${t}</button>`).join("")}</div>
+    <textarea class="rev-text" id="bugText" maxlength="300" rows="2" placeholder="Kısaca anlat: örneğin “2 su bardağı su çok fazla, çorba sulu oldu”">${esc(bug.text || "")}</textarea>
+    <div class="actions"><button type="button" class="ai-btn" data-act="bugSend" data-key="${esc(r.key)}" ${bug.sending ? "disabled" : ""}>${bug.sending ? "Gönderiliyor…" : "Gönder"}</button><button type="button" class="link-btn" data-act="bugCancel">Vazgeç</button></div>
+    ${bug.msg ? `<p class="photo-msg">${esc(bug.msg)}</p>` : ""}</section>`;
+}
+async function sendBug(r){
+  const text = ($("bugText") && $("bugText").value || "").trim();
+  if (!bug.tur && !text){ bug.msg = "Lütfen hatanın türünü seç ya da kısaca yaz."; renderSheet(); return; }
+  bug.sending = true; bug.msg = ""; renderSheet();
+  try {
+    const res = await fetch(HATA_URL(), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({tarif:r.key, tur:bug.tur, metin:text})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && d.ok){ bug.done = true; bug.msg = "✓ Teşekkürler! Bildirimin bize ulaştı; tarifi kontrol edip düzelteceğiz."; }
+    else bug.msg = (d && d.error) || "Gönderilemedi, tekrar dene.";
+  } catch(e){ bug.msg = "Gönderilemedi, internet bağlantını kontrol et."; }
+  bug.sending = false; renderSheet();
+}
+// Yönetici: gelen bildirimleri gör
+const bugAdmin = {list:null, msg:""};
+async function openBugAdmin(){
+  let el = $("bugs"); if (!el){ el = document.createElement("div"); el.id = "bugs"; el.className = "tour"; document.body.appendChild(el); }
+  bugAdmin.msg = "Yükleniyor…"; renderBugAdmin();
+  try {
+    const res = await fetch(HATA_URL() + "/liste", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && Array.isArray(d.liste)){ bugAdmin.list = d.liste; bugAdmin.msg = ""; } else bugAdmin.msg = (d && d.error) || "Bildirimler alınamadı.";
+  } catch(e){ bugAdmin.msg = "Bildirimler alınamadı."; }
+  renderBugAdmin();
+}
+function renderBugAdmin(){
+  const el = $("bugs"); if (!el) return;
+  const l = bugAdmin.list || [];
+  el.innerHTML = `<div class="tour-card prefs-card" role="dialog" aria-modal="true" aria-label="Hata bildirimleri"><h2>🛠️ Hata bildirimleri</h2>
+    ${bugAdmin.msg ? `<p class="sub">${esc(bugAdmin.msg)}</p>` : l.length ? `<ul class="rev-list">${l.map(x => `<li><div class="rev-top"><b>${esc(REG.get(x.tarif) ? REG.get(x.tarif).ad : x.tarif)}</b><span class="rev-time">${timeAgo(x.t)}</span></div>${x.tur ? `<p><b>${esc(x.tur)}</b></p>` : ""}${x.metin ? `<p>${esc(x.metin)}</p>` : ""}<div class="rev-acts">${REG.get(x.tarif) ? `<button type="button" class="link-btn" data-act="bugView" data-key="${esc(x.tarif)}">Tarife bak</button>` : ""}<button type="button" class="link-btn" data-act="bugSolve" data-id="${esc(x.id)}">✓ Çözüldü, sil</button></div></li>`).join("")}</ul>` : `<p class="sub">Şu an bekleyen bildirim yok. 🎉</p>`}
+    <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="bugAdminClose">Kapat</button></div></div>`;
+  el.hidden = false;
 }
 
 /* ---------- Bildirim baloncuğu ---------- */
@@ -2607,7 +2742,7 @@ function renderGroups(){
   // 2) Arama varsa: tüm gruplardan eşleşenler düz bir liste hâlinde
   if (q){
     const hits = [];
-    GROUPS.forEach(g => g.items.forEach(([id, l]) => { if (norm(l).includes(q) || (lang === "en" && norm(EN_ING[l] || "").includes(q))) hits.push([id, l]); }));
+    GROUPS.forEach(g => g.items.forEach(([id, l]) => { if (fuzzyHit(l, q) || (lang === "en" && fuzzyHit(EN_ING[l] || "", q))) hits.push([id, l]); }));
     const dishes = sortRecipes(BUILTIN.filter(r => nameHit(r, q))).slice(0, 8);
     if (hits.length) html += `<div class="group-head"><h2>🥕 Malzemeler</h2></div><div class="chips search-hits">${hits.map(([id, l]) => chipHTML(id, l)).join("")}</div>`;
     if (dishes.length) html += `<div class="group-head"><h2>🍽️ Yemekler</h2></div><div class="dish-grid search-dishes">${dishes.map(r => dishCard(r, "openSaved")).join("")}</div>`;
@@ -2619,7 +2754,8 @@ function renderGroups(){
     return;
   }
 
-  // 3) En çok kullanılanlar
+  // 3) Kişi sayısı, süre ve en çok kullanılanlar
+  html += prefRowHTML();
   html += `<div class="group"><div class="group-head"><h2>⭐ En çok kullanılanlar</h2></div><div class="chips">${QUICK.map(id => chipHTML(id, LABEL[id])).join("")}</div></div>`;
 
   html += `<p class="quick-hint">🔎 Aradığın malzeme burada yoksa yukarıdaki arama kutusuna yaz.</p>`;
@@ -2646,7 +2782,7 @@ function renderResults(){
   const any = selected.size + extras.size > 0;
   // Tuz, yağ, su gibi temel malzemeler eşleşme sayılmaz; sadece asıl malzemelere bakılır
   const BASIC = new Set(GROUPS[0].items.map(([id]) => id));
-  const ev = BUILTIN.filter(fpass).map(r => {
+  const ev = BUILTIN.filter(fpass).filter(r => !pantryTime || (r.sure || 0) <= pantryTime).map(r => {
     const main = r.malzemeler.filter(m => !BASIC.has(m.id));
     const have = main.filter(m => selected.has(m.id)).length;
     // Tuz, yağ, su gibi temel malzemeler her evde olur: seçili olmasalar da yemeği engellemez
@@ -2726,7 +2862,8 @@ function hintCats(q){
 function renderDishList(){
   const raw = $("dishSearch").value.trim();
   const q = norm(raw);
-  const list = sortRecipes(BUILTIN.filter(r => (!q || nameHit(r, q)) && fpass(r)));
+  let list = sortRecipes(BUILTIN.filter(r => (!q || nameHit(r, q)) && fpass(r)));
+  if (q){ const fq = fold(q); list = [...list.filter(r => fold(r.ad).includes(fq)), ...list.filter(r => !fold(r.ad).includes(fq))]; } // birebir eşleşenler önce
   let html = "";
   const hints = hintCats(q);
   if (hints.length){
@@ -3569,7 +3706,7 @@ document.addEventListener("click", e => {
     case "fridgeClose": fridge.state = "idle"; renderGroups(); break;
     case "aiPlanPreset": { const pt = PLAN_PRESETS[Number(el.dataset.i)]; aiPlan.text = aiPlan.text.trim() ? aiPlan.text.trim().replace(/[.,]?$/, ", ") + pt.toLocaleLowerCase("tr") : pt; renderPlan(); break; }
     case "aiPlanRun": runAiPlan(); break;
-    case "tourNext": if (tourStep < TOUR.length - 1){ tourStep++; renderTour(); } else closeTour(); break;
+    case "tourNext": if (tourStep < TOUR.length - 1){ tourStep++; renderTour(); } else { const first = !(() => { try { return localStorage.getItem("pisir-tur"); } catch(e){ return "1"; } })(); closeTour(); if (first) openPrefs(true); } break;
     case "tourSkip": closeTour(); break;
     case "tourShow": tourStep = 0; renderTour(); break;
     case "trOpen": transfer.msg = ""; renderTransfer(); break;
@@ -3601,6 +3738,26 @@ document.addEventListener("click", e => {
       if (mode !== "pantry"){ mode = "pantry"; planTarget = null; filters = new Set(); }
       currentKey = null; dishState = null; renderAll(); window.scrollTo(0, 0);
       break;
+    case "prefsOpen": openPrefs(false); break;
+    case "prefKisi": prefs.kisi = Number(el.dataset.v); savePrefs(); renderPrefs(); break;
+    case "prefSev": { const id = el.dataset.id; prefs.sev = prefs.sev.includes(id) ? prefs.sev.filter(x => x !== id) : [...prefs.sev, id]; savePrefs(); renderPrefs(); break; }
+    case "prefsDone": case "prefsClose": closePrefs(); break;
+    case "kisiMinus": case "kisiPlus": prefs.kisi = Math.min(12, Math.max(1, kisiNow() + (act === "kisiPlus" ? 1 : -1))); savePrefs(); renderAll(); break;
+    case "sureSet": pantryTime = Number(el.dataset.v) || 0; try { localStorage.setItem("pisir-sure", JSON.stringify(pantryTime)); } catch(e) {} renderAll(); break;
+    case "bugOpen": Object.assign(bug, {key, tur:"", msg:"", sending:false, done:false, text:""}); renderSheet(); break;
+    case "bugType": bug.text = $("bugText") ? $("bugText").value : bug.text; bug.tur = bug.tur === el.dataset.t ? "" : el.dataset.t; renderSheet(); break;
+    case "bugCancel": bug.key = null; renderSheet(); break;
+    case "bugSend": if (r){ bug.text = $("bugText") ? $("bugText").value : ""; sendBug(r); } break;
+    case "bugAdminOpen": openBugAdmin(); break;
+    case "bugAdminClose": { const be = $("bugs"); if (be) be.hidden = true; break; }
+    case "bugView": { const be = $("bugs"); if (be) be.hidden = true; openSheet(el.dataset.key); break; }
+    case "bugSolve": {
+      const id = el.dataset.id; el.disabled = true;
+      fetch(HATA_URL() + "/sil", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey, id})})
+        .then(res => { if (res.ok){ bugAdmin.list = (bugAdmin.list || []).filter(x => x.id !== id); } else bugAdmin.msg = "Silinemedi, tekrar dene."; renderBugAdmin(); })
+        .catch(() => { bugAdmin.msg = "Silinemedi, tekrar dene."; renderBugAdmin(); });
+      break;
+    }
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "speakAgain": lastSpoken = ""; renderCook(); break;
@@ -3730,7 +3887,7 @@ function loadStats(){
    Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
 let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
 const EN_EXACT = {
-  "Bugün ne pişirsem?":"What should I cook today?","Sandviçler":"Sandwiches","Aradığın malzeme burada yoksa yukarıdaki arama kutusuna yaz.":"Can't find an ingredient? Type it in the search box above.","🎲 Senin için öneriler":"🎲 Ideas for you","Bir çorba, bir ana yemek ve bir tatlı. Beğenmediğini 🔄 ile değiştir.":"A soup, a main and a dessert. Tap 🔄 to swap any.","🔄 Yenile":"🔄 Refresh","Ana yemek":"Main course","🎲 Aklına bir şey gelmiyor mu?":"🎲 Out of ideas?","Her kategoriden senin için bir öneri. Beğenmediğini 🔄 ile değiştir.":"One idea from every category. Tap 🔄 to swap any you don't like.","🔄 Hepsini yenile":"🔄 Refresh all","⚡ 30 dk altı":"⚡ Under 30 min","🟢 Sadece kolay":"🟢 Easy only","🎲 Evde ne var bilmiyorum, bana öner":"🎲 Not sure what I have, suggest something","Kahvaltı":"Breakfast","Etli yemek":"Meat dish","Sebze yemeği":"Vegetable dish","Etsiz yemek":"Meat-free dish","Sporcu yemeği":"Fitness meal","Meze":"Meze","Atıştırmalık":"Snack","Rehberler":"Guides","📚 Rehber":"📚 Guide","Diğer rehberler":"More guides","Keşfet":"Explore","Uygulama":"App","Destek":"Support","Haftalık menü":"Weekly menu","En sevilenler ve rozetler":"Most loved & badges","Nasıl kullanılır?":"How it works","Verilerini taşı":"Move your data","Gizlilik ve kullanım şartları":"Privacy & terms","İletişim":"Contact","Dolabındakiyle ne pişireceğini bul.":"Find what to cook with what you have.","© 2026 Bugün ne pişirsem?":"© 2026 Bugün ne pişirsem?","🏅 Mutfak rozetlerin":"🏅 Your kitchen badges","Kazanıldı ✓":"Earned ✓","🔄 Verilerini başka cihaza taşı":"🔄 Move your data to another device","🔄 Verilerini taşı":"🔄 Move your data","📄 Gizlilik ve kullanım şartları":"📄 Privacy & terms","📤 Bu cihazdan gönder":"📤 Send from this device","📥 Başka cihazdan al":"📥 Receive from another device","Kod oluştur":"Create code","Aktar":"Transfer","Fotoğraftan tanı":"Scan a photo","📸 Fotoğrafta bunları buldum":"📸 Here's what I found","Kapat":"Close","Yanlış olanların işaretini kaldır, sonra seç.":"Untick anything that's wrong, then add.","Bunları da ekle":"Add these too","🤖 Menüyü benim için oluştur":"🤖 Plan my week","✨ Haftalık menümü oluştur":"✨ Create my weekly menu","Menün hazırlanıyor…":"Preparing your menu…","Geç":"Skip","İleri →":"Next →","Hadi başlayalım!":"Let's start!","❓ Nasıl kullanılır?":"❓ How it works","Malzemelerini seç":"Pick your ingredients","Önerileri gör":"See suggestions","Adım adım pişir":"Cook step by step","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
+  "Bugün ne pişirsem?":"What should I cook today?","Tercihlerim":"My preferences","⚙️ Tercihlerim":"⚙️ My preferences","👋 Seni biraz tanıyalım":"👋 Let's get to know you","👥 Kaç kişisiniz?":"👥 How many people?","🚫 Sevmediğin ya da yiyemediğin bir şey var mı?":"🚫 Anything you don't like or can't eat?","Kaydet ve başla":"Save and start","Tamam":"Done","Hepsi":"All","1 saat":"1 hour","🛠️ Bu tarifte bir hata mı var? Bildir":"🛠️ Spot a mistake in this recipe? Report it","🛠️ Tarifte ne yanlış?":"🛠️ What's wrong?","Vazgeç":"Cancel","Malzeme ya da miktar":"Ingredient or amount","Adımlar":"Steps","Süre":"Time","Kalori":"Calories","Diğer":"Other","Sandviçler":"Sandwiches","Aradığın malzeme burada yoksa yukarıdaki arama kutusuna yaz.":"Can't find an ingredient? Type it in the search box above.","🎲 Senin için öneriler":"🎲 Ideas for you","Bir çorba, bir ana yemek ve bir tatlı. Beğenmediğini 🔄 ile değiştir.":"A soup, a main and a dessert. Tap 🔄 to swap any.","🔄 Yenile":"🔄 Refresh","Ana yemek":"Main course","🎲 Aklına bir şey gelmiyor mu?":"🎲 Out of ideas?","Her kategoriden senin için bir öneri. Beğenmediğini 🔄 ile değiştir.":"One idea from every category. Tap 🔄 to swap any you don't like.","🔄 Hepsini yenile":"🔄 Refresh all","⚡ 30 dk altı":"⚡ Under 30 min","🟢 Sadece kolay":"🟢 Easy only","🎲 Evde ne var bilmiyorum, bana öner":"🎲 Not sure what I have, suggest something","Kahvaltı":"Breakfast","Etli yemek":"Meat dish","Sebze yemeği":"Vegetable dish","Etsiz yemek":"Meat-free dish","Sporcu yemeği":"Fitness meal","Meze":"Meze","Atıştırmalık":"Snack","Rehberler":"Guides","📚 Rehber":"📚 Guide","Diğer rehberler":"More guides","Keşfet":"Explore","Uygulama":"App","Destek":"Support","Haftalık menü":"Weekly menu","En sevilenler ve rozetler":"Most loved & badges","Nasıl kullanılır?":"How it works","Verilerini taşı":"Move your data","Gizlilik ve kullanım şartları":"Privacy & terms","İletişim":"Contact","Dolabındakiyle ne pişireceğini bul.":"Find what to cook with what you have.","© 2026 Bugün ne pişirsem?":"© 2026 Bugün ne pişirsem?","🏅 Mutfak rozetlerin":"🏅 Your kitchen badges","Kazanıldı ✓":"Earned ✓","🔄 Verilerini başka cihaza taşı":"🔄 Move your data to another device","🔄 Verilerini taşı":"🔄 Move your data","📄 Gizlilik ve kullanım şartları":"📄 Privacy & terms","📤 Bu cihazdan gönder":"📤 Send from this device","📥 Başka cihazdan al":"📥 Receive from another device","Kod oluştur":"Create code","Aktar":"Transfer","Fotoğraftan tanı":"Scan a photo","📸 Fotoğrafta bunları buldum":"📸 Here's what I found","Kapat":"Close","Yanlış olanların işaretini kaldır, sonra seç.":"Untick anything that's wrong, then add.","Bunları da ekle":"Add these too","🤖 Menüyü benim için oluştur":"🤖 Plan my week","✨ Haftalık menümü oluştur":"✨ Create my weekly menu","Menün hazırlanıyor…":"Preparing your menu…","Geç":"Skip","İleri →":"Next →","Hadi başlayalım!":"Let's start!","❓ Nasıl kullanılır?":"❓ How it works","Malzemelerini seç":"Pick your ingredients","Önerileri gör":"See suggestions","Adım adım pişir":"Cook step by step","Beslenme tercihim:":"My diet:","Glütensiz":"Gluten-free","Laktozsuz":"Lactose-free","Vegan":"Vegan","Kuruyemişsiz":"Nut-free","500 kcal altı":"Under 500 kcal","📤 Paylaş":"📤 Share","📤 Listeyi paylaş":"📤 Share list","🛒 Eksikleri sipariş et ↓":"🛒 Order missing items ↓","🧾 Eksiklerin":"🧾 Missing items","🏪 Nereden sipariş vermek istersin?":"🏪 Where do you want to order from?","Bir pazaryeri seç; eksik listeni kopyalayıp sana yol gösterelim.":"Pick a store; we'll copy your list and guide you.","🛒 Eksikleri sipariş et ↑":"🛒 Order missing items ↑","👨‍🍳 Şef'e sor":"👨‍🍳 Ask the chef","Sor":"Ask","Sorunu yaz…":"Type your question…","Şef düşünüyor…":"The chef is thinking…","⭐ Değerlendirmeler":"⭐ Ratings & reviews","Gönder":"Send","Kontrol ediliyor…":"Checking…","🚩 Şikâyet et":"🚩 Report","Senin yorumun · ":"Your review · ","Henüz değerlendirme yok. İlk puanı sen ver!":"No ratings yet. Be the first!","Bu tarifi değerlendirdin, teşekkürler!":"You rated this recipe, thanks!","Nasıl oldu? Kısa bir not bırak (isteğe bağlı)":"How did it go? Leave a short note (optional)","Yorumlar yükleniyor…":"Loading reviews…","📖 Tüm tarifler":"📖 All recipes","Malzemeleri seç":"Pick ingredients","Öneriyi gör":"See ideas","Pişir, afiyet olsun":"Cook and enjoy","Nasıl çalışır":"How it works","Temizle":"Clear","🔎 Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"🔎 Search ingredients or dishes: “eggplant”, “pasta”…",
   "💡 Öneriler burada belirecek":"💡 Ideas will appear here","Malzeme seçtikçe yapabileceğin yemekler burada anında görünür. Hızlı başlamak için birine dokun:":"As you pick ingredients, dishes you can make appear here instantly. Tap one to get started:","⚡ Hızlı başlangıç":"⚡ Quick start",
   "🗑️ Kaldır":"🗑️ Remove","Kaldırılıyor…":"Removing…","Fotoğrafın kaldırıldı.":"Your photo was removed.","Fotoğraf kaldırılamadı, tekrar dene.":"Couldn't remove the photo, please try again.","Fotoğrafı büyüt":"Enlarge photo","✓ Fotoğrafın eklendi, ellerine sağlık! Üzerine dokunarak büyütebilir, istersen kaldırabilirsin.":"✓ Your photo was added, well done! Tap it to enlarge, or remove it if you like.","Fotoğrafımı sil":"Delete my photo","Fotoğrafın silindi.":"Your photo was deleted.","Fotoğraf silinemedi, tekrar dene.":"Couldn't delete the photo, please try again.","✓ Fotoğrafın eklendi, ellerine sağlık!":"✓ Your photo was added, well done!","Fotoğraf hazırlanıyor…":"Preparing photo…","Fotoğraf kontrol ediliyor, bu birkaç saniye sürebilir…":"Checking your photo, this may take a few seconds…","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
   "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
@@ -3927,7 +4084,7 @@ function setLang(l){
   applyLang(); renderAll();
   if (l === "en") trTree(document.documentElement);
 }
-function nameHit(r, q){ return norm(r.ad).includes(q) || (lang === "en" && norm(EN_NAME[r.ad] || "").includes(q)); }
+function nameHit(r, q){ return fuzzyHit(r.ad, q) || (lang === "en" && fuzzyHit(EN_NAME[r.ad] || "", q)); }
 
 /* Ana ekrana eklenebilir ve internetsiz çalışır (PWA) */
 if ("serviceWorker" in navigator){
@@ -3940,6 +4097,7 @@ renderAll();
 { const mg = location.hash.match(/^#rehber-([a-z]+)/); if (mg && GUIDE_BY.has(mg[1])) openGuide(mg[1], {root:true}); }
 // Ana ekran kısayolu ile gelindiyse ilgili sekmeyi aç (?sekme=ara / menu / sevilen)
 { const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"recent"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
+{ const fb = $("footBugs"); if (fb) fb.hidden = !adminKey; } // hata bildirimleri yalnızca yöneticiye görünür
 // İlk kez gelen kişiye kısa tanıtım
 try { if (!localStorage.getItem("pisir-tur") && !/^#(t=|rehber-)/.test(location.hash)) renderTour(); } catch(e) {}
 // Ziyaretçi istatistikleri (Cloudflare Web Analytics, çerez kullanmaz). Anahtarı aldığında tırnakların arasına yaz.
