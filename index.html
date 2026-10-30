@@ -833,6 +833,74 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .start-card .combo{justify-content:flex-start;padding:10px 14px;font-size:.9rem;border-radius:14px;min-height:0}
 .start-card .inspire-go{max-width:340px;margin:0 auto;display:block;width:100%}
 #results .daily-mini{margin-top:14px}
+/* Yemek ara: açılır-kapanır kategoriler */
+.cat-acc{margin:0 0 10px;border:1px solid var(--line);border-radius:20px;background:var(--surface);overflow:hidden;box-shadow:0 1px 2px rgba(29,36,51,.04)}
+.cat-acc.open{box-shadow:0 8px 26px rgba(29,36,51,.08)}
+.acc-head{display:flex;align-items:center;gap:14px;width:100%;padding:14px 16px;border:0;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.acc-emo{display:grid;place-items:center;width:46px;height:46px;flex:0 0 46px;border-radius:14px;background:var(--bg);font-size:1.5rem}
+.acc-txt{display:flex;flex-direction:column;min-width:0;flex:1}
+.acc-txt b{font-size:1.08rem}
+.acc-txt small{color:var(--muted);font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acc-n{padding:3px 10px;border-radius:999px;background:var(--bg);color:var(--muted);font-size:.8rem;font-weight:700}
+.acc-chev{font-size:1.1rem;color:var(--muted);transition:transform .25s ease}
+.acc-head[aria-expanded="true"] .acc-chev{transform:rotate(180deg);color:var(--cobalt)}
+.acc-body{padding:0 16px 16px}
+.acc-body .see-all{margin-top:12px}
+/* ---------- Animasyonlar (hareket azaltma tercihine saygılı) ---------- */
+@media (prefers-reduced-motion: no-preference){
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+  @keyframes steam{0%{opacity:0;transform:translateY(6px) scaleX(1)}30%{opacity:.7}100%{opacity:0;transform:translateY(-22px) scaleX(1.6)}}
+  @keyframes shine{0%{transform:translateX(-120%) skewX(-20deg)}60%,100%{transform:translateX(220%) skewX(-20deg)}}
+  @keyframes tabBounce{0%{transform:scale(1)}40%{transform:scale(1.22) translateY(-3px)}100%{transform:scale(1)}}
+  @keyframes wave{0%,60%,100%{transform:rotate(0)}10%,30%{transform:rotate(14deg)}20%,40%{transform:rotate(-8deg)}}
+  /* Sekme değişince içerik yumuşakça gelir */
+  #pantryMode:not([hidden]),#dishMode:not([hidden]),#planMode:not([hidden]),#savedMode:not([hidden]){animation:fadeUp .4s ease backwards}
+  .hero-card{animation:fadeIn .5s ease backwards}
+  /* Kategori açılınca kartlar sırayla belirir */
+  .acc-body{animation:fadeIn .25s ease backwards}
+  .acc-body .dish-card,.dish-grid .dish-card,.sug-row > *,.stat,.badge{animation:fadeUp .45s cubic-bezier(.2,.8,.2,1) backwards}
+  .dish-grid > :nth-child(2),.sug-row > :nth-child(2),.stat-grid > :nth-child(2){animation-delay:.04s}
+  .dish-grid > :nth-child(3),.sug-row > :nth-child(3),.stat-grid > :nth-child(3){animation-delay:.08s}
+  .dish-grid > :nth-child(4),.sug-row > :nth-child(4),.stat-grid > :nth-child(4){animation-delay:.12s}
+  .dish-grid > :nth-child(5),.sug-row > :nth-child(5),.stat-grid > :nth-child(5){animation-delay:.16s}
+  .dish-grid > :nth-child(6),.sug-row > :nth-child(6),.stat-grid > :nth-child(6){animation-delay:.2s}
+  .dish-grid > :nth-child(7){animation-delay:.24s}
+  .dish-grid > :nth-child(8){animation-delay:.28s}
+  .dish-grid > :nth-child(n+9){animation-delay:.32s}
+  /* Kartların üzerine gelince hafif yükselme (fareyle) */
+  @media (hover:hover){
+    .dish-card,.combo,.acc-head,.sug{transition:transform .18s ease,box-shadow .18s ease}
+    .dish-card:hover,.combo:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(29,36,51,.12)}
+    .dish-card:hover .dc-media img{transform:scale(1.06)}
+    .acc-head:hover .acc-emo{animation:bob .6s ease}
+  }
+  .dc-media{overflow:hidden}
+  .dc-media img{transition:transform .35s ease}
+  /* Pişirme modunda adım geçişi */
+  .cook-main.step-in .step-emo{animation:bob .6s ease, fadeIn .3s ease backwards}
+  .cook-main.step-in .cook-step{animation:slideIn .38s cubic-bezier(.2,.8,.2,1) backwards}
+  .cook-main.step-in .cook-step ~ *{animation:fadeUp .4s ease .08s backwards}
+  .cook-progress span{transition:width .4s ease}
+  /* Boş öneri kartında buharı tüten tava */
+  .start-emo{position:relative;display:inline-block;animation:bob 2.6s ease-in-out infinite}
+  .steam{position:absolute;left:50%;top:-6px;transform:translateX(-50%);display:flex;gap:5px}
+  .steam i{display:block;width:5px;height:14px;border-radius:6px;background:var(--muted);opacity:0;animation:steam 2.4s ease-in infinite}
+  .steam i:nth-child(2){animation-delay:.6s}
+  .steam i:nth-child(3){animation-delay:1.2s}
+  /* Selamlama el sallar */
+  #greet{display:inline-block}
+  /* Kazanılan rozetlerde parıltı */
+  .badge.ok{position:relative;overflow:hidden}
+  .badge.ok::after{content:"";position:absolute;inset:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(-120%) skewX(-20deg);animation:shine 3.5s ease-in-out 1s infinite;pointer-events:none}
+  /* Alt sekmede seçilen simge zıplar */
+  .tab[aria-selected="true"] .tab-i{display:inline-block;animation:tabBounce .45s ease}
+  /* Öneri başlığı belirince */
+  .sug-head,.sug-sec h2{animation:fadeIn .4s ease backwards}
+  .toast.show{animation:fadeUp .3s ease backwards}
+}
 </style>
 </head>
 <body>
@@ -939,7 +1007,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 59</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 60</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -3060,7 +3128,7 @@ function renderResults(){
   let html = "";
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `<div class="section start-card"><div class="start-emo" aria-hidden="true">🍳</div><h2>Yemek önerilerin burada</h2><p class="sub">Soldan malzeme seçtikçe yapabileceğin yemekler burada belirir.</p><p class="start-l">Ya da hızlıca dene:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Bana rastgele öner</button>`}</div>${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}`;
+    html = `<div class="section start-card"><div class="start-emo" aria-hidden="true"><span class="steam"><i></i><i></i><i></i></span>🍳</div><h2>Yemek önerilerin burada</h2><p class="sub">Soldan malzeme seçtikçe yapabileceğin yemekler burada belirir.</p><p class="start-l">Ya da hızlıca dene:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Bana rastgele öner</button>`}</div>${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -3090,6 +3158,7 @@ function hintCats(q){
   if (q.length < 2) return [];
   return CATS.filter(([id, , , keys]) => keys.some(k => k.startsWith(q) || (q.startsWith(k) && k.length >= 2 && q.length <= k.length + 2)) && !filters.has(id));
 }
+const openCats = new Set();
 function renderDishList(){
   const raw = $("dishSearch").value.trim();
   const q = norm(raw);
@@ -3109,7 +3178,9 @@ function renderDishList(){
       const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
       if (!items.length) return "";
       const more = items.length > 12 ? `<button type="button" class="see-all cat-${id}" data-act="filter" data-f="${id}">Tümünü gör · ${items.length} tarif</button>` : "";
-      return `<section class="dish-sec"><div class="sec-head"><h2><span aria-hidden="true">${emo}</span> ${l}</h2><span class="sec-count">${items.length} tarif</span></div><div class="dish-grid dish-row">${items.slice(0, 12).map(r => dishCard(r, "pickDish", id === "spor" ? proteinNote(r) : "")).join("")}</div>${more}</section>`;
+      const open = openCats.has(id);
+      const peek = items.slice(0, 3).map(r => r.ad).join(", ") + (items.length > 3 ? "…" : "");
+      return `<section class="dish-sec cat-acc${open ? " open" : ""}" data-key="sec-${id}"><button type="button" class="acc-head cat-${id}" data-act="catToggle" data-f="${id}" aria-expanded="${open}"><span class="acc-emo" aria-hidden="true">${emo}</span><span class="acc-txt"><b>${l}</b><small>${open ? `${items.length} tarif` : esc(peek)}</small></span><span class="acc-n">${items.length}</span><span class="acc-chev" aria-hidden="true">▾</span></button>${open ? `<div class="acc-body"><div class="dish-grid">${items.slice(0, 12).map(r => dishCard(r, "pickDish", id === "spor" ? proteinNote(r) : "")).join("")}</div>${more}</div>` : ""}</section>`;
     }).join("");
   } else if (list.length){
     const c = filters.size ? CAT_BY_ID[[...filters][0]] : null;
@@ -3611,6 +3682,7 @@ async function runExplain(){
   if (cook.open) renderCook();
 }
 
+let cookAnimAt = "";
 function renderCook(){
   const r = REG.get(cook.key); if (!r) return;
   const n = r.adimlar.length;
@@ -3623,7 +3695,8 @@ function renderCook(){
     const s = r.adimlar[cook.step];
     const min = stepMinutes(s);
     const tech = stepTechnique(r, s);
-    h += `<div class="cook-main"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
+    const stepAnim = cookAnimAt !== cook.key + "|" + cook.step ? " step-in" : ""; cookAnimAt = cook.key + "|" + cook.step;
+    h += `<div class="cook-main${stepAnim}"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
       <p class="cook-wake"><span id="cookWake">${wakeText()}</span></p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
@@ -4013,6 +4086,7 @@ document.addEventListener("click", e => {
         .catch(() => { bugAdmin.msg = "Silinemedi, tekrar dene."; renderBugAdmin(); });
       break;
     }
+    case "catToggle": { const f = el.dataset.f; openCats.has(f) ? openCats.delete(f) : openCats.add(f); renderDishList(); break; }
     case "prefToggle": prefOpen = !prefOpen; renderGroups(); break;
     case "quickMore": quickAll = true; renderGroups(); break;
     case "focusSearch": { const se = $("search"); if (se){ se.scrollIntoView({block:"center", behavior:"smooth"}); se.focus({preventScroll:true}); } break; }
