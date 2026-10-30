@@ -150,7 +150,7 @@ html.sheet-open{overflow:hidden}
 .sug-head{font-weight:800;margin:0 0 8px}
 .sug-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
 .sug-row .sug{flex:0 0 240px}
-@media (min-width:900px){.suggest-strip{display:none}}
+
 :root[data-theme="dark"] .sug-img{background:rgba(255,255,255,.08)}
 :root[data-theme="dark"] .sug-ok{color:#8CE99A}
 :root[data-theme="dark"] .sug-miss{color:#FF8787}
@@ -201,6 +201,7 @@ header.hero{position:relative}
 .hero-top .marquee{flex:1;min-width:0;margin:0}
 .theme-btn{flex:0 0 auto;height:42px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:.92rem;cursor:pointer;box-shadow:0 2px 10px rgba(13,21,40,.08);white-space:nowrap}
 .theme-btn:hover{border-color:var(--cobalt)}
+.top-actions{display:flex;gap:8px;flex:0 0 auto}
 :root[data-theme="dark"] .theme-btn{background:#FFD43B;color:#1A1300;border-color:#FFD43B}
 body,.dish-card,.mybox,.acc,.chip,.tabs,.daily,.nut{transition:background-color .25s,color .25s,border-color .25s}
 .daily{display:grid;grid-template-columns:minmax(0,1fr);gap:0;border-radius:24px;background:var(--cbg);margin:0 0 24px}
@@ -486,7 +487,7 @@ header.hero{padding:28px 0 20px}
 <body>
 <div class="wrap">
   <header class="hero">
-    <div class="topbar"><div class="brand"><span class="brand-logo" aria-hidden="true">🍳</span><span>Bugün ne pişirsem?</span></div><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div>
+    <div class="topbar"><div class="brand"><span class="brand-logo" aria-hidden="true">🍳</span><span>Bugün ne pişirsem?</span></div><div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></div>
     <div class="hero-card">
       <p class="greet" id="greet"></p>
       <h1 id="heroTitle">Dolabında ne var?</h1>
@@ -1447,8 +1448,8 @@ function renderGroups(){
   // 2) Arama varsa: tüm gruplardan eşleşenler düz bir liste hâlinde
   if (q){
     const hits = [];
-    GROUPS.forEach(g => g.items.forEach(([id, l]) => { if (norm(l).includes(q)) hits.push([id, l]); }));
-    const dishes = sortRecipes(BUILTIN.filter(r => norm(r.ad).includes(q))).slice(0, 8);
+    GROUPS.forEach(g => g.items.forEach(([id, l]) => { if (norm(l).includes(q) || (lang === "en" && norm(EN_ING[l] || "").includes(q))) hits.push([id, l]); }));
+    const dishes = sortRecipes(BUILTIN.filter(r => nameHit(r, q))).slice(0, 8);
     if (hits.length) html += `<div class="group-head"><h2>🥕 Malzemeler</h2></div><div class="chips search-hits">${hits.map(([id, l]) => chipHTML(id, l)).join("")}</div>`;
     if (dishes.length) html += `<div class="group-head"><h2>🍽️ Yemekler</h2></div><div class="dish-grid search-dishes">${dishes.map(r => dishCard(r, "openSaved")).join("")}</div>`;
     const exact = Object.values(LABEL).some(l => norm(l) === q) || [...extras].some(x => norm(x) === q);
@@ -1559,7 +1560,7 @@ function hintCats(q){
 function renderDishList(){
   const raw = $("dishSearch").value.trim();
   const q = norm(raw);
-  const list = sortRecipes(BUILTIN.filter(r => (!q || norm(r.ad).includes(q)) && fpass(r)));
+  const list = sortRecipes(BUILTIN.filter(r => (!q || nameHit(r, q)) && fpass(r)));
   let html = "";
   const hints = hintCats(q);
   if (hints.length){
@@ -1781,7 +1782,7 @@ let voiceOn = (() => { try { return localStorage.getItem("pisir-ses") === "1"; }
 let lastSpoken = "";
 const canSpeak = () => "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
 function trVoice(){
-  const vs = speechSynthesis.getVoices().filter(v => /^tr/i.test(v.lang));
+  const vs = speechSynthesis.getVoices().filter(v => (lang === "en" ? /^en/i : /^tr/i).test(v.lang));
   return vs.find(v => /premium|enhanced|gelişmiş|natural|neural|siri/i.test(v.name)) || vs.find(v => /google|yelda/i.test(v.name)) || vs[0] || null;
 }
 /* Adımı bir insan anlatıyormuş gibi konuşma diline çevir */
@@ -1812,7 +1813,7 @@ function pcmToWav(b64, rate){
 function aiVoice(text){
   if (!TTS_URL || aiVoiceFails >= 2 || !navigator.onLine) return Promise.resolve(null);
   if (audioCache.has(text)) return audioCache.get(text);
-  const p = fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text})})
+  const p = fetch(TTS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({text, lang})})
     .then(res => res.ok ? res.json() : null)
     .then(d => {
       if (!d || !d.audio){ aiVoiceFails++; return null; }
@@ -1830,7 +1831,7 @@ function deviceSpeak(text){
   if (!canSpeak()) return;
   try {
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = "tr-TR"; u.rate = 1; u.pitch = 1;
+    u.lang = lang === "en" ? "en-US" : "tr-TR"; u.rate = 1; u.pitch = 1;
     const v = trVoice(); if (v) u.voice = v;
     speechSynthesis.speak(u);
     voiceKind = "device";
@@ -2057,8 +2058,11 @@ function renderCook(){
   const sayKey = cook.key + "|" + cook.step;
   if (voiceOn && sayKey !== lastSpoken){
     lastSpoken = sayKey;
-    speak(cook.step < n ? spokenStep(r, cook.step) : `Afiyet olsun! ${r.ad} hazır, ellerine sağlık.`);
-    if (cook.step + 1 < n) aiVoice(spokenStep(r, cook.step + 1)); // sıradaki adımı önceden hazırla
+    if (lang === "en") speak(cook.step < n ? `Step ${cook.step + 1}. ${trText(r.adimlar[cook.step])}` : `Enjoy your meal! ${enName(r)} is ready.`);
+    else {
+      speak(cook.step < n ? spokenStep(r, cook.step) : `Afiyet olsun! ${r.ad} hazır, ellerine sağlık.`);
+      if (cook.step + 1 < n) aiVoice(spokenStep(r, cook.step + 1)); // sıradaki adımı önceden hazırla
+    }
   }
   renderTimers();
 }
@@ -2086,7 +2090,7 @@ function beep(){
 }
 function tick(){
   const now = Date.now();
-  timers.forEach(t => { if (!t.done && now >= t.end){ t.done = true; beep(); speak(`${t.label} zamanlayıcısı doldu.`); } });
+  timers.forEach(t => { if (!t.done && now >= t.end){ t.done = true; beep(); speak(lang === "en" ? `${trText(t.label)} timer is done.` : `${t.label} zamanlayıcısı doldu.`); } });
   if (!timers.some(t => !t.done)){ clearInterval(tickId); tickId = null; }
   renderTimers();
 }
@@ -2127,7 +2131,7 @@ async function runDishAI(){
     if (out && typeof out.hata === "string") dishState = {state:"error", query:q, msg:out.hata};
     else {
       const r = fromAI(out);
-      if (r){ dishState = null; currentKey = r.key; addRecent(r.key); }
+      if (r){ dishState = null; currentKey = null; openSheet(r.key); }
       else dishState = {state:"error", query:q, msg:"Tarif okunamadı. Tekrar dene."};
     }
   } catch(e){ dishState = {state:"error", query:q, msg:errMsg(e)}; }
@@ -2284,10 +2288,8 @@ document.addEventListener("click", e => {
     case "rmExtra": extras.delete(el.dataset.name); save(); renderAll(); break;
     case "clear": selected.clear(); extras.clear(); manual = {}; open.clear(); aiPantry = {state:"idle", keys:[], msg:""}; save(); renderAll(); break;
     case "toResults": $("results").scrollIntoView(); break;
-    case "expand": if (open.has(key)) open.delete(key); else { open.add(key); addRecent(key); } renderResults(); break;
-    case "pickDish":
-      if (!dishState && currentKey === key){ currentKey = null; renderDishList(); renderDishDetail(); break; } // açık tarife tekrar basınca kapat
-      dishState = null; currentKey = key; addRecent(key); renderDishList(); renderDishDetail(); $("dishDetail").scrollIntoView({block:"start"}); break;
+    case "expand": if (r) openSheet(key); break;
+    case "pickDish": if (r){ dishState = null; currentKey = null; openSheet(key); renderDishDetail(); } break;
     case "pickCat": filters = new Set([el.dataset.f]); $("dishSearch").value = ""; renderAll(); break;
     case "aiDish": runDishAI(); break;
     case "aiSuggest": runPantryAI(); break;
@@ -2316,6 +2318,7 @@ document.addEventListener("click", e => {
         .catch(() => { uploadState[key] = "Fotoğraf kaldırılamadı, bağlantını kontrol et."; refreshPhotoViews(key); });
       break;
     }
+    case "lang": setLang(lang === "en" ? "tr" : "en"); break;
     case "theme": theme = theme === "dark" ? "light" : "dark"; try { localStorage.setItem("pisir-tema", theme); } catch(e) {} applyTheme(); break;
     case "voice":
       voiceOn = !voiceOn; try { localStorage.setItem("pisir-ses", voiceOn ? "1" : "0"); } catch(e) {}
@@ -2366,7 +2369,7 @@ $("dishSearch").addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
   const q = norm($("dishSearch").value); if (!q) return;
   const list = BUILTIN.filter(r => norm(r.ad).includes(q) && fpass(r));
-  if (list.length === 1){ dishState = null; currentKey = list[0].key; addRecent(currentKey); renderDishList(); renderDishDetail(); }
+  if (list.length === 1){ dishState = null; currentKey = null; openSheet(list[0].key); renderDishList(); renderDishDetail(); }
   else if (!list.length) runDishAI();
 });
 document.addEventListener("keydown", e => {
@@ -2446,12 +2449,216 @@ function loadStats(){
   }).catch(() => {});
 }
 
+/* ---------- İngilizce (English) ----------
+   Kısa arayüz metinleri, yemek ve malzeme adları buradaki sözlükten çevrilir.
+   Tarif adımları gibi uzun metinler yapay zekâyla bir kez çevrilir, telefonda ve Cloudflare'de saklanır. */
+let lang = (() => { try { return localStorage.getItem("pisir-dil") === "en" ? "en" : "tr"; } catch(e){ return "tr"; } })();
+const EN_EXACT = {
+  "Bugün ne pişirsem?":"What should I cook today?","Türkçeye geç":"Türkçeye geç","Switch to English":"Switch to English","Dolabım":"My kitchen","Yemek ara":"Find dishes","Menü":"Menu","En sevilenler":"Most loved","Geçmiş":"History",
+  "Dolabında ne var?":"What's in your kitchen?","Evdeki malzemeleri seç, sana ne pişirebileceğini hemen söyleyelim.":"Pick what you have at home and we'll tell you what you can cook right away.",
+  "Ne pişirelim?":"What shall we cook?","Bir kategori seç ya da yemek ara.":"Pick a category or search for a dish.","Haftalık menü":"Weekly menu","Günlere yemek ekle, alışveriş listen hazır.":"Add dishes to days and your shopping list is ready.",
+  "Türk ve dünya mutfağının en sevilenleri, senin favorilerin.":"The most-loved Turkish and world dishes, plus your favorites.","Son baktıkların":"Recently viewed","En son açtığın tarifler.":"Recipes you opened recently.",
+  "Günaydın 👋":"Good morning 👋","İyi günler 👋":"Good afternoon 👋","İyi akşamlar 👋":"Good evening 👋","İyi geceler 👋":"Good night 👋",
+  "🌙 Karanlık":"🌙 Dark","☀️ Aydınlık":"☀️ Light","Karanlık moda geç":"Switch to dark mode","Aydınlık moda geç":"Switch to light mode","Görünüm":"Appearance",
+  "Çorbalar":"Soups","Etli yemekler":"Meat dishes","Sebze yemekleri":"Vegetable dishes","Etsiz yemekler":"Meat-free dishes","Sporcu yemekleri":"Fitness meals","Dünya mutfağı":"World cuisine","Mezeler":"Mezes","Kahvaltılık":"Breakfast","Atıştırmalıklar":"Snacks","Tatlılar":"Desserts","Kahveler":"Coffees","Kategoriler":"Categories","15 dakikada":"In 15 minutes",
+  "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
+  "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
+  "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
+  "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
+  "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
+  "💡 Bu malzemelerle":"💡 You can make","yapabilirsin":"with these ingredients","💡 Bu malzemelere yakın yemekler":"💡 Dishes close to these ingredients","✅ Bu malzemelerle hemen yapabilirsin":"✅ You can make these right now","🛒 1-2 malzeme alırsan":"🛒 If you buy 1–2 more","💡 Öneriler":"💡 Suggestions","✓ Hepsi evde var":"✓ You have everything","Diğer yapabileceklerin":"More you can make",
+  "Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.":"We couldn't find a dish for these ingredients. Pick a few more or ask the AI below.",
+  "Dünya mutfağından öneriler":"Ideas from world cuisines","Yapay zekâ, kendi eklediğin malzemeler dahil elindekilerle farklı ülke mutfaklarından yemekler önerir.":"The AI suggests dishes from around the world using what you have, including ingredients you added.","Öneri al":"Get ideas","Yeni öneriler al":"Get new ideas","Öneriler hazırlanıyor…":"Preparing ideas…","Bu birkaç saniye sürebilir.":"This may take a few seconds.",
+  "Yemekleri göster":"Show dishes","Açmak için dokun.":"Tap to open.","Kapatmak için dokun":"Tap to close",
+  "🌟 Bugünün sofrası":"🌟 Today's table","Bugünün sofrası":"Today's table","🌟 Günün menüsü":"🌟 Menu of the day","Menüyü gör ↓":"Show menu ↓","Menüyü gizle ↑":"Hide menu ↑","Önce hangisini yapmak istiyorsun?":"Which one do you want to make first?","Kişi başı toplam yaklaşık":"Total per person, about","Tarife bak":"View recipe","📅 Bugünün menüsüne ekle":"📅 Add to today's menu","Çorba":"Soup","Ana yemek":"Main course","Yanında":"On the side","Tatlı":"Dessert",
+  "✕ Kapat":"✕ Close","Kapat":"Close","Geri":"Back","Pişirmeye başla":"Start cooking","▶ Videolu tarif":"▶ Video recipe","▶ Tarifin videosu":"▶ Recipe video","▶ Nasıl yapılır?":"▶ How to do it","💡 Nasıl yapılır?":"💡 How to do it","🤖 Daha ayrıntılı anlat":"🤖 Explain in more detail",
+  "Menüye ekle…":"Add to menu…","♡ Favorilere ekle":"♡ Add to favorites","♥ Favorilerde":"♥ In favorites","Kişi sayısı":"Servings","Bir kişi artır":"One more person","Bir kişi azalt":"One less person",
+  "Malzemeler":"Ingredients","Evde olanları işaretlemek için dokun.":"Tap what you have at home.","Evde var":"At home","Alınacak":"To buy","Yerine ne koyabilirim?":"What can I use instead?","Alışveriş listen":"Your shopping list","Listeyi kopyala":"Copy list","Kopyalandı":"Copied","Tarif":"Recipe","Fırın:":"Oven:","Su bardağı:":"Cup:",
+  "📸 Bu yemeği yapanlar":"📸 Made by others","📷 Fotoğrafını ekle":"📷 Add your photo","📷 Yemeğinin fotoğrafını çek ve paylaş":"📷 Snap and share your dish","Fotoğraflar yükleniyor…":"Loading photos…","Henüz fotoğraf yok. Bu yemeği yaptıysan ilk fotoğrafı sen ekle!":"No photos yet. If you've made this dish, add the first one!",
+  "Eklediğin fotoğraf herkese görünür. Yayınlanmadan önce yapay zekâ ile yemek fotoğrafı olup olmadığı ve uygunluğu kontrol edilir.":"Your photo will be visible to everyone. Before it's published, AI checks that it shows food and is appropriate.",
+  "📷 Görsel: Wikimedia Commons":"📷 Image: Wikimedia Commons","Sonraki adım":"Next step","Bitir":"Finish","Bitti":"Done","Afiyet olsun!":"Enjoy your meal!","🔈 Sessiz":"🔈 Muted","🔊 Sesli":"🔊 Voice on","🔁 Tekrar oku":"🔁 Read again","🤖 Yapay zekâ sesi":"🤖 AI voice","📱 Telefonun sesi":"📱 Phone voice",
+  "Bu tarayıcı ekranı açık tutamıyor; gerekirse telefonunun ekran kapanma süresini uzat.":"This browser can't keep the screen on; if needed, extend your phone's screen timeout.",
+  "+ Yemek ekle":"+ Add dish","Henüz yemek yok.":"No dishes yet.","Menüyü temizle":"Clear menu","Haftalık alışveriş listen":"Weekly shopping list","Aldım":"Got it","Haftalık menüye ekle":"Add to weekly menu",
+  "Menün boş. Bir güne “+ Yemek ekle” ile başla ya da herhangi bir tarifteki “Menüye ekle” seçeneğini kullan.":"Your menu is empty. Start with “+ Add dish” on a day or use “Add to menu” on any recipe.",
+  "Pazartesi":"Monday","Salı":"Tuesday","Çarşamba":"Wednesday","Perşembe":"Thursday","Cuma":"Friday","Cumartesi":"Saturday","Pazar":"Sunday",
+  "🇹🇷 Türk mutfağının en sevilenleri":"🇹🇷 Most-loved Turkish dishes","🌍 Dünyanın en sevilenleri":"🌍 World favorites","❤️ Kaydettiklerin":"❤️ Your saved recipes","👩‍🍳 Senin en çok pişirdiklerin":"👩‍🍳 Your most cooked","📈 Bu uygulamada en çok pişirilenler":"📈 Most cooked in this app",
+  "Türkiye’de en çok sevilen ve en sık yapılan yemeklerden derlendi.":"Picked from the most-loved, most-cooked dishes in Turkey.","Dünyada en çok bilinen ve sevilen yemeklerden derlendi.":"Picked from the best-known and most-loved dishes worldwide.","Tüm kullanıcıların pişirme modunda sonuna kadar yaptığı tarifler.":"Recipes all users cooked to the end in cooking mode.",
+  "Beğendiğin bir tarifte “♡ Favorilere ekle”ye dokun, burada seni beklesin.":"Tap “♡ Add to favorites” on a recipe you like and it will wait for you here.","Geçmişi temizle":"Clear history",
+  "Bir yemek seç; malzemelerini, hangilerinin evde olduğunu ve neleri alman gerektiğini gösterelim.":"Pick a dish and we'll show its ingredients, what you already have and what to buy.",
+  "Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; görselin yazar ve lisans bilgisine tarif sayfasındaki “Görsel: Wikimedia Commons” bağlantısından ulaşabilirsin.":"Dish images come from Wikimedia Commons, Wikipedia's free-license archive; author and license details are linked under “Image: Wikimedia Commons” on each recipe page.",
+  "Bu tarif yapay zekâ tarafından oluşturuldu; miktarları ve pişirme sürelerini kendi tecrübenle kontrol et.":"This recipe was created by AI; double-check amounts and cooking times with your own experience."
+};
+const EN_ING = {"Tuz":"Salt","Karabiber":"Black pepper","Sıvı yağ":"Vegetable oil","Zeytinyağı":"Olive oil","Su":"Water","Domates":"Tomato","Soğan":"Onion","Sarımsak":"Garlic","Biber":"Green pepper","Kapya biber":"Red pepper","Patates":"Potato","Patlıcan":"Eggplant","Kabak":"Zucchini","Havuç":"Carrot","Ispanak":"Spinach","Taze fasulye":"Green beans","Salatalık":"Cucumber","Maydanoz":"Parsley","Dereotu":"Dill","Marul":"Lettuce","Limon":"Lemon","Mantar":"Mushrooms","Bezelye":"Peas","Lahana":"Cabbage","Pırasa":"Leek","Bal kabağı":"Pumpkin","Asma yaprağı":"Vine leaves","Semizotu":"Purslane","Pancar":"Beetroot","Brokoli":"Broccoli","Elma":"Apple","Muz":"Banana","Çilek":"Strawberries","Avokado":"Avocado","Kuşbaşı et":"Diced beef","Kıyma":"Ground beef","Tavuk":"Chicken","Sucuk":"Turkish sausage","Pastırma":"Pastırma (cured beef)","Balık":"Fish","Somon":"Salmon","Ton balığı":"Tuna","Pirinç":"Rice","Bulgur":"Bulgur","Kırmızı mercimek":"Red lentils","Yeşil mercimek":"Green lentils","Yulaf":"Oats","Kinoa":"Quinoa","Nohut":"Chickpeas","Kuru fasulye":"White beans","Kuru bakla":"Dried broad beans","Makarna":"Pasta","Lazanya yaprağı":"Lasagna sheets","Pirinç eriştesi":"Rice noodles","Şehriye":"Orzo","Un":"Flour","İrmik":"Semolina","Ekmek":"Bread","Hamburger ekmeği":"Burger buns","Lavaş / tortilla":"Flatbread / tortilla","Yufka":"Yufka (thin dough)","Baklavalık yufka":"Phyllo dough","Tel kadayıf":"Shredded phyllo","Güllaç yaprağı":"Güllaç sheets","Galeta unu":"Breadcrumbs","Nori yaprağı":"Nori sheets","Patlamış mısırlık mısır":"Popcorn kernels","Yumurta":"Eggs","Süt":"Milk","Yoğurt":"Yogurt","Beyaz peynir":"Feta cheese","Kaşar":"Kashar cheese","Mozzarella":"Mozzarella","Labne peyniri":"Labneh","Sıvı krema":"Cream","Tereyağı":"Butter","Vanilyalı dondurma":"Vanilla ice cream","Künefe peyniri":"Künefe cheese","Lor peyniri":"Curd cheese","Türk kahvesi":"Turkish coffee","Espresso kahvesi":"Espresso coffee","Filtre kahve":"Filter coffee","Granül kahve":"Instant coffee","Buz":"Ice","Menengiç kahvesi":"Menengiç coffee","Dibek kahvesi":"Dibek coffee","Şeker":"Sugar","Kakao":"Cocoa","Bitter çikolata":"Dark chocolate","Vanilin":"Vanilla","Tarçın":"Cinnamon","Bal":"Honey","Nişasta":"Starch","Bisküvi":"Biscuits","Ceviz":"Walnuts","Yer fıstığı":"Peanuts","Kuru maya":"Dry yeast","Kabartma tozu":"Baking powder","Salça":"Tomato paste","Kuru nane":"Dried mint","Pul biber":"Chili flakes","Köri baharatı":"Curry powder","Tahin":"Tahini","Nar ekşisi":"Pomegranate molasses","Soya sosu":"Soy sauce","Mayonez":"Mayonnaise","Kornişon turşu":"Pickles","Fıstık ezmesi":"Peanut butter","Zeytin":"Olives","Sirke":"Vinegar","Mısır (konserve)":"Sweetcorn"};
+const EN_NAME = {"Menemen":"Menemen (Turkish eggs)","Sucuklu yumurta":"Eggs with Turkish sausage","Peynirli omlet":"Cheese omelette","Ispanaklı yumurta":"Spinach and eggs","Mercimek çorbası":"Red lentil soup","Ezogelin çorbası":"Ezogelin soup","Yayla çorbası":"Yogurt mint soup","Tavuk şehriye çorbası":"Chicken noodle soup","Pirinç pilavı":"Turkish rice pilaf","Tavuklu pilav":"Chicken and rice","Bulgur pilavı":"Bulgur pilaf","Kısır":"Kısır (bulgur salad)","Karnıyarık":"Karnıyarık (stuffed eggplant)","Musakka":"Turkish moussaka","Kabak mücveri":"Zucchini fritters","Patates yemeği":"Potato stew","Kıymalı patates":"Potatoes with ground beef","Fırında tavuk ve patates":"Roast chicken and potatoes","Tavuk sote":"Chicken sauté","Köfte":"Meatballs","Nohut yemeği":"Chickpea stew","Kuru fasulye":"White bean stew","Zeytinyağlı taze fasulye":"Green beans in olive oil","Yoğurtlu makarna":"Pasta with yogurt","Domates soslu makarna":"Pasta with tomato sauce","Cacık":"Cacık (yogurt and cucumber)","Havuç tarator":"Carrot yogurt dip","Çoban salatası":"Shepherd's salad","Patates salatası":"Potato salad","Sigara böreği":"Cheese cigar pastries","Kaşarlı tost":"Cheese toastie","Yumurtalı ekmek":"Eggy bread","Krep":"Crêpes","Sütlaç":"Rice pudding","Muhallebi":"Milk pudding","İrmik helvası":"Semolina halva","Un kurabiyesi":"Flour cookies","Tas kebabı":"Tas kebab (beef stew)","Et sote":"Beef sauté","Etli nohut":"Chickpeas with beef","İzmir köfte":"İzmir meatballs","Tavuk şiş":"Chicken skewers","Domates çorbası":"Tomato soup","Şehriye çorbası":"Orzo soup","Sebze çorbası":"Vegetable soup","Türlü":"Türlü (vegetable stew)","İmam bayıldı":"İmam bayıldı (stuffed eggplant)","Ispanak yemeği":"Spinach stew","Mantar çorbası":"Mushroom soup","Düğün çorbası":"Wedding soup","Patates çorbası":"Potato soup","Yeşil mercimek çorbası":"Green lentil soup","Kabak çorbası":"Zucchini soup","Hünkar beğendi":"Hünkar beğendi (beef on eggplant purée)","Orman kebabı":"Forest kebab","Etli kuru fasulye":"White beans with beef","Tavuk güveç":"Chicken casserole","Kıymalı makarna":"Pasta with ground beef","Kıymalı ıspanak":"Spinach with ground beef","Kıymalı börek":"Ground beef börek","Tavuklu bezelye":"Chicken with peas","Balık tava":"Pan-fried fish","Fırında balık":"Baked fish","Patlıcan kebabı":"Eggplant kebab","Zeytinyağlı pırasa":"Leeks in olive oil","Kapuska":"Cabbage stew","Mantar sote":"Sautéed mushrooms","Bezelye yemeği":"Pea stew","Mercimek köftesi":"Lentil patties","Fırında sebze":"Roasted vegetables","Acılı ezme":"Spicy tomato dip","Piyaz":"Piyaz (bean salad)","Haydari":"Haydari (yogurt dip)","Patates kızartması":"French fries","Fırında makarna":"Baked pasta","Nohutlu pilav":"Rice with chickpeas","Şehriyeli pilav":"Rice with orzo","Pişi":"Pişi (fried dough)","Çılbır":"Çılbır (eggs on yogurt)","Sahanda yumurta":"Fried eggs","Peynirli gözleme":"Cheese gözleme","Patatesli yumurta":"Eggs with potatoes","Mantarlı omlet":"Mushroom omelette","Revani":"Revani (semolina cake)","Kek":"Sponge cake","Un helvası":"Flour halva","Şekerpare":"Şekerpare (syrup cookies)","Türk kahvesi":"Turkish coffee","Sütlü Türk kahvesi":"Turkish coffee with milk","Filtre kahve":"Filter coffee","French press kahve":"French press coffee","Dalgona kahve":"Dalgona coffee","Humus":"Hummus","Babagannuş":"Baba ghanoush","Şakşuka":"Şakşuka (fried veg in tomato)","Atom":"Atom (spicy yogurt dip)","Fava":"Fava (broad bean dip)","Patlıcan salatası":"Eggplant salad","Rus salatası":"Russian salad","Köpoğlu":"Köpoğlu (eggplant with yogurt)","Girit ezmesi":"Cretan cheese dip","Zeytinyağlı yaprak sarma":"Stuffed vine leaves","Islak kek":"Wet chocolate cake","Yaş pasta":"Layer cake","Magnolia":"Magnolia pudding","Supangle":"Supangle (chocolate pudding)","Trileçe":"Trileçe (tres leches)","Kabak tatlısı":"Candied pumpkin","Cevizli kurabiye":"Walnut cookies","Tuzlu kurabiye":"Savory cookies","Elmalı kurabiye":"Apple cookies","Lahmacun":"Lahmacun (Turkish pizza)","Mantı":"Mantı (Turkish dumplings)","Kıymalı pide":"Ground beef pide","Tavuk döner":"Chicken döner","Adana kebap":"Adana kebab","Çiğ köfte":"Çiğ köfte (bulgur rolls)","Yoğurtlu semizotu":"Purslane with yogurt","Közlenmiş biber":"Roasted peppers","Mantar dolması":"Stuffed mushrooms","Yoğurtlu patlıcan":"Eggplant with yogurt","Tarator":"Tarator (walnut dip)","Pancar salatası":"Beet salad","Paçanga böreği":"Paçanga pastries","Çerkez tavuğu":"Circassian chicken","Moka pot kahvesi":"Moka pot coffee","Menengiç kahvesi":"Menengiç coffee","Dibek kahvesi":"Dibek coffee","Kazandibi":"Kazandibi (caramelized pudding)","Profiterol":"Profiteroles","Güllaç":"Güllaç (rose milk dessert)","Lokma":"Lokma (syrup doughnuts)","Kadayıf":"Kadayıf (shredded pastry)","Künefe":"Künefe (cheese pastry)","Mozaik pasta":"Chocolate biscuit cake","Patlamış mısır":"Popcorn","Çıtır tavuk":"Crispy chicken strips","Kumpir":"Kumpir (loaded baked potato)","Peynirli poğaça":"Cheese buns","Fırında patates cipsi":"Baked potato chips","Kavrulmuş nohut":"Roasted chickpeas","Izgara tavuk göğsü":"Grilled chicken breast","Tavuklu kinoa salatası":"Chicken quinoa salad","Ton balıklı salata":"Tuna salad","Yulaf lapası":"Oatmeal","Protein pankek":"Protein pancakes","Fıstık ezmeli muz smoothie":"Peanut butter banana smoothie","Fırında brokolili balık":"Baked fish with broccoli","Lorlu ıspanaklı omlet":"Spinach and curd omelette","Yeşil mercimek salatası":"Green lentil salad","Fırında somon ve brokoli":"Baked salmon and broccoli","Tavuklu sebze sote":"Chicken and vegetable stir-fry","Yoğurtlu yulaf kasesi":"Overnight oats with yogurt","Fit köfte":"Lean meatballs","Çilekli protein smoothie":"Strawberry protein smoothie","Yumurta beyazlı sebzeli omlet":"Egg white veggie omelette","Tavuklu brokoli salatası":"Chicken broccoli salad","Avokadolu yumurta tost":"Avocado egg toast","Ton balıklı nohut salatası":"Tuna chickpea salad","Lor peynirli yeşil salata":"Green salad with curd cheese","Mercimekli kinoa salatası":"Lentil quinoa salad","Izgara tavuk dürüm":"Grilled chicken wrap"};
+const EN_CUISINE = {"Türk mutfağı":"Turkish cuisine","İtalyan mutfağı":"Italian cuisine","Amerikan mutfağı":"American cuisine","Avustralya mutfağı":"Australian cuisine","Dünya mutfağı":"World cuisine","Fransız mutfağı":"French cuisine","Kore mutfağı":"Korean cuisine","Yunan mutfağı":"Greek cuisine","Orta Doğu mutfağı":"Middle Eastern cuisine","Meksika mutfağı":"Mexican cuisine","Tayland mutfağı":"Thai cuisine","Hint mutfağı":"Indian cuisine","Çin mutfağı":"Chinese cuisine","İspanyol mutfağı":"Spanish cuisine","Balkan mutfağı":"Balkan cuisine","Avusturya mutfağı":"Austrian cuisine","Japon mutfağı":"Japanese cuisine","İngiliz mutfağı":"British cuisine"};
+const EN_UNIT = {"adet":"pcs","tatlı kaşığı":"dsp","çay kaşığı":"tsp","yemek kaşığı":"tbsp","g":"g","tutam":"pinch","su bardağı":"cup","demet":"bunch","dilim":"slice","diş":"clove","litre":"L","kg":"kg","paket":"pack","fincan":"small cup","shot":"shot","ml":"ml","top":"scoop","yaprak":"sheet","kutu":"can"};
+BUILTIN.forEach(r => { if (!EN_NAME[r.ad] && r.orijinal) EN_NAME[r.ad] = r.orijinal; });
+const EN_WORD = {...EN_ING, ...EN_NAME, ...EN_CUISINE};
+Object.keys(EN_ING).forEach(k => { EN_WORD[k.toLocaleLowerCase("tr")] = EN_ING[k].toLowerCase(); });
+const enName = r => lang === "en" ? (EN_NAME[r.ad] || r.ad) : r.ad;
+const TR_LETTER = /[çğıöşüÇĞİÖŞÜ]/;
+const UNIT_RE = new RegExp(`^([\\d.,]*[½¾¼⅓⅔]?)\\s(${Object.keys(EN_UNIT).sort((a, b) => b.length - a.length).join("|")})$`);
+const trList = s => s.split(", ").map(x => trCore(x) || x).join(", ");
+const EN_PAT = [
+  [/^(\d+) dk$/, m => `${m[1]} min`],
+  [/^⏱️ (\d+) dk$/, m => `⏱️ ${m[1]} min`],
+  [/^⏱️ (\d+) sa (\d+) dk$/, m => `⏱️ ${m[1]} h ${m[2]} min`],
+  [/^⏱️ (\d+) saat$/, m => `⏱️ ${m[1]} h`],
+  [/^(\d+) kez pişirdin$/, m => `You cooked it ${m[1]}×`],
+  [/^(\d+) kez pişirildi$/, m => `Cooked ${m[1]}×`],
+  [/^(\d+) kişilik$/, m => `Serves ${m[1]}`],
+  [/^(\d+) malzeme$/, m => `${m[1]} ingredient${m[1] === "1" ? "" : "s"}`],
+  [/^(\d+) malzeme seçili$/, m => `${m[1]} ingredient${m[1] === "1" ? "" : "s"} selected`],
+  [/^(\d+) seçili$/, m => `${m[1]} selected`],
+  [/^(\d+) tarif$/, m => `${m[1]} recipe${m[1] === "1" ? "" : "s"}`],
+  [/^(\d+) yemek$/, m => `${m[1]} dish${m[1] === "1" ? "" : "es"}`],
+  [/^(\d+) yemeğe$/, m => `${m[1]} dish${m[1] === "1" ? "" : "es"}`],
+  [/^(\d+) fotoğraf$/, m => `${m[1]} photo${m[1] === "1" ? "" : "s"}`],
+  [/^Adım (\d+) \/ (\d+)$/, m => `Step ${m[1]} / ${m[2]}`],
+  [/^Menü \((\d+)\)$/, m => `Menu (${m[1]})`],
+  [/^Malzemeler \((\d+) kişilik\)$/, m => `Ingredients (serves ${m[1]})`],
+  [/^Toplam · (\d+) kişilik$/, m => `Total · serves ${m[1]}`],
+  [/^Tümünü gör · (\d+) tarif$/, m => `See all · ${m[1]} recipes`],
+  [/^(.+), (\d+) dakika\. (\d+) malzemenin (\d+) tanesi evde\.$/, m => `${trCore(m[1]) || m[1]}, ${m[2]} min. ${m[4]} of ${m[3]} ingredients at home.`],
+  [/^⏱️ (\d+) dakikalık zamanlayıcıyı başlat$/, m => `⏱️ Start a ${m[1]}-minute timer`],
+  [/^🧂 Temel malzemeler \(tuz, yağ, su…\): (\d+)\/(\d+) seçili$/, m => `🧂 Basics (salt, oil, water…): ${m[1]}/${m[2]} selected`],
+  [/^✓ Bu malzemelerle yapılır · (.+) isteğe bağlı$/, m => `✓ Can be made with these · ${trList(m[1]).toLowerCase()} optional`],
+  [/^Eksik: (.+)$/, m => `Missing: ${trList(m[1])}`],
+  [/^✨ “(.+)” için tarif oluştur$/, m => `✨ Create a recipe for “${m[1]}”`],
+  [/^“(.+)” malzemesini ekle$/, m => `Add “${m[1]}” as an ingredient`],
+  [/^“(.+)” bulunamadı\. Başka bir yazımla dene\.$/, m => `“${m[1]}” not found. Try another spelling.`],
+  [/^“(.+)” listemizde yok\. Başka bir yazımla dene\.$/, m => `“${m[1]}” isn't in our list. Try another spelling.`],
+  [/^(.+) malzemesini çıkar$/, m => `Remove ${trCore(m[1]) || m[1]}`],
+  [/^(.+) yemeğini kaldır$/, m => `Remove ${trCore(m[1]) || m[1]}`],
+  [/^(.+) ✕$/, m => `${trCore(m[1]) || m[1]} ✕`],
+  [/^🍳 (.+) pişir$/, m => `🍳 Cook ${trCore(m[1]) || m[1]}`],
+  [/^(.+) tarifinin tüm adımlarını tamamladın\.$/, m => `You've completed every step of ${trCore(m[1]) || m[1]}.`],
+  [/^(.+) için$/, m => `for ${trList(m[1])}`],
+  [/^✓ (.+) menüsüne eklendi$/, m => `✓ Added to ${trCore(m[1]) || m[1]}'s menu`],
+  [/^(\d+) su bardağı \+ ([\d.,]+) litre$/, m => `${m[1]} cups + ${m[2]} L`]
+];
+let aiTr = load("pisir-ceviri", {}); if (!aiTr || typeof aiTr !== "object") aiTr = {};
+const trCache = new Map();
+function trCore(c){
+  if (EN_EXACT[c] != null) return EN_EXACT[c];
+  if (EN_WORD[c] != null) return EN_WORD[c];
+  if (aiTr[c] != null) return aiTr[c];
+  for (const [re, fn] of EN_PAT){ const m = c.match(re); if (m) return fn(m); }
+  const u = c.match(UNIT_RE); if (u && u[1]) return `${u[1]} ${EN_UNIT[u[2]]}`;
+  const em = c.match(/^([^\p{L}\p{N}“"(+]+)\s(.+)$/u); // başında emoji olan metin: "🍲 Kabak çorbası"
+  if (em){ const inner = trCore(em[2]); if (inner != null) return `${em[1]} ${inner}`; }
+  return null;
+}
+function trText(t){
+  if (lang !== "en" || !t || !/\p{L}/u.test(t)) return t;
+  if (trCache.has(t)) return trCache.get(t);
+  const lead = t.match(/^\s*/)[0], trail = t.match(/\s*$/)[0], core = t.trim();
+  let out = trCore(core);
+  if (out == null){ if (TR_LETTER.test(core) || /\b(ve|ile|bir|için|yemek|tarif|malzeme|dakika|kadar|ekle|pişir)\b/.test(core)) queueAI(core); out = core; }
+  const res = lead + out + trail;
+  trCache.set(t, res);
+  return res;
+}
+/* Yapay zekâ çevirisi: bilinmeyen metinler toplanıp 25'erli gruplar hâlinde gönderilir */
+const TR_URL = AI_URL ? AI_URL.replace(/\/$/, "") + "/ceviri" : "";
+const aiTrQueue = new Set(); let aiTrBusy = false, aiTrTimer = null, aiTrSent = 0;
+function queueAI(c){
+  if (!TR_URL || aiTr[c] != null || aiTrQueue.has(c) || c.length > 600 || aiTrSent > 1500) return;
+  aiTrQueue.add(c); clearTimeout(aiTrTimer); aiTrTimer = setTimeout(flushAI, 350);
+}
+async function flushAI(){
+  if (aiTrBusy || !aiTrQueue.size || !navigator.onLine) return;
+  aiTrBusy = true;
+  const batch = [...aiTrQueue].slice(0, 25); batch.forEach(x => aiTrQueue.delete(x)); aiTrSent += batch.length;
+  try {
+    const res = await fetch(TR_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({texts:batch})});
+    const d = res.ok ? await res.json() : null;
+    if (d && d.map && typeof d.map === "object"){
+      let n = 0;
+      for (const k of batch){ const v = d.map[k]; if (typeof v === "string" && v.trim()){ aiTr[k] = v; n++; } }
+      if (n){ try { localStorage.setItem("pisir-ceviri", JSON.stringify(aiTr)); } catch(e) {} trCache.clear(); if (lang === "en") retranslateAll(); }
+    }
+  } catch(e) {}
+  aiTrBusy = false;
+  if (aiTrQueue.size) setTimeout(flushAI, 200);
+}
+/* Sayfadaki metinleri çevir; asıllarını sakla ki Türkçeye dönülebilsin */
+const origText = new WeakMap(), doneText = new WeakMap(), origAttr = new WeakMap();
+const TR_ATTRS = ["placeholder", "aria-label", "title"];
+function trNode(n){
+  const v = n.nodeValue; if (doneText.get(n) === v) return;
+  const p = n.parentElement; if (p && (p.closest("script,style") || p.isContentEditable)) return;
+  const out = trText(v);
+  if (out !== v){ origText.set(n, v); doneText.set(n, out); n.nodeValue = out; }
+}
+function trAttrs(el){
+  if (!el.getAttribute) return;
+  for (const a of TR_ATTRS){
+    const v = el.getAttribute(a); if (v == null) continue;
+    const o = origAttr.get(el) || {}; if (o["_" + a] === v) continue;
+    const out = trText(v);
+    if (out !== v){ o[a] = v; o["_" + a] = out; origAttr.set(el, o); el.setAttribute(a, out); }
+  }
+}
+function trTree(root){
+  if (lang !== "en" || !root) return;
+  if (root.nodeType === 3){ trNode(root); return; }
+  if (root.nodeType !== 1) return;
+  trAttrs(root);
+  const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let n; while ((n = tw.nextNode())){ if (n.nodeType === 3) trNode(n); else trAttrs(n); }
+}
+function retranslateAll(){
+  const tw = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let n; while ((n = tw.nextNode())){
+    if (n.nodeType === 3){
+      const src = (origText.has(n) && doneText.get(n) === n.nodeValue) ? origText.get(n) : n.nodeValue;
+      const p = n.parentElement; if (p && p.closest("script,style")) continue;
+      const out = trText(src);
+      if (out !== n.nodeValue){ origText.set(n, src); doneText.set(n, out); n.nodeValue = out; }
+    } else trAttrs(n);
+  }
+}
+function restoreAll(){
+  const tw = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+  let n; while ((n = tw.nextNode())){
+    if (n.nodeType === 3){ if (origText.has(n) && doneText.get(n) === n.nodeValue){ n.nodeValue = origText.get(n); doneText.delete(n); } }
+    else { const o = origAttr.get(n); if (o) for (const a of TR_ATTRS){ if (o[a] != null && n.getAttribute(a) === o["_" + a]) n.setAttribute(a, o[a]); } origAttr.delete(n); }
+  }
+}
+if (typeof MutationObserver === "function"){
+  new MutationObserver(ms => {
+    if (lang !== "en") return;
+    for (const m of ms){
+      if (m.type === "characterData") trNode(m.target);
+      else if (m.type === "attributes") trAttrs(m.target);
+      else m.addedNodes.forEach(trTree);
+    }
+  }).observe(document.documentElement, {subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:TR_ATTRS});
+}
+function applyLang(){
+  document.documentElement.lang = lang;
+  const b = $("langBtn"); if (b){ b.textContent = lang === "en" ? "🇹🇷 TR" : "🇬🇧 EN"; b.setAttribute("aria-label", lang === "en" ? "Türkçeye geç" : "Switch to English"); }
+}
+function setLang(l){
+  lang = l; try { localStorage.setItem("pisir-dil", l); } catch(e) {}
+  trCache.clear();
+  if (l === "tr") restoreAll();
+  applyLang(); renderAll();
+  if (l === "en") trTree(document.documentElement);
+}
+function nameHit(r, q){ return norm(r.ad).includes(q) || (lang === "en" && norm(EN_NAME[r.ad] || "").includes(q)); }
+
 /* Ana ekrana eklenebilir ve internetsiz çalışır (PWA) */
 if ("serviceWorker" in navigator){
   window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
 }
 
 renderAll();
+applyLang();
+if (lang === "en") trTree(document.documentElement);
 // Görselleri arka planda hazırla (sayfa açıldıktan hemen sonra)
 setTimeout(prefetchImages, 600);
 window.addEventListener("online", prefetchImages);
