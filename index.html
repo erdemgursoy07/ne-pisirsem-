@@ -1100,6 +1100,110 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .ia-btns{display:flex;flex-wrap:wrap;gap:4px 10px}
 .ia-up{cursor:pointer}
 .ia-apinote{font-size:.82rem}
+/* =========================================================
+   Rafine hareket dili: zıplama/sallanma yok; yumuşak geçiş, derinlik, ışık
+   ========================================================= */
+.tabs{isolation:isolate}
+@media (min-width:700px){.tabs{position:relative}}
+.tab-pill{position:absolute;left:0;top:0;z-index:-1;border-radius:999px;background:var(--cobalt);box-shadow:0 4px 14px rgba(194,65,12,.28);pointer-events:none}
+.tabs.has-pill .tab[aria-selected="true"]{background:transparent;box-shadow:none}
+.tab{position:relative}
+.hero-glow{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;border-radius:inherit}
+.hero-glow i{position:absolute;width:60%;aspect-ratio:1;border-radius:50%;filter:blur(40px);opacity:.55}
+.hero-glow i:nth-child(1){right:-12%;top:-40%;background:radial-gradient(circle,rgba(255,146,84,.55),transparent 65%)}
+.hero-glow i:nth-child(2){right:22%;bottom:-55%;background:radial-gradient(circle,rgba(250,176,5,.35),transparent 65%)}
+.hero-card > .hero-glow{position:absolute;z-index:0}
+.hero-card > :not(.hero-glow):not(.hero-float){position:relative;z-index:1}
+@media (max-width:699px){.tab-pill{border-radius:16px}}
+
+@media (prefers-reduced-motion: no-preference){
+  /* --- Çocuksu kaçan hareketleri kapat --- */
+  .brand-logo,.brand:hover .brand-logo,.start-emo,.lo-btn .lo-e,.acc-emo,.acc-head[aria-expanded="true"] .acc-emo,.acc-head:hover .acc-emo,
+  .acc-head[aria-expanded="true"] .acc-n,.cat:active > span:first-child,.cat:hover > span:first-child,.back-cats .back-arrow,
+  .chip[aria-pressed="true"] > span:first-child,.tab[aria-selected="true"] .tab-i,.dm-tag,.badge.ok .badge-emo,.stat b,.empty,
+  .cook-main.step-in .step-emo{animation:none}
+  .dm-tag{background:none;-webkit-background-clip:initial;background-clip:initial;color:#C2410C}
+  :root[data-theme="dark"] .dm-tag{color:#FF9354}
+
+  @keyframes softIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes blurIn{from{opacity:0;filter:blur(8px);transform:translateY(6px)}to{opacity:1;filter:blur(0);transform:none}}
+  @keyframes scaleIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+  @keyframes sheetIn{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+  @keyframes fadeBg{from{opacity:0}to{opacity:1}}
+  @keyframes glowDrift1{0%,100%{transform:translate(0,0)}50%{transform:translate(-8%,10%)}}
+  @keyframes glowDrift2{0%,100%{transform:translate(0,0)}50%{transform:translate(10%,-8%)}}
+  @keyframes pressGlow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--cobalt) 30%,transparent)}100%{box-shadow:0 0 0 8px transparent}}
+  @keyframes shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+  @keyframes underline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  /* Sekme vurgusu yumuşakça kayar */
+  .tab-pill{transition:transform .45s cubic-bezier(.22,1,.36,1),width .45s cubic-bezier(.22,1,.36,1),height .3s ease}
+  .tab{transition:color .3s ease}
+
+  /* Başlık kartında çok yavaş dolaşan ışık */
+  .hero-glow i:nth-child(1){animation:glowDrift1 14s ease-in-out infinite}
+  .hero-glow i:nth-child(2){animation:glowDrift2 18s ease-in-out infinite}
+  .hero h1{animation:blurIn .7s cubic-bezier(.22,1,.36,1) backwards}
+  #heroText{animation:softIn .7s cubic-bezier(.22,1,.36,1) .12s backwards}
+
+  /* Sekme değişince içerik bulanıklıktan netleşir */
+  #pantryMode:not([hidden]),#dishMode:not([hidden]),#planMode:not([hidden]),#savedMode:not([hidden]){animation:blurIn .5s cubic-bezier(.22,1,.36,1) backwards}
+
+  /* Kartlar: daha kısa mesafe, daha uzun ve yumuşak geçiş */
+  .acc-body .dish-card,.dish-grid .dish-card,.sug-row > *,.stat,.badge,.cat-acc{animation:softIn .55s cubic-bezier(.22,1,.36,1) backwards}
+  .dish-card,.combo,.sug,.act-i,.lo-btn{transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s cubic-bezier(.22,1,.36,1),border-color .25s ease}
+  @media (hover:hover){
+    .dish-card:hover,.combo:hover,.sug:hover,.lo-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(29,36,51,.22)}
+    .dish-card .dc-media img{transition:transform .9s cubic-bezier(.22,1,.36,1)}
+    .dish-card:hover .dc-media img{transform:scale(1.045)}
+    .cat-acc:hover{border-color:color-mix(in srgb,var(--cobalt) 35%,var(--line))}
+  }
+  .dish-card:active,.sug:active,.act-i:active,.lo-btn:active,.chip:active{transform:scale(.98)}
+
+  /* Görseller belirirken yumuşak netleşme; yüklenirken ışıltılı yer tutucu */
+  .dc-media img,.detail-img img,.sug-img img{animation:blurIn .6s ease backwards}
+
+  /* Seçimler: zıplama yerine yumuşak dolgu ve hafif ışık halkası */
+  .chip{transition:background-color .3s ease,color .3s ease,border-color .3s ease,transform .2s ease}
+  .chip[aria-pressed="true"]{animation:pressGlow .6s ease-out}
+  .fav[aria-pressed="true"],[data-act="fav"][aria-pressed="true"],.act-i[aria-pressed="true"] .act-e,.dc-fav{animation:scaleIn .35s cubic-bezier(.22,1,.36,1)}
+
+  /* Açılır-kapanır: içerik süzülerek iner, ok yumuşak döner */
+  .acc-body{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards}
+  .acc-chev{transition:transform .4s cubic-bezier(.22,1,.36,1),color .3s ease}
+
+  /* Tarif penceresi: alttan yumuşak yükselir, arka plan kararır */
+  #sheet:not([hidden]){animation:fadeBg .3s ease backwards}
+  #sheet:not([hidden]) .sheet-inner{animation:sheetIn .5s cubic-bezier(.22,1,.36,1) backwards}
+  .tour:not([hidden]){animation:fadeBg .25s ease backwards}
+  .tour:not([hidden]) .tour-card{animation:scaleIn .4s cubic-bezier(.22,1,.36,1) backwards}
+
+  /* Pişirme modu: yeni adım bulanıklıktan netleşir */
+  .cook-main.step-in .cook-step{animation:blurIn .55s cubic-bezier(.22,1,.36,1) backwards}
+  .cook-main.step-in .step-emo{animation:scaleIn .45s cubic-bezier(.22,1,.36,1) backwards}
+
+  /* Başlıkların altında ince çizgi açılır */
+  .sec-head h2,.sug-h{position:relative}
+  .sec-head h2::after{content:"";position:absolute;left:0;bottom:-6px;width:28px;height:2px;border-radius:2px;background:var(--cobalt);transform-origin:left;animation:underline .6s cubic-bezier(.22,1,.36,1) .15s backwards}
+
+  /* Ana buton: parıltı daha seyrek ve ince */
+  .ai-btn[data-act="cook"]::after{animation-duration:6s;opacity:.7}
+  .ai-btn{transition:transform .2s ease,box-shadow .3s ease,filter .3s ease}
+  @media (hover:hover){.ai-btn:hover{filter:brightness(1.06);box-shadow:0 10px 24px -8px rgba(194,65,12,.55)}}
+
+  /* İlerleme çubukları dolarak gelir */
+  .have-track span,.ia-bar span{animation:growX 1.1s cubic-bezier(.22,1,.36,1) backwards}
+
+  /* Kaydırınca beliren bölümler (destekleyen tarayıcılarda) */
+  @supports (animation-timeline: view()){
+    .site-foot,.dish-sec,.section,.day,.stats-sec{animation:softIn linear both;animation-timeline:view();animation-range:entry 0% entry 35%}
+  }
+  /* Kaydırınca üst çubuğa hafif gölge (destekleyen tarayıcılarda) */
+  @supports (animation-timeline: scroll()){
+    @keyframes barShadow{from{box-shadow:none}to{box-shadow:0 6px 20px -12px rgba(29,36,51,.35)}}
+    .topbar{animation:barShadow linear both;animation-timeline:scroll();animation-range:0 120px}
+  }
+}
 </style>
 </head>
 <body>
@@ -1115,7 +1219,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
     <div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></nav>
   <header class="hero">
     <div class="hero-card">
-      <div class="hero-float" aria-hidden="true"><span>🍅</span><span>🥕</span><span>🧄</span><span>🍋</span><span>🫑</span><span>🧀</span></div>
+      <div class="hero-glow" aria-hidden="true"><i></i><i></i></div>
       <div class="hero-text">
         <p class="greet" id="greet"></p>
         <h1 id="heroTitle">Dolabında ne var?</h1>
@@ -1209,7 +1313,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 66</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 67</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2231,6 +2335,7 @@ function renderHero(){
   $("heroCta").hidden = $("heroAi").hidden = true;
   const listMode = mode === "fav" || mode === "recent";
   ["pantry","dish","plan","fav","recent"].forEach(m => $("tab-" + m).setAttribute("aria-selected", mode === m));
+  requestAnimationFrame(moveTabPill);
   const planN = plan.reduce((n, d) => n + d.length, 0);
   $("tab-plan").innerHTML = `<span class="tab-i" aria-hidden="true">📅</span><span class="tab-t">Menü${planN ? ` (${planN})` : ""}</span>`;
   $("pantryMode").hidden = mode !== "pantry";
@@ -3171,6 +3276,35 @@ function openRemind(){
   el.hidden = false; renderRemind();
 }
 
+/* ---------- Kayan sekme vurgusu ---------- */
+function moveTabPill(){
+  const bar = document.querySelector(".tabs"), act = document.querySelector(".tab[aria-selected='true']");
+  if (!bar || !act) return;
+  let pill = bar.querySelector(".tab-pill");
+  if (!pill){ pill = document.createElement("span"); pill.className = "tab-pill"; pill.setAttribute("aria-hidden", "true"); bar.prepend(pill); bar.classList.add("has-pill"); }
+  pill.style.width = act.offsetWidth + "px"; pill.style.height = act.offsetHeight + "px";
+  pill.style.transform = `translate(${act.offsetLeft}px, ${act.offsetTop}px)`;
+}
+window.addEventListener("resize", () => requestAnimationFrame(moveTabPill));
+
+/* ---------- İstatistik sayıları yumuşakça sayar ---------- */
+function countUp(root){
+  if (!root || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  root.querySelectorAll(".stat b:not([data-counted])").forEach(b => {
+    const m = b.textContent.match(/^([\d.,]+)(.*)$/); b.setAttribute("data-counted", "1");
+    if (!m) return;
+    const target = parseFloat(m[1].replace(/\./g, "").replace(",", ".")), suf = m[2], dec = m[1].includes(",");
+    if (!(target > 1)) return;
+    const t0 = performance.now(), dur = 900;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3), v = target * e;
+      b.textContent = (dec ? v.toLocaleString("tr-TR", {minimumFractionDigits:1, maximumFractionDigits:1}) : Math.round(v).toLocaleString("tr-TR")) + suf;
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+}
+
 /* ---------- Bildirim baloncuğu ---------- */
 const toastQueue = []; let toastBusy = false;
 function showToast(text){
@@ -3687,6 +3821,7 @@ function savedRow(r){
   return `<button type="button" class="saved-row" data-act="openSaved" data-key="${esc(r.key)}"><span class="rh"><span class="emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</span><span><span class="recipe-name">${favs.includes(r.key) ? "♥ " : ""}${esc(r.ad)}</span><span class="cuisine">${esc(r.mutfak)}${r.src === "ai" ? ", yapay zekâ tarifi" : ""}</span></span></span><span class="recipe-meta">${r.sure ? r.sure + " dk" : ""}</span></button>`;
 }
 function renderSaved(){
+  setTimeout(() => countUp($("savedMode")), 60);
   if (mode === "fav"){
     const grid = (list, note) => `<div class="dish-grid">${list.map(r => dishCard(r, "openSaved", note ? note(r) : "")).join("")}</div>`;
     const sec = (title, sub, list, note) => list.length ? `<section class="dish-sec"><div class="sec-head"><h2>${title}</h2></div>${sub ? `<p class="sub">${sub}</p>` : ""}${grid(list, note)}</section>` : "";
