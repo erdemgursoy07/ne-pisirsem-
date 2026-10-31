@@ -1333,6 +1333,31 @@ body.market-mode .cart-aisle h3{font-size:1.15rem}
   .more-panel{animation:softIn .35s cubic-bezier(.22,1,.36,1)}
   .cart-empty-e{display:inline-block;animation:bob 2.6s ease-in-out infinite}
 }
+/* ===== Sade Dolabım: tek sütun, ortada büyük arama ===== */
+#pantryMode.layout{display:flex;flex-direction:column;gap:18px;max-width:760px;margin-inline:auto;width:100%}
+#pantryMode .results{position:static;max-height:none;overflow:visible}
+#pantryMode .results:empty{display:none}
+#pantryMode .suggest-strip{display:none}
+body[data-mode="pantry"] .hero{max-width:760px;margin-inline:auto}
+body[data-mode="pantry"] .hero-card{text-align:center}
+body[data-mode="pantry"] #heroText{margin-inline:auto;max-width:46ch}
+.big-search{min-height:58px}
+@media (min-width:700px){
+  .big-search{font-size:1.2rem;min-height:66px;padding:18px 22px;border-radius:22px;box-shadow:0 10px 30px -18px rgba(29,36,51,.35)}
+  #pantryMode .pantry{padding:26px 28px}
+}
+@media (max-width:699px){
+  .big-search{font-size:1.02rem}
+  #pantryMode .pantry{padding:16px}
+}
+/* Günün menüsü Menü sekmesinde */
+body[data-mode="plan"] #daily{margin:0 0 18px}
+/* Alt bilgi emojileri */
+.site-foot .fe{display:inline-block;width:1.4em;text-align:center;margin-right:2px}
+.site-foot h3 .fe{width:auto;margin-right:4px}
+@media (prefers-reduced-motion: no-preference){
+  .site-foot li button:hover .fe,.site-foot li a:hover .fe{animation:bob .5s ease}
+}
 </style>
 </head>
 <body>
@@ -1372,7 +1397,7 @@ body.market-mode .cart-aisle h3{font-size:1.15rem}
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
       <div class="toolbar">
-        <input class="search big-search" id="search" type="search" enterkeyhint="done" autocomplete="off" placeholder="🔎 Dolabında ne var? Ör: domates, soğan, yumurta" aria-label="Dolabındaki malzemeleri yaz">
+        <input class="search big-search" id="search" type="search" enterkeyhint="done" autocomplete="off" placeholder="🔎 Örn: domates, soğan, yumurta…" aria-label="Dolabındaki malzemeleri yaz">
         <label class="fav scan-btn" title="Buzdolabının ya da tezgâhın fotoğrafını çek, malzemeleri biz bulalım">📸 <span>Fotoğraftan tanı</span><input type="file" accept="image/*" capture="environment" id="fridgeInput" hidden></label>
       </div>
       <div id="groups"></div>
@@ -1398,54 +1423,54 @@ body.market-mode .cart-aisle h3{font-size:1.15rem}
         <p class="foot-text">Evdeki malzemelerden yemek önerisi, adım adım pişirme modu ve haftalık menü. Ücretsiz, reklamsız, üyeliksiz.</p>
       </div>
       <nav class="foot-col" aria-label="Keşfet">
-        <h3>Keşfet</h3>
+        <h3><span class="fe" aria-hidden="true">🧭</span> Keşfet</h3>
         <ul>
-          <li><button type="button" data-act="footGo" data-f="corba">Çorbalar</button></li>
-          <li><button type="button" data-act="footGo" data-f="etli">Etli yemekler</button></li>
-          <li><button type="button" data-act="footGo" data-f="sebze">Sebze yemekleri</button></li>
-          <li><button type="button" data-act="footGo" data-f="dunya">Dünya mutfağı</button></li>
-          <li><button type="button" data-act="footGo" data-f="spor">Sporcu yemekleri</button></li>
-          <li><button type="button" data-act="footGo" data-f="tatli">Tatlılar</button></li>
-          <li><button type="button" data-act="footGo" data-f="kahve">Kahveler</button></li>
+          <li><button type="button" data-act="footGo" data-f="corba"><span class="fe" aria-hidden="true">🍲</span> Çorbalar</button></li>
+          <li><button type="button" data-act="footGo" data-f="etli"><span class="fe" aria-hidden="true">🥩</span> Etli yemekler</button></li>
+          <li><button type="button" data-act="footGo" data-f="sebze"><span class="fe" aria-hidden="true">🥦</span> Sebze yemekleri</button></li>
+          <li><button type="button" data-act="footGo" data-f="dunya"><span class="fe" aria-hidden="true">🌍</span> Dünya mutfağı</button></li>
+          <li><button type="button" data-act="footGo" data-f="spor"><span class="fe" aria-hidden="true">💪</span> Sporcu yemekleri</button></li>
+          <li><button type="button" data-act="footGo" data-f="tatli"><span class="fe" aria-hidden="true">🍰</span> Tatlılar</button></li>
+          <li><button type="button" data-act="footGo" data-f="kahve"><span class="fe" aria-hidden="true">☕️</span> Kahveler</button></li>
         </ul>
       </nav>
       <nav class="foot-col" aria-label="Uygulama">
-        <h3>Uygulama</h3>
+        <h3><span class="fe" aria-hidden="true">📱</span> Uygulama</h3>
         <ul>
-          <li><button type="button" data-act="footGo" data-mode="pantry">Dolabım</button></li>
-          <li><button type="button" data-act="footGo" data-mode="dish">Yemek ara</button></li>
-          <li><button type="button" data-act="footGo" data-mode="plan">Haftalık menü</button></li>
-          <li><button type="button" data-act="footGo" data-mode="fav">En sevilenler ve rozetler</button></li>
-          <li><button type="button" data-act="footGo" data-mode="cart">Sepetim</button></li>
+          <li><button type="button" data-act="footGo" data-mode="pantry"><span class="fe" aria-hidden="true">🧺</span> Dolabım</button></li>
+          <li><button type="button" data-act="footGo" data-mode="dish"><span class="fe" aria-hidden="true">🔎</span> Yemek ara</button></li>
+          <li><button type="button" data-act="footGo" data-mode="plan"><span class="fe" aria-hidden="true">📅</span> Haftalık menü</button></li>
+          <li><button type="button" data-act="footGo" data-mode="fav"><span class="fe" aria-hidden="true">🏆</span> En sevilenler ve rozetler</button></li>
+          <li><button type="button" data-act="footGo" data-mode="cart"><span class="fe" aria-hidden="true">🛒</span> Sepetim</button></li>
         </ul>
       </nav>
       <nav class="foot-col" aria-label="Destek">
-        <h3>Destek</h3>
+        <h3><span class="fe" aria-hidden="true">💬</span> Destek</h3>
         <ul>
-          <li><button type="button" data-act="tourShow">Nasıl kullanılır?</button></li>
-          <li><button type="button" data-act="prefsOpen">Tercihlerim</button></li>
-          <li><button type="button" data-act="remindOpen">⏰ Akşam hatırlatması</button></li>
-          <li><button type="button" data-act="whatsNew">🆕 Yenilikler</button></li>
-          <li><button type="button" data-act="trOpen">Verilerini taşı</button></li>
-          <li id="footBugs" hidden><button type="button" data-act="bugAdminOpen">🛠️ Hata bildirimleri</button></li>
-          <li id="footImg" hidden><button type="button" data-act="imgAdminOpen">🎨 Yemek görselleri</button></li>
-          <li><a href="gizlilik.html">Gizlilik ve kullanım şartları</a></li>
-          <li><a href="gizlilik.html#iletisim">İletişim</a></li>
+          <li><button type="button" data-act="tourShow"><span class="fe" aria-hidden="true">❓</span> Nasıl kullanılır?</button></li>
+          <li><button type="button" data-act="prefsOpen"><span class="fe" aria-hidden="true">⚙️</span> Tercihlerim</button></li>
+          <li><button type="button" data-act="remindOpen"><span class="fe" aria-hidden="true">⏰</span> Akşam hatırlatması</button></li>
+          <li><button type="button" data-act="whatsNew"><span class="fe" aria-hidden="true">🆕</span> Yenilikler</button></li>
+          <li><button type="button" data-act="trOpen"><span class="fe" aria-hidden="true">📲</span> Verilerini taşı</button></li>
+          <li id="footBugs" hidden><button type="button" data-act="bugAdminOpen"><span class="fe" aria-hidden="true">🛠️</span> Hata bildirimleri</button></li>
+          <li id="footImg" hidden><button type="button" data-act="imgAdminOpen"><span class="fe" aria-hidden="true">🎨</span> Yemek görselleri</button></li>
+          <li><a href="gizlilik.html"><span class="fe" aria-hidden="true">🔒</span> Gizlilik ve kullanım şartları</a></li>
+          <li><a href="gizlilik.html#iletisim"><span class="fe" aria-hidden="true">✉️</span> İletişim</a></li>
         </ul>
       </nav>
       <nav class="foot-col" aria-label="Rehberler">
-        <h3>Rehberler</h3>
+        <h3><span class="fe" aria-hidden="true">📚</span> Rehberler</h3>
         <ul>
-          <li><button type="button" data-act="guide" data-id="olculer">Mutfak ölçüleri: 1 su bardağı kaç gram?</button></li>
-          <li><button type="button" data-act="guide" data-id="saklama">Sebze ve meyveler nasıl saklanır?</button></li>
-          <li><button type="button" data-act="guide" data-id="menu">Haftalık menü nasıl planlanır?</button></li>
-          <li><button type="button" data-act="guide" data-id="guvenlik">Artan yemekler ve gıda güvenliği</button></li>
-          <li><button type="button" data-act="guide" data-id="terimler">Mutfak terimleri sözlüğü</button></li>
+          <li><button type="button" data-act="guide" data-id="olculer"><span class="fe" aria-hidden="true">⚖️</span> Mutfak ölçüleri: 1 su bardağı kaç gram?</button></li>
+          <li><button type="button" data-act="guide" data-id="saklama"><span class="fe" aria-hidden="true">🥕</span> Sebze ve meyveler nasıl saklanır?</button></li>
+          <li><button type="button" data-act="guide" data-id="menu"><span class="fe" aria-hidden="true">🗓️</span> Haftalık menü nasıl planlanır?</button></li>
+          <li><button type="button" data-act="guide" data-id="guvenlik"><span class="fe" aria-hidden="true">🧊</span> Artan yemekler ve gıda güvenliği</button></li>
+          <li><button type="button" data-act="guide" data-id="terimler"><span class="fe" aria-hidden="true">📖</span> Mutfak terimleri sözlüğü</button></li>
         </ul>
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 73</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 74</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -4260,7 +4285,7 @@ function renderResults(){
   else status.innerHTML = `Henüz tam eşleşme yok, ama <strong>${near.length} yemeğe</strong> çok yakınsın.`;
 
   const stripList = [...readyS, ...nearS].slice(0, 10);
-  if (strip && !mainSel){ setHTML(strip, pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button>`); strip.classList.remove("only-mobile"); }
+  if (strip && false){ setHTML(strip, pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Evde ne var bilmiyorum, bana öner</button>`); strip.classList.remove("only-mobile"); }
   else if (strip) strip.classList.remove("only-mobile");
   if (strip && mainSel) setHTML(strip, stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "");
   let html = "";
@@ -4273,7 +4298,7 @@ function renderResults(){
   }
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `<div class="section start-card"><div class="start-emo" aria-hidden="true"><span class="steam"><i></i><i></i><i></i></span>🍳</div><h2>Yemek önerilerin burada</h2><p class="sub">Soldan malzeme seçtikçe yapabileceğin yemekler burada belirir.</p><p class="start-l">Ya da hızlıca dene:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Bana rastgele öner</button>`}<button type="button" class="link-btn rm-link" data-act="remindOpen">⏰ Her akşam bana hatırlat</button></div>${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}`;
+    html = ""; // malzeme seçilmeden öneri gösterilmez; sonuçlar ancak malzeme seçince arama kutusunun altında belirir
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -4474,10 +4499,10 @@ function dailyCardHTML(){
 }
 function renderDaily(){
   const box = $("daily");
-  const show = mode === "pantry"; // günün menüsü yalnızca Dolabım'da (Yemek ara'da tekrar olmasın)
+  const show = mode === "plan" && planTarget === null; // günün menüsü Menü sekmesinin en üstünde
   box.hidden = !show; if (!show) return;
   if (!dailyMenu().length){ box.hidden = true; return; }
-  setHTML(box, dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : ""));
+  setHTML(box, dailyCardHTML());
 }
 
 /* ---------- Tarif sayfası: yemeğe nereden dokunulursa dokunulsun üstte açılır ---------- */
@@ -5598,7 +5623,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
