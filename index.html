@@ -1227,6 +1227,16 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .cat-acc:not(.open){content-visibility:auto;contain-intrinsic-size:auto 76px}
 .bd-wait{background:color-mix(in srgb,#7048E8 10%,var(--surface));color:#5F3DC4}
 :root[data-theme="dark"] .bd-wait{color:#B197FC}
+.wn-card{max-width:560px;max-height:92vh;overflow:auto}
+.wn-list{display:flex;flex-direction:column;gap:8px;margin:10px 0 6px}
+.wn-row{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.wn-e{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--bg);font-size:1.15rem}
+.wn-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.wn-t small{color:var(--muted);font-size:.82rem;line-height:1.35}
+.wn-go{white-space:nowrap;padding:6px 10px;font-size:.82rem;min-height:0}
+@keyframes wnFlash{0%,100%{box-shadow:0 0 0 0 transparent}30%,70%{box-shadow:0 0 0 4px color-mix(in srgb,var(--cobalt) 45%,transparent)}}
+.wn-flash{animation:wnFlash 1.6s ease 2;border-radius:14px}
+@media (prefers-reduced-motion: no-preference){ .wn-row{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards} .wn-row:nth-child(2){animation-delay:.04s}.wn-row:nth-child(3){animation-delay:.08s}.wn-row:nth-child(4){animation-delay:.12s}.wn-row:nth-child(5){animation-delay:.16s}.wn-row:nth-child(6){animation-delay:.2s}.wn-row:nth-child(7){animation-delay:.24s} }
 </style>
 </head>
 <body>
@@ -1318,6 +1328,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
           <li><button type="button" data-act="tourShow">Nasıl kullanılır?</button></li>
           <li><button type="button" data-act="prefsOpen">Tercihlerim</button></li>
           <li><button type="button" data-act="remindOpen">⏰ Akşam hatırlatması</button></li>
+          <li><button type="button" data-act="whatsNew">🆕 Yenilikler</button></li>
           <li><button type="button" data-act="trOpen">Verilerini taşı</button></li>
           <li id="footBugs" hidden><button type="button" data-act="bugAdminOpen">🛠️ Hata bildirimleri</button></li>
           <li id="footImg" hidden><button type="button" data-act="imgAdminOpen">🎨 Yemek görselleri</button></li>
@@ -1337,7 +1348,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 70</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 71</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -1363,6 +1374,25 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 <div class="cook" id="cook" role="dialog" aria-modal="true" aria-labelledby="cookTitle" hidden></div>
 
 <script>
+/* ---------- Hata yakalayıcı: beklenmeyen bir hata olursa ekranda göster ---------- */
+(function(){
+  let shown = 0;
+  function show(msg, where){
+    if (shown >= 1) return; shown++;
+    const box = document.createElement("div");
+    box.id = "errbox"; box.setAttribute("role", "alert");
+    box.style.cssText = "position:fixed;left:12px;right:12px;bottom:84px;z-index:9999;padding:12px 14px;border-radius:14px;background:#FFF5F5;color:#8A1C1C;border:1px solid #FFA8A8;font:600 13px/1.4 system-ui,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.18)";
+    box.innerHTML = "⚠️ Bir hata oluştu. Bu ekranın görüntüsünü gönderir misin?<br><small style='font-weight:500;word-break:break-word'></small><br><button type='button' style='margin-top:6px;font:inherit;padding:4px 10px;border-radius:8px;border:1px solid #FFA8A8;background:#fff;color:#8A1C1C'>Kapat</button>";
+    box.querySelector("small").textContent = String(msg).slice(0, 220) + (where ? " · " + where : "") + " · " + navigator.userAgent.replace(/^Mozilla\/5\.0 /, "").slice(0, 110);
+    box.querySelector("button").onclick = () => box.remove();
+    (document.body || document.documentElement).appendChild(box);
+  }
+  window.addEventListener("error", e => { if (e && e.message) show(e.message, e.lineno ? "satır " + e.lineno : ""); });
+  window.addEventListener("unhandledrejection", e => { const r = e && e.reason; if (r && r.message && !/fetch|network|Load failed|abort/i.test(r.message)) show(r.message, "söz"); });
+})();
+</script>
+<script>
+
 /* ---------- Veri ---------- */
 const GROUPS = [
   {title:"🧂 Temel malzemeler", all:true, items:[["tuz","Tuz"],["karabiber","Karabiber"],["yag","Sıvı yağ"],["zeytinyagi","Zeytinyağı"],["su","Su"]]},
@@ -3357,6 +3387,36 @@ function micBarHTML(){
 }
 function renderMic(){ const b = $("micBar"); if (b) b.outerHTML = micBarHTML() || `<div id="micBar" hidden></div>`; }
 
+/* ---------- Yenilikler ---------- */
+const WHATS_NEW_VER = 71;
+const WHATS_NEW = [
+  ["🎙️", "Sesli komut", "Pişirirken “sonraki”, “geri”, “tekrar” de; telefona dokunmana gerek yok.", "wn-mic"],
+  ["🌱", "Mevsiminde", "Bu ay taze olan sebzeler ve onlarla yapılan yemekler.", "wn-season"],
+  ["🍚", "Artanları değerlendir", "Dünden kalan pilav, ekmek, patatesle ne yapabileceğini bul.", "wn-lo"],
+  ["⏰", "Son kullanma takibi", "Bozulmak üzere olanları işaretle; öneriler önce onları kullansın.", "wn-skt"],
+  ["🛒", "Reyonlara göre alışveriş listesi", "Haftalık menünün eksikleri manav, kasap, bakkal diye gruplu; WhatsApp'tan gönder.", "wn-shop"],
+  ["⏳", "Bekleme süreleri", "Dinlendirme ve buzdolabında bekleme artık tarif süresinde görünüyor.", "wn-wait"],
+  ["🔔", "Akşam hatırlatması", "Her akşam seçtiğin saatte takvimin sana hatırlatsın.", "wn-remind"]
+];
+function renderWhatsNew(){
+  const el = $("whatsnew"); if (!el || el.hidden) return;
+  setHTML(el, `<div class="tour-card prefs-card wn-card" role="dialog" aria-modal="true" aria-label="Yenilikler"><h2>🆕 Yenilikler</h2><p class="sub">Uygulamaya yeni eklenenler. Görmek istediğine dokun.</p>
+    <div class="wn-list">${WHATS_NEW.map(([e, t, d, act]) => `<div class="wn-row"><span class="wn-e" aria-hidden="true">${e}</span><span class="wn-t"><b>${t}</b><small>${d}</small></span><button type="button" class="fav wn-go" data-act="${act}">Göster</button></div>`).join("")}</div>
+    <div class="tour-acts"><span></span><button type="button" class="ai-btn" data-act="wnClose">Tamam</button></div></div>`);
+}
+function openWhatsNew(){
+  let el = $("whatsnew"); if (!el){ el = document.createElement("div"); el.id = "whatsnew"; el.className = "tour"; document.body.appendChild(el); }
+  el.hidden = false; renderWhatsNew();
+  try { localStorage.setItem("pisir-yenilik", String(WHATS_NEW_VER)); } catch(e) {}
+}
+function closeWhatsNew(){ const el = $("whatsnew"); if (el) el.hidden = true; }
+function goMode(m){ const t = document.querySelector(`[data-mode="${m}"]`); if (t) t.click(); }
+setTimeout(() => {
+  let seen = 0; try { seen = Number(localStorage.getItem("pisir-yenilik")) || 0; } catch(e) {}
+  const tourOpen = $("tour") && !$("tour").hidden;
+  if (seen < WHATS_NEW_VER && !tourOpen && localStorage.getItem("pisir-tur")) openWhatsNew();
+}, 1200);
+
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
   const bar = document.querySelector(".tabs"), act = document.querySelector(".tab[aria-selected='true']");
@@ -4906,6 +4966,16 @@ document.addEventListener("click", e => {
     case "focusSearch": { const se = $("search"); if (se){ se.scrollIntoView({block:"center", behavior:"smooth"}); se.focus({preventScroll:true}); } break; }
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
+    case "wnClose": closeWhatsNew(); break;
+    case "whatsNew": openWhatsNew(); break;
+    case "wn-mic": closeWhatsNew(); goMode("dish"); { const r = REG.get("b:Menemen") || BUILTIN[0]; openCook(r.key, false); setTimeout(() => { const b = document.querySelector('#cook [data-act="micToggle"]'); if (b){ b.scrollIntoView({block:"center"}); b.classList.add("wn-flash"); } else showToast("Sesli komut bu tarayıcıda desteklenmiyor. Chrome ya da Safari'de dene."); }, 350); } break;
+    case "wn-season": closeWhatsNew(); goMode("dish"); openCats.clear(); openCats.add("mevsim"); renderDishList(); setTimeout(() => { const x = document.querySelector('[data-key="sec-mevsim"]'); if (x){ x.scrollIntoView({block:"start", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 150); break;
+    case "wn-lo": closeWhatsNew(); goMode("pantry"); setTimeout(openLeftover, 200); break;
+    case "wn-skt": closeWhatsNew(); goMode("pantry"); setTimeout(() => { if (![...selected].some(id => !GROUPS[0].items.some(([b]) => b === id))){ ["domates","sogan","yumurta"].forEach(id => selected.add(id)); save(); }
+      sktOpen = true; renderAll(); const x = document.querySelector(".skt-tg"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
+    case "wn-shop": closeWhatsNew(); if (!plan.some(d => d.length)){ plan[(new Date().getDay() + 6) % 7].push("b:Karnıyarık"); save(); } goMode("plan"); setTimeout(() => { const x = document.querySelector(".shop-sum"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 300); break;
+    case "wn-wait": closeWhatsNew(); openSheet("b:Tiramisu"); setTimeout(() => { const x = document.querySelector("#sheetBody .bd-wait"); if (x) x.classList.add("wn-flash"); }, 300); break;
+    case "wn-remind": closeWhatsNew(); openRemind(); break;
     case "micToggle":
       if (mic.on){ micStop(); mic.heard = ""; }
       else { mic.on = true; mic.heard = ""; micStart(); }
@@ -5068,7 +5138,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
