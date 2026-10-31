@@ -945,7 +945,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   /* Bugünün sofrası etiketi hafifçe parlar */
   .dm-tag{background:linear-gradient(90deg,#C2410C,#E8590C,#F59F00,#C2410C);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:glow 6s ease infinite}
   /* Seçilen malzemeler sepete kayar */
-  .mybox + .chips > *{animation:slideIn .3s ease backwards}
+  .mybox .chips > *{animation:slideIn .3s ease backwards}
 }
 /* Geri dönüş butonu */
 .back-cats{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
@@ -1052,6 +1052,54 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   @keyframes growX{from{width:0}}
   .sheet-cta .ai-btn{animation:fadeUp .4s ease .2s backwards}
 }
+/* Görsel paneli durum satırı */
+.ia-durum{margin:0 0 10px;padding:10px 12px;border-radius:12px;background:#FFF4E6;color:#7A3E00;font-size:.88rem;font-weight:700}
+.ia-durum.ok{background:#EBFBEE;color:#2B8A3E}
+:root[data-theme="dark"] .ia-durum{background:#3A2A14;color:#FFD8A8}
+:root[data-theme="dark"] .ia-durum.ok{background:#16301D;color:#8CE99A}
+/* Son kullanma */
+.skt-tg{display:block;margin:8px 0 0;font-size:.85rem}
+.skt-b{display:inline-block;margin-left:4px;padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.25);font-size:.72rem;font-weight:800}
+.skt-b.soon{background:#F59F00;color:#fff}
+.skt-b.gone{background:#E03131;color:#fff}
+.skt-panel{margin:10px 0 4px;padding:10px 12px;border:1px dashed var(--line);border-radius:14px;background:var(--surface)}
+.skt-panel .sub{margin:0 0 8px;font-size:.85rem}
+.skt-row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:6px 0;border-top:1px solid var(--line)}
+.skt-row:first-of-type{border-top:0}
+.skt-n{font-weight:700;font-size:.9rem}
+.skt-opts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip.mini{padding:5px 10px;font-size:.78rem;min-height:0}
+.exp-sec{border:1.5px solid #F59F00;background:color-mix(in srgb,#F59F00 6%,var(--surface))}
+.exp-list{display:flex;flex-direction:column;gap:8px}
+/* Artanları değerlendir */
+.lo-btn{display:flex;align-items:center;gap:12px;width:100%;margin:12px 0 4px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.lo-btn small{display:block;color:var(--muted);font-size:.8rem}
+.lo-e{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:#FFF3BF;font-size:1.4rem}
+.lo-btn > span:nth-child(2){flex:1}
+.lo-card{max-width:760px;max-height:92vh;overflow:auto}
+.lo-chips{margin:8px 0 10px}
+.lo-text{width:100%;margin-bottom:6px}
+.lo-h{margin:16px 0 8px;font-size:1rem}
+.lo-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.lo-ai{margin-top:12px}
+/* Hatırlatma */
+.rm-time{display:flex;align-items:center;gap:10px;margin:8px 0 14px;font-weight:700}
+.rm-time input{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
+.rm-acts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.rm-g{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
+.rm-link{display:block;margin:10px auto 0;font-size:.88rem}
+@media (prefers-reduced-motion: no-preference){
+  .skt-b.soon,.skt-b.gone{animation:pop .5s ease}
+  .exp-sec{animation:fadeUp .4s ease backwards}
+  .lo-btn{transition:transform .15s ease,box-shadow .15s ease}
+  .lo-btn:active{transform:scale(.98)}
+  .lo-btn .lo-e{animation:bob 2.8s ease-in-out infinite}
+}
+.ia-free{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#EBFBEE;color:#1B5E20;font-size:.88rem;line-height:1.45}
+:root[data-theme="dark"] .ia-free{background:#16301D;color:#B2F2BB}
+.ia-btns{display:flex;flex-wrap:wrap;gap:4px 10px}
+.ia-up{cursor:pointer}
+.ia-apinote{font-size:.82rem}
 </style>
 </head>
 <body>
@@ -1141,6 +1189,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
         <ul>
           <li><button type="button" data-act="tourShow">Nasıl kullanılır?</button></li>
           <li><button type="button" data-act="prefsOpen">Tercihlerim</button></li>
+          <li><button type="button" data-act="remindOpen">⏰ Akşam hatırlatması</button></li>
           <li><button type="button" data-act="trOpen">Verilerini taşı</button></li>
           <li id="footBugs" hidden><button type="button" data-act="bugAdminOpen">🛠️ Hata bildirimleri</button></li>
           <li id="footImg" hidden><button type="button" data-act="imgAdminOpen">🎨 Yemek görselleri</button></li>
@@ -1160,7 +1209,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 64</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 66</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -1948,8 +1997,8 @@ function detailHTML(r, compact){
     if (r.src === "ai") h += `<span class="ai-tag">Yapay zekâ tarifi</span>`;
     const wi = wikiInfo(r);
     h += wi
-      ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption>${wi.ai ? `<span class="ai-cap">✨ Görsel yapay zekâ ile oluşturuldu</span>` : `<a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a>`}${adminKey && r.src === "b" ? ` · <button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}">🎨 Yeniden üret</button>` : ""}</figcaption></figure>`
-      : (adminKey && r.src === "b" && IMG_BASE() ? `<p class="img-adm-one"><button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}">🎨 Bu tarife yapay zekâ görseli üret</button></p>` : "") + `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
+      ? `<figure class="detail-img"><img src="${esc(wi.s)}" alt="${esc(r.ad)}"><figcaption>${wi.ai ? `<span class="ai-cap">✨ Görsel yapay zekâ ile oluşturuldu</span>` : `<a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(wi.f)}" target="_blank" rel="noopener">📷 Görsel: Wikimedia Commons</a>`}${adminKey && r.src === "b" ? ` · <button type="button" class="link-btn" data-act="imgGemini" data-key="${esc(r.key)}">📋 Gemini</button> · <label class="link-btn ia-up">📁 Değiştir<input type="file" accept="image/*" data-img-key="${esc(r.key)}" hidden></label>` : ""}</figcaption></figure>`
+      : (adminKey && r.src === "b" && IMG_BASE() ? `<p class="img-adm-one">🎨 Görsel ekle: <button type="button" class="link-btn" data-act="imgGemini" data-key="${esc(r.key)}">📋 Gemini'de üret</button> · <label class="link-btn ia-up">📁 Yükle<input type="file" accept="image/*" data-img-key="${esc(r.key)}" hidden></label></p>` : "") + `<div class="big-emo cat-${recipeCat(r)}" aria-hidden="true">${recipeEmoji(r)}</div>`;
     h += `<h2>${esc(r.ad)}</h2>${badgesHTML(r)}`;
     if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (!v) return; if (sheetKey === r.key) renderSheet(); if (mode === "dish" && currentKey === r.key) renderDishDetail(); });
     const meta = [r.mutfak, r.sure ? r.sure + " dakika" : ""].filter(Boolean).join(", ");
@@ -2526,6 +2575,7 @@ function voicePanelHTML(){
   </div>`;
 }
 const VOICE_ERR = {
+  sinir: "Bugünlük yapay zekâ sesi sınırına ulaşıldı. Şimdilik “Telefonun sesi”ni seçebilirsin.",
   kota: "Yapay zekâ sesinin ücretsiz günlük kotası doldu. Şimdilik “Telefonun sesi”ni seçebilirsin; kota her gün sıfırlanır.",
   anahtar: "Yapay zekâ anahtarı ses için yetkili değil (Cloudflare'deki GEMINI_API_KEY'i kontrol et).",
   zaman: "Yapay zekâ çok geç yanıt verdi. Birazdan tekrar dene.",
@@ -2894,10 +2944,11 @@ function renderBugAdmin(){
 /* ---------- Yapay zekâ yemek görselleri (yalnızca yönetici üretir) ---------- */
 const imgAdm = {run:false, cur:"", msg:"", last:null, tab:"eksik", skip:new Set(), busy:new Set()};
 const IMG_ERR = {
-  kota: "Gemini görsel kotası doldu ya da faturalandırma kapalı. Google AI Studio'da bu proje için faturalandırmayı açman gerekebilir.",
+  eski: "Cloudflare'deki aracı kod güncel değil. Son worker.js'i yükleyip Deploy'a bas.",
+  kota: "Otomatik üretim ücretsiz planda çalışmıyor. Ücretsiz yolu kullan: 📋 Gemini ile üret, 📁 Yükle ile ekle.",
   anahtar: "Gemini anahtarı görsel üretmeye yetkili değil.",
   yetki: "Yönetici anahtarı geçersiz. Siteyi ?yonetici=ANAHTAR ile bir kez aç.",
-  model: "Görsel modeline ulaşılamadı.",
+  model: "Otomatik üretim kullanılamıyor. Ücretsiz yolu kullan: 📋 Gemini ile üret, 📁 Yükle ile ekle.",
   zaman: "Gemini çok geç yanıt verdi.",
   bos: "Gemini görsel yerine yalnızca yazı döndürdü.",
   diger: "Görsel üretilemedi."
@@ -2923,11 +2974,27 @@ function squeezeImage(b64, mime){
     im.src = `data:${mime || "image/png"};base64,${b64}`;
   });
 }
+function imgPrompt(r){
+  const cat = recipeCat(r), en = enName(r);
+  const malz = r.malzemeler.filter(m => !/^(tuz|su|karabiber|sıvı yağ|zeytinyağı)$/i.test(m.ad)).slice(0, 10).map(m => m.ad).join(", ");
+  return `Bana "${r.ad}"${en && en !== r.ad ? ` (${en})` : ""} yemeğinin profesyonel, iştah açıcı bir yemek fotoğrafını üret.${cat === "dunya" ? "" : " Türk ev mutfağından bir yemek."} Ana malzemeleri: ${malz}.
+${cat === "kahve" ? "İçecek uygun bir fincan ya da bardakta olsun" : "Yemek geleneksel servis edildiği gibi, sade seramik bir tabakta ya da kasede olsun"}, açık renk ahşap masada. Yumuşak doğal pencere ışığı, 45 derece açı, arka plan hafif bulanık, gerçekçi renkler; abartısız ve doğal görünsün.
+Karede yalnızca yemek ve sade servis malzemeleri olsun. Yazı, harf, logo, filigran, insan ya da el olmasın. Yatay (4:3) olsun.`;
+}
+async function saveAiImageFile(r, file){
+  const dataUrl = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result)); fr.onerror = rej; fr.readAsDataURL(file); });
+  const [head, b64] = dataUrl.split(",");
+  const small = await squeezeImage(b64, (head.match(/data:([^;]+)/) || [])[1] || "image/png");
+  const sv = await fetch(IMG_BASE() + "/kaydet", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey, slug:SLUG.get(r.key), data:small.data, mime:small.type})});
+  const sd = await sv.json().catch(() => null);
+  if (!sv.ok || !sd || !sd.ok){ const e = new Error("kayıt"); e.sebep = sd && sd.sebep ? sd.sebep : (imgAdm.durum && imgAdm.durum.surum >= 65 ? "diger" : "eski"); throw e; }
+  aiImgs[SLUG.get(r.key)] = sd.v; try { localStorage.setItem("pisir-aigorsel", JSON.stringify(aiImgs)); } catch(e) {}
+}
 async function genAiImage(r){
   const cat = recipeCat(r);
   const res = await fetch(IMG_BASE() + "/uret", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey, ad:r.ad, en:enName(r), malzemeler:r.malzemeler.map(m => m.ad), kategori:(CAT_BY_ID[cat] || [,""])[1], dunya:cat === "dunya", icecek:cat === "kahve"})});
   const d = await res.json().catch(() => null);
-  if (!res.ok || !d || !d.image) { const e = new Error((d && d.sebep) || "diger"); e.sebep = (d && d.sebep) || "diger"; throw e; }
+  if (!res.ok || !d || !d.image) { const sb = d && d.sebep ? d.sebep : (imgAdm.durum && imgAdm.durum.surum >= 65 ? "diger" : "eski"); const e = new Error(sb); e.sebep = sb; throw e; }
   const small = await squeezeImage(d.image, d.mime);
   const sl = SLUG.get(r.key);
   const sv = await fetch(IMG_BASE() + "/kaydet", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey, slug:sl, data:small.data, mime:small.type})});
@@ -2968,11 +3035,13 @@ function renderImgAdmin(){
   const last = imgAdm.last && REG.get(imgAdm.last);
   const lastWi = last && aiImgInfo(last);
   const items = (imgAdm.tab === "eksik" ? miss : ready);
-  const cell = r => { const wi = aiImgInfo(r), busy = imgAdm.busy.has(r.key) || imgAdm.cur === r.ad; return `<div class="ia-cell" data-key="ia-${esc(r.key)}"><span class="ia-thumb">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span>${recipeEmoji(r)}</span>`}</span><span class="ia-name">${esc(r.ad)}</span><button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}" ${busy ? "disabled" : ""}>${busy ? "⏳" : wi ? "🔄 Yenile" : "🎨 Üret"}</button></div>`; };
+  const cell = r => { const wi = aiImgInfo(r), busy = imgAdm.busy.has(r.key) || imgAdm.cur === r.ad; return `<div class="ia-cell" data-key="ia-${esc(r.key)}"><span class="ia-thumb">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span>${recipeEmoji(r)}</span>`}</span><span class="ia-name">${esc(r.ad)}</span><span class="ia-btns"><button type="button" class="link-btn" data-act="imgGemini" data-key="${esc(r.key)}" title="İstemi kopyala ve ücretsiz Gemini'yi aç">📋 Gemini</button><label class="link-btn ia-up" title="Gemini'den indirdiğin görseli yükle">${busy ? "⏳" : "📁 Yükle"}<input type="file" accept="image/*" data-img-key="${esc(r.key)}" hidden ${busy ? "disabled" : ""}></label>${imgAdm.api ? `<button type="button" class="link-btn" data-act="imgOne" data-key="${esc(r.key)}" ${busy ? "disabled" : ""}>${wi ? "🔄" : "🎨"} API</button>` : ""}</span></div>`; };
   setHTML(el, `<div class="tour-card prefs-card img-adm" role="dialog" aria-modal="true" aria-label="Yemek görselleri"><h2>🎨 Yemek görselleri</h2>
-    <p class="sub">Görseller Gemini ile <b>bir kez</b> üretilir, küçültülüp saklanır ve herkese gösterilir. Her görselde “✨ YZ” etiketi bulunur.</p>
+    <p class="sub">Görseller <b>bir kez</b> hazırlanır, küçültülüp saklanır ve herkese gösterilir. Her görselde “✨ YZ” etiketi bulunur.</p>
+    <div class="ia-free"><b>💸 Ücretsiz yol:</b> Bir tarifte <b>📋 Gemini</b>'ye bas: istem kopyalanır ve Gemini açılır. Yapıştır, görseli indir, sonra aynı tarifte <b>📁 Yükle</b> ile seç. Gemini uygulaması ücretsiz hesapla da görsel üretebilir (günlük sınırla).</div>
+    ${imgAdm.durumMsg ? `<p class="ia-durum${/^✓/.test(imgAdm.durumMsg) ? " ok" : ""}">${esc(imgAdm.durumMsg)}</p>` : ""}
     <div class="ia-prog"><div class="ia-bar"><span style="width:${pct}%"></span></div><b>${ready.length} / ${all.length}</b> tarifin görseli hazır</div>
-    <div class="ia-acts">${imgAdm.run ? `<button type="button" class="ai-btn" data-act="imgStop">⏸ Durdur</button>` : `<button type="button" class="ai-btn" data-act="imgStart" ${miss.length ? "" : "disabled"}>▶ Eksikleri üret (${miss.length})</button>`}</div>
+    <div class="ia-acts">${!imgAdm.api ? `<p class="sub ia-apinote">Otomatik üretim (API) ücretli Gemini planı gerektirebilir; ücretsiz yolu kullanman önerilir. <button type="button" class="link-btn" data-act="imgApiOn">Yine de API'yi dene</button></p>` : imgAdm.run ? `<button type="button" class="ai-btn" data-act="imgStop">⏸ Durdur</button>` : `<button type="button" class="ai-btn" data-act="imgStart" ${miss.length ? "" : "disabled"}>▶ Eksikleri üret (${miss.length})</button>`}</div>
     ${imgAdm.cur ? `<p class="ia-cur">⏳ Şimdi üretiliyor: <b>${esc(imgAdm.cur)}</b></p>` : ""}
     ${imgAdm.msg ? `<p class="vp-msg">${esc(imgAdm.msg)}</p>` : ""}
     ${lastWi ? `<figure class="ia-last"><img src="${esc(lastWi.s)}" alt="${esc(last.ad)}"><figcaption><b>Son üretilen: ${esc(last.ad)}</b> <button type="button" class="link-btn" data-act="imgOne" data-key="${esc(last.key)}">🔄 Beğenmedim, yeniden üret</button></figcaption></figure>` : ""}
@@ -2982,9 +3051,124 @@ function renderImgAdmin(){
     <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="imgAdminClose">Kapat</button></div></div>`);
   el.hidden = false;
 }
+async function checkWorker(){
+  imgAdm.durum = null; imgAdm.durumMsg = "⏳ Aracı kod kontrol ediliyor…"; renderImgAdmin();
+  let d = null;
+  try { const res = await fetch(PHOTO_URL.replace(/\/foto$/, "/durum") + "?gorsel=1&_=" + Date.now()); d = await res.json().catch(() => null); } catch(e) {}
+  imgAdm.durum = d;
+  if (!d || typeof d.surum !== "number") imgAdm.durumMsg = "⚠️ Cloudflare'deki aracı kod ESKİ. Son worker.js'i Cloudflare'e yapıştırıp Deploy'a bas; görseller ancak ondan sonra üretilebilir.";
+  else if (d.surum < 65) imgAdm.durumMsg = `⚠️ Aracı kod eski (sürüm ${d.surum}). Son worker.js'i yükleyip Deploy'a bas.`;
+  else if (!d.gemini) imgAdm.durumMsg = "⚠️ Cloudflare'de GEMINI_API_KEY tanımlı değil.";
+  else if (!d.depo) imgAdm.durumMsg = "⚠️ Cloudflare'de SAYAC depo bağlantısı yok.";
+  else if (!d.yonetici) imgAdm.durumMsg = "⚠️ Cloudflare'de ADMIN_KEY tanımlı değil.";
+  else if (!d.gorselModel || !d.gorselModel.length) imgAdm.durumMsg = `✓ Aracı kod güncel (sürüm ${d.surum}) · Otomatik üretim ücretli plan istiyor; ücretsiz yolu kullan.`;
+  else imgAdm.durumMsg = `✓ Aracı kod güncel (sürüm ${d.surum})`;
+  renderImgAdmin();
+}
 function openImgAdmin(){
   let el = $("imgadm"); if (!el){ el = document.createElement("div"); el.id = "imgadm"; el.className = "tour"; document.body.appendChild(el); }
-  imgAdm.open = true; el.hidden = false; renderImgAdmin(); loadAiImgList();
+  imgAdm.open = true; el.hidden = false; renderImgAdmin(); loadAiImgList(); checkWorker();
+}
+
+/* ---------- Artanları değerlendir ---------- */
+const LEFTOVERS = [
+  ["pilav", "🍚", "Pilav", ["Kızarmış pilav"]],
+  ["bulgur", "🌾", "Bulgur pilavı", []],
+  ["makarna", "🍝", "Makarna", []],
+  ["ekmek", "🍞", "Bayat ekmek", ["Yumurtalı ekmek", "Bruschetta", "Kaşarlı tost"]],
+  ["patates", "🥔", "Haşlanmış patates", ["Patates salatası", "Patates köftesi", "Kahvaltılık patates", "Tortilla española", "Rus salatası"]],
+  ["tavuk", "🍗", "Pişmiş tavuk", ["Tavuklu sandviç", "Quesadilla", "Sezar salata", "Tavuklu kinoa salatası", "Tavuk şehriye çorbası"]],
+  ["et", "🥩", "Pişmiş et ya da kıyma", ["Kıymalı börek", "Kıymalı pide"]],
+  ["kofte", "🧆", "Köfte", ["Köfte ekmek"]],
+  ["sebze", "🥗", "Sebze yemeği", ["Yumurta beyazlı sebzeli omlet", "Sebze çorbası"]],
+  ["bakliyat", "🫘", "Kuru fasulye ya da nohut", ["Nohut salatası", "Humuslu sebze çubukları"]],
+  ["yogurt", "🥛", "Yoğurt", ["Cacık", "Haydari", "Fırında yoğurtlu tavuk", "Yoğurtlu yulaf kasesi"]],
+  ["peynir", "🧀", "Peynir kırıntıları", ["Peynirli omlet", "Peynirli börek", "Peynirli gözleme"]],
+  ["muz", "🍌", "Olgun muz", ["Muzlu kek", "Pankek", "Fıstık ezmeli muz smoothie"]],
+  ["corba", "🥣", "Çorba", []],
+  ["simit", "🥯", "Simit ya da poğaça", []]
+];
+const lo = {sel:new Set(), text:"", state:"", keys:[], msg:""};
+function loMatches(){
+  const names = new Set();
+  LEFTOVERS.filter(x => lo.sel.has(x[0])).forEach(x => x[3].forEach(n => names.add(n)));
+  return BUILTIN.filter(r => names.has(r.ad)).filter(dislikePass);
+}
+function renderLeftover(){
+  const el = $("leftover"); if (!el || el.hidden) return;
+  const matches = loMatches(), any = lo.sel.size || lo.text.trim();
+  const aiList = lo.keys.map(k => REG.get(k)).filter(Boolean);
+  setHTML(el, `<div class="tour-card prefs-card lo-card" role="dialog" aria-modal="true" aria-label="Artanları değerlendir"><h2>🍚 Artanları değerlendir</h2>
+    <p class="sub">Dünden kalanları seç; onlarla ne yapabileceğini söyleyelim. Hem lezzetli hem israfsız.</p>
+    <div class="chips lo-chips">${LEFTOVERS.map(([id, e, l]) => `<button type="button" class="chip" data-act="loToggle" data-id="${id}" aria-pressed="${lo.sel.has(id)}"><span aria-hidden="true">${e}</span> ${l}</button>`).join("")}</div>
+    <input class="search lo-text" id="loText" type="text" maxlength="80" placeholder="Başka bir şey: ör. yarım kavanoz domates sosu" value="${esc(lo.text)}">
+    ${matches.length ? `<h3 class="lo-h">📖 Tariflerimizden</h3><div class="dish-grid lo-grid">${matches.slice(0, 8).map(r => dishCard(r, "openSaved", "")).join("")}</div>` : ""}
+    ${sampleFn ? `<h3 class="lo-h">✨ Yapay zekâdan fikirler</h3><button type="button" class="ai-btn" data-act="loAI" ${!any || lo.state === "loading" ? "disabled" : ""}>${lo.state === "loading" ? "⏳ Fikirler hazırlanıyor…" : aiList.length ? "🔄 Yeni fikirler al" : "✨ Bu artanlarla ne yapabilirim?"}</button>
+      ${!any ? `<p class="sub">Önce yukarıdan en az bir artan seç ya da yaz.</p>` : ""}
+      ${lo.state === "error" ? `<p class="vp-msg">⚠️ ${esc(lo.msg)}</p>` : ""}
+      ${aiList.length ? `<div class="lo-ai">${aiList.map(cardHTML).join("")}</div>` : ""}` : ""}
+    <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="loClose">Kapat</button></div></div>`);
+}
+function openLeftover(){
+  let el = $("leftover"); if (!el){ el = document.createElement("div"); el.id = "leftover"; el.className = "tour"; document.body.appendChild(el); }
+  el.hidden = false; renderLeftover();
+}
+async function runLeftoverAI(){
+  if (!sampleFn || lo.state === "loading") return;
+  const items = LEFTOVERS.filter(x => lo.sel.has(x[0])).map(x => x[2].toLocaleLowerCase("tr")).concat(lo.text.trim() ? [lo.text.trim()] : []);
+  if (!items.length) return;
+  lo.state = "loading"; lo.msg = ""; renderLeftover();
+  const other = ownedNames().slice(0, 25);
+  const avoid = prefs.sev && prefs.sev.length ? ` Şu malzemeleri kesinlikle kullanma: ${prefs.sev.map(id => LABEL[id] || id).join(", ")}.` : "";
+  const prompt = `Sen israfı sevmeyen, ev mutfağını çok iyi bilen bir Türk aşçısın. Kullanıcının elinde önceki günden ARTAN şunlar var: ${items.join(", ")}.${other.length ? ` Ayrıca dolabında şunlar var: ${other.join(", ")}.` : ""}${avoid}
+Bu artanları ANA malzeme olarak değerlendiren 4 farklı tarif öner. Artanın zaten pişmiş olduğunu hesaba kat (yeniden uzun süre pişirme). Pratik, ev mutfağına uygun, gerçek tarifler olsun; en az biri Türk mutfağından olsun. Her şeyi Türkçe yaz. Tuz, karabiber, yağ ve su dahil bütün malzemeleri miktarlarıyla listele; artan malzemeyi de listeye ekle ve "evde" alanını true yap.
+Yalnızca şu biçimde JSON döndür, başka hiçbir şey yazma:
+{"yemekler": [${FORMAT}]}`;
+  try {
+    const out = await sampleFn.json(prompt);
+    const list = (out && Array.isArray(out.yemekler) ? out.yemekler : []).map(fromAI).filter(Boolean);
+    lo.keys = list.map(r => r.key);
+    lo.state = list.length ? "done" : "error"; lo.msg = list.length ? "" : "Fikirler okunamadı, tekrar dene.";
+  } catch(e){ lo.state = "error"; lo.msg = errMsg(e); }
+  renderLeftover();
+}
+
+/* ---------- Akşam hatırlatması (takvim) ---------- */
+let remind = load("pisir-hatirlat", {saat:"17:30"}); if (!remind || typeof remind !== "object") remind = {saat:"17:30"};
+function siteURL(){ return location.origin + location.pathname.replace(/index\.html$/, ""); }
+function remindTimes(){
+  const [h, m] = (remind.saat || "17:30").split(":").map(Number);
+  const d = new Date(); d.setHours(h, m, 0, 0); if (d < new Date()) d.setDate(d.getDate() + 1);
+  const p = n => String(n).padStart(2, "0");
+  const local = x => `${x.getFullYear()}${p(x.getMonth() + 1)}${p(x.getDate())}T${p(x.getHours())}${p(x.getMinutes())}00`;
+  const end = new Date(d.getTime() + 15 * 60000);
+  return {start: local(d), end: local(end)};
+}
+function remindICS(){
+  const t = remindTimes(), url = siteURL();
+  const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bugun ne pisirsem//TR", "CALSCALE:GREGORIAN", "BEGIN:VEVENT",
+    `UID:pisir-hatirlatma-${Date.now()}@nepisirsem`, `DTSTAMP:${stamp}`, `DTSTART:${t.start}`, `DTEND:${t.end}`, "RRULE:FREQ=DAILY",
+    "SUMMARY:🍲 Bugün ne pişirsem?", `DESCRIPTION:Dolabındakilere bak, akşam yemeğini seç: ${url}`, `URL:${url}`,
+    "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Bugün ne pişirsem?", "TRIGGER:PT0M", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+}
+function renderRemind(){
+  const el = $("remind"); if (!el || el.hidden) return;
+  const t = remindTimes();
+  const gcal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("🍲 Bugün ne pişirsem?")}&details=${encodeURIComponent("Dolabındakilere bak, akşam yemeğini seç: " + siteURL())}&dates=${t.start}/${t.end}&recur=${encodeURIComponent("RRULE:FREQ=DAILY")}&ctz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Istanbul")}`;
+  setHTML(el, `<div class="tour-card prefs-card" role="dialog" aria-modal="true" aria-label="Akşam hatırlatması"><h2>⏰ Akşam hatırlatması</h2>
+    <p class="sub">Her gün seçtiğin saatte telefonun sana “Bugün ne pişirsem?” diye hatırlatsın. Hatırlatma takvimine eklenir; istediğin zaman takviminden silebilirsin.</p>
+    <label class="rm-time">Saat <input type="time" id="remindTime" value="${esc(remind.saat)}"></label>
+    <div class="rm-acts">
+      <button type="button" class="ai-btn" data-act="remindICS">📅 Telefonumun takvimine ekle</button>
+      <a class="fav rm-g" href="${esc(gcal)}" target="_blank" rel="noopener">Google Takvim'e ekle</a>
+    </div>
+    <p class="note">iPhone'da “Telefonumun takvimine ekle” → açılan ekranda “Tümünü ekle”. Android'de “Google Takvim'e ekle” daha kolaydır.</p>
+    <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="remindClose">Kapat</button></div></div>`);
+}
+function openRemind(){
+  let el = $("remind"); if (!el){ el = document.createElement("div"); el.id = "remind"; el.className = "tour"; document.body.appendChild(el); }
+  el.hidden = false; renderRemind();
 }
 
 /* ---------- Bildirim baloncuğu ---------- */
@@ -3295,11 +3479,15 @@ function renderGroups(){
   let html = fridgeHTML();
 
   // 1) Dolabındakiler: seçtiklerin tek bakışta, ✕ ile çıkar
+  { let ch = false; Object.keys(skt).forEach(id => { if (!selected.has(id)){ delete skt[id]; ch = true; } }); if (ch) saveSkt(); } // dolaptan çıkan malzemenin tarihi de silinir
   if (total) html += `<div class="mybox"><div class="mybox-head"><b>🧺 Dolabındakiler</b><span class="mybox-right"><span class="sec-count">${total} malzeme</span>${total ? `<button type="button" class="link-btn" data-act="clear">Temizle</button>` : ""}</span></div>`;
   if (total) html += total
-    ? `<div class="chips">${mine.map(id => `<button type="button" class="chip on" data-act="ing" data-id="${id}" aria-label="${LABEL[id]} malzemesini çıkar"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]} ✕</button>`).join("")}${[...extras].map(x => `<button type="button" class="chip on" data-act="rmExtra" data-name="${esc(x)}" aria-label="${esc(x)} malzemesini çıkar">${esc(x)} ✕</button>`).join("")}</div>`
+    ? `<div class="chips">${mine.map(id => `<button type="button" class="chip on" data-act="ing" data-id="${id}" aria-label="${LABEL[id]} malzemesini çıkar"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]}${sktBadge(id)} ✕</button>`).join("")}${[...extras].map(x => `<button type="button" class="chip on" data-act="rmExtra" data-name="${esc(x)}" aria-label="${esc(x)} malzemesini çıkar">${esc(x)} ✕</button>`).join("")}</div>`
     : `<p class="sub" style="margin:0">Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.</p>`;
+  if (total && mine.length) html += `<button type="button" class="link-btn skt-tg" data-act="sktToggle" aria-expanded="${sktOpen}">⏰ Son kullanma tarihleri ${sktOpen ? "▲" : "▼"}</button>`;
+  if (total && sktOpen) html += sktPanelHTML(mine);
   if (total) html += `<p class="basic-note">🧂 Temel malzemeler (tuz, yağ, su…): ${basicN}/${basics.length} seçili</p></div>`;
+  html += `<button type="button" class="lo-btn" data-act="loOpen"><span class="lo-e" aria-hidden="true">🍚</span><span><b>Dünden artan mı var?</b><small>Artanları değerlendir, israf etme</small></span><span class="sug-go" aria-hidden="true">›</span></button>`;
   html += `<div class="suggest-strip" id="sugStrip"></div>`;
 
   // 2) Arama varsa: tüm gruplardan eşleşenler düz bir liste hâlinde
@@ -3342,6 +3530,21 @@ function combosHTML(){
 }
 // Çoğu yemekte olmasa da olur: lezzet verir ama yemeğin kendisi değildir
 const FLEX = new Set(["kekik","kimyon","sumak","biber","kapya","maydanoz","dereotu","nane","pul_biber","limon","sarimsak","salca","sogan"]);
+let skt = load("pisir-skt", {}); if (!skt || typeof skt !== "object") skt = {};
+let sktOpen = false;
+const saveSkt = () => { try { localStorage.setItem("pisir-skt", JSON.stringify(skt)); } catch(e) {} };
+function sktDays(id){
+  if (!skt[id]) return null;
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((skt[id] - t.getTime()) / 864e5);
+}
+function sktLabel(id){ const d = sktDays(id); return d === null ? "" : d < 0 ? "süresi geçti" : d === 0 ? "bugün" : d === 1 ? "yarın" : `${d} gün`; }
+function sktBadge(id){ const d = sktDays(id); if (d === null) return ""; return ` <span class="skt-b ${d < 0 ? "gone" : d <= 2 ? "soon" : ""}">⏰ ${sktLabel(id)}</span>`; }
+function sktPanelHTML(mine){
+  if (!mine.length) return "";
+  const opts = [["0", "Bugün"], ["1", "Yarın"], ["3", "3 gün"], ["7", "1 hafta"]];
+  return `<div class="skt-panel"><p class="sub">Son kullanma tarihi yaklaşanları seç; öneriler önce onları kullanır.</p>${mine.map(id => `<div class="skt-row"><span class="skt-n">${ING_EMOJI[id] || "🥄"} ${LABEL[id]}</span><span class="skt-opts">${opts.map(([v, l]) => { const on = skt[id] && sktDays(id) === Number(v); return `<button type="button" class="chip mini" data-act="sktSet" data-id="${id}" data-d="${v}" aria-pressed="${!!on}">${l}</button>`; }).join("")}${skt[id] ? `<button type="button" class="link-btn" data-act="sktSet" data-id="${id}" data-d="" aria-label="Tarihi kaldır">✕</button>` : ""}</span></div>`).join("")}</div>`;
+}
 function renderResults(){
   cardSeq = 0;
   const any = selected.size + extras.size > 0;
@@ -3394,9 +3597,16 @@ function renderResults(){
   else if (strip) strip.classList.remove("only-mobile");
   if (strip && mainSel) setHTML(strip, stripList.length ? `<div class="sug-head">💡 ${readyS.length ? `Bu malzemelerle <b>${readyS.length} yemek</b> yapabilirsin` : "Bu malzemelere yakın yemekler"}</div><div class="sug-row">${stripList.map(sugCard).join("")}</div>` : "");
   let html = "";
+  const expIds = [...selected].filter(id => { const d = sktDays(id); return d !== null && d <= 2; });
+  if (expIds.length){
+    const exs = ev.filter(x => x.have >= 1 && x.r.malzemeler.some(m => expIds.includes(m.id)))
+      .map(x => Object.assign({}, x, {ex: x.r.malzemeler.filter(m => expIds.includes(m.id)).length}))
+      .sort((a, b) => b.ex - a.ex || a.miss - b.miss || b.have - a.have).slice(0, 6);
+    html += `<div class="section exp-sec"><h2>⏰ Bozulmadan değerlendir</h2><p class="sub">${expIds.map(id => `<b>${LABEL[id]}</b> (${sktLabel(id)})`).join(", ")} yakında bozulacak. Önce bunları kullanan yemekler:</p>${exs.length ? `<div class="exp-list">${exs.map(sugCard).join("")}</div>` : `<p class="sub">Bunu kullanan bir tarif bulamadık; “Artanları değerlendir”i deneyebilirsin.</p>`}</div>`;
+  }
   if (mainSel) html += `<div class="section sug-sec">${sugBlock("h2") || `<h2>💡 Öneriler</h2><div class="empty">Bu malzemelerle eşleşen bir yemek bulamadık. Birkaç malzeme daha seç ya da aşağıdan yapay zekâya sor.</div>`}</div>`;
   if (!mainSel){
-    html = `<div class="section start-card"><div class="start-emo" aria-hidden="true"><span class="steam"><i></i><i></i><i></i></span>🍳</div><h2>Yemek önerilerin burada</h2><p class="sub">Soldan malzeme seçtikçe yapabileceğin yemekler burada belirir.</p><p class="start-l">Ya da hızlıca dene:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Bana rastgele öner</button>`}</div>${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}`;
+    html = `<div class="section start-card"><div class="start-emo" aria-hidden="true"><span class="steam"><i></i><i></i><i></i></span>🍳</div><h2>Yemek önerilerin burada</h2><p class="sub">Soldan malzeme seçtikçe yapabileceğin yemekler burada belirir.</p><p class="start-l">Ya da hızlıca dene:</p>${combosHTML()}${pantryInspire ? mixHTML() : `<button type="button" class="fav inspire-go" data-act="inspireGo">🎲 Bana rastgele öner</button>`}<button type="button" class="link-btn rm-link" data-act="remindOpen">⏰ Her akşam bana hatırlat</button></div>${dailyMiniHTML()}${dailyOpen ? `<div class="results-daily">${dailyCardHTML()}</div>` : ""}`;
   } else {
     if (ready.length > 8) html += `<div class="section"><h2>Diğer yapabileceklerin</h2>${ready.slice(8).map(x => cardHTML(x.r)).join("")}</div>`;
     html += aiPantryHTML();
@@ -4202,6 +4412,7 @@ document.addEventListener("click", e => {
   const r = key ? REG.get(key) : null;
   // Telefonlar sesi yalnızca bir dokunuşla başlatmaya izin verir: pişirme butonlarında sesi her seferinde "aç"
   if (["cook","cookNext","cookPrev","speakAgain","tryVoice","setVoice","setStyle"].includes(act) && voiceOn) unlockAudio();
+  if (act === "openSaved" && el.closest("#leftover")) { const le = $("leftover"); if (le) le.hidden = true; }
   switch (act){
     case "tab": if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
     case "filter": {
@@ -4360,6 +4571,33 @@ document.addEventListener("click", e => {
         .catch(() => { imgAdm.msg = "⚠️ Bağlantı hatası."; renderImgAdmin(); });
       break;
     }
+    case "sktToggle": sktOpen = !sktOpen; renderGroups(); break;
+    case "sktSet": {
+      const id = el.dataset.id, d = el.dataset.d;
+      if (d === "" || (skt[id] && sktDays(id) === Number(d))) delete skt[id];
+      else { const t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() + Number(d)); skt[id] = t.getTime(); }
+      saveSkt(); renderGroups(); renderResults(); break;
+    }
+    case "loOpen": openLeftover(); break;
+    case "loClose": { const le = $("leftover"); if (le) le.hidden = true; break; }
+    case "loToggle": { const id = el.dataset.id; lo.sel.has(id) ? lo.sel.delete(id) : lo.sel.add(id); renderLeftover(); break; }
+    case "loAI": runLeftoverAI(); break;
+    case "remindOpen": openRemind(); break;
+    case "remindClose": { const re2 = $("remind"); if (re2) re2.hidden = true; break; }
+    case "remindICS": {
+      const blob = new Blob([remindICS()], {type:"text/calendar;charset=utf-8"});
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "aksam-hatirlatmasi.ics";
+      document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      showToast("📅 Takvim dosyası hazır; açıp eklemen yeterli."); break;
+    }
+    case "imgApiOn": imgAdm.api = true; renderImgAdmin(); break;
+    case "imgGemini": {
+      const r = REG.get(el.dataset.key); if (!r) break;
+      copyToClipboard(imgPrompt(r));
+      imgAdm.msg = `📋 “${r.ad}” istemi kopyalandı. Gemini'ye yapıştır, görseli indir ve “📁 Yükle” ile seç.`;
+      renderImgAdmin(); window.open("https://gemini.google.com/app", "_blank", "noopener");
+      break;
+    }
     case "imgTab": imgAdm.tab = el.dataset.v; renderImgAdmin(); break;
     case "imgOne": imgOne(el.dataset.key, !!(el.closest && el.closest("#imgadm"))); break;
     case "bugAdminClose": { const be = $("bugs"); if (be) be.hidden = true; break; }
@@ -4421,7 +4659,21 @@ document.addEventListener("click", e => {
   }
 });
 
+document.addEventListener("input", e => {
+  if (e.target.id === "loText"){ lo.text = e.target.value; const b = document.querySelector('[data-act="loAI"]'); if (b && lo.state !== "loading") b.disabled = !(lo.sel.size || lo.text.trim()); }
+});
 document.addEventListener("change", e => {
+  const imgIn = e.target.closest && e.target.closest("input[data-img-key]");
+  if (imgIn && imgIn.files && imgIn.files[0]){
+    const r = REG.get(imgIn.dataset.imgKey); const file = imgIn.files[0]; imgIn.value = "";
+    if (!r) return;
+    imgAdm.busy.add(r.key); imgAdm.msg = `⏳ “${r.ad}” görseli yükleniyor…`; renderImgAdmin();
+    saveAiImageFile(r, file).then(() => { imgAdm.last = r.key; imgAdm.msg = `✓ “${r.ad}” görseli kaydedildi.`; renderAll(); })
+      .catch(err => { imgAdm.msg = "⚠️ " + (IMG_ERR[err.sebep] || "Görsel kaydedilemedi."); })
+      .finally(() => { imgAdm.busy.delete(r.key); renderImgAdmin(); if ($("sheet") && !$("sheet").hidden) renderSheet(); });
+    return;
+  }
+  if (e.target.id === "remindTime"){ remind.saat = e.target.value || "17:30"; try { localStorage.setItem("pisir-hatirlat", JSON.stringify(remind)); } catch(err) {} renderRemind(); return; }
   const s = e.target.closest("select[data-plan-key]"); if (!s || s.value === "") return;
   const key = s.dataset.planKey, day = Number(s.value);
   if (!REG.has(key)) return;
@@ -4476,6 +4728,7 @@ async function aiCall(prompt, wantJson){
       } catch(e){ throw {code: navigator.onLine ? "unreachable" : "offline"}; }
       if (!res.ok){
         const d = await res.json().catch(() => null);
+        if (d && d.sebep === "sinir") throw {code:"daily_limit"}; // aracı koddaki günlük sınır: tekrar deneme
         // Yoğunlukta bir kez birkaç saniye bekleyip yeniden dene
         if (res.status === 429 && attempt === 0){ await new Promise(r => setTimeout(r, 4000)); continue; }
         throw {code: res.status === 429 ? "rate_limited" : "server", detail: d && (d.detail || d.error)};
@@ -4531,7 +4784,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
