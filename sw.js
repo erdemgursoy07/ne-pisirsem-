@@ -1,5 +1,5 @@
 /* Bugün ne pişirsem? çevrimdışı önbellek. Büyük bir güncellemede sürüm numarasını artır. */
-const CACHE = "pisir-v68";
+const CACHE = "pisir-v70";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
@@ -23,8 +23,17 @@ self.addEventListener("fetch", e => {
     return;
   }
   if (req.mode === "navigate") {
-    // Sayfayı her zaman sunucudan en güncel hâliyle iste (GitHub Pages'in 10 dakikalık önbelleğini atla)
-    e.respondWith(fetch(req.url, {cache:"no-cache", credentials:"same-origin"}).then(res => { if (res.ok){ const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; }).catch(() => caches.match(req).then(hit => hit || caches.match("./index.html"))));
+    // Sayfayı sunucudan en güncel hâliyle iste (GitHub Pages'in 10 dakikalık önbelleğini atla).
+    // İnternet yavaşsa 3 saniye sonra kayıtlı sürümü hemen göster; yenisi arka planda inip bir sonraki açılışa hazır olur.
+    const net = fetch(req.url, {cache:"no-cache", credentials:"same-origin"}).then(res => { if (res.ok){ const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); } return res; });
+    const cached = () => caches.match(req).then(hit => hit || caches.match("./index.html"));
+    e.waitUntil(net.catch(() => {}));
+    e.respondWith(new Promise(resolve => {
+      let done = false;
+      const t = setTimeout(() => { cached().then(hit => { if (hit && !done){ done = true; resolve(hit); } }); }, 3000);
+      net.then(res => { if (!done){ done = true; clearTimeout(t); resolve(res); } })
+         .catch(() => { clearTimeout(t); cached().then(hit => { if (!done){ done = true; resolve(hit || Response.error()); } }); });
+    }));
     return;
   }
   // Görseller, yazı tipleri vb.: önce kayıtlı olan

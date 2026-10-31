@@ -1197,6 +1197,36 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
     .topbar{animation:barShadow linear both;animation-timeline:scroll();animation-range:0 120px}
   }
 }
+/* Sesli komut */
+.mic-btn[aria-pressed="true"]{border-color:#2B8A3E;color:#2B8A3E;background:color-mix(in srgb,#2B8A3E 8%,var(--surface))}
+.mic-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:12px 0 4px;padding:10px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);font-size:.86rem;color:var(--muted)}
+.mic-bar.on{border-color:color-mix(in srgb,#2B8A3E 45%,var(--line))}
+.mic-bar b{color:var(--ink)}
+.mic-dot{width:10px;height:10px;border-radius:50%;background:#ADB5BD;flex:0 0 10px}
+.mic-bar.on .mic-dot{background:#2B8A3E}
+.mic-h{margin-left:auto;font-weight:700;color:var(--ink)}
+/* Mevsiminde */
+.acc-season .acc-emo{background:color-mix(in srgb,#2B8A3E 12%,var(--bg))}
+.season-chips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 14px}
+.season-chip{padding:5px 10px;border-radius:999px;background:color-mix(in srgb,#2B8A3E 10%,var(--surface));color:#2B8A3E;font-size:.8rem;font-weight:700}
+:root[data-theme="dark"] .season-chip{color:#8CE99A}
+/* Alışveriş listesi */
+.shop-sum{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}
+.shop-pill{padding:5px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-size:.8rem}
+.shop-aisle h3{margin:16px 0 4px;font-size:1rem}
+.shop-acts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.shop-wa{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
+@media (prefers-reduced-motion: no-preference){
+  @keyframes micPulse{0%{box-shadow:0 0 0 0 rgba(43,138,62,.5)}100%{box-shadow:0 0 0 10px rgba(43,138,62,0)}}
+  .mic-bar.on .mic-dot{animation:micPulse 1.4s ease-out infinite}
+  .mic-h{animation:softIn .35s ease}
+  .shop-aisle{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards}
+}
+/* Hız: ekranın dışındaki bölümler görünene kadar çizilmez */
+.site-foot{content-visibility:auto;contain-intrinsic-size:auto 640px}
+.cat-acc:not(.open){content-visibility:auto;contain-intrinsic-size:auto 76px}
+.bd-wait{background:color-mix(in srgb,#7048E8 10%,var(--surface));color:#5F3DC4}
+:root[data-theme="dark"] .bd-wait{color:#B197FC}
 </style>
 </head>
 <body>
@@ -1307,7 +1337,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 68</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 70</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2061,7 +2091,7 @@ function fpass(r){
   if (!dislikePass(r)) return false; // sevmediğin malzemeyi içeren yemekler önerilmez
   if (mode === "dish" && !dietPass(r)) return false; // beslenme tercihi yalnızca Yemek ara'da geçerli
   for (const f of filters){
-    if (f === "hizli"){ if (!(r.sure && r.sure <= 15)) return false; }
+    if (f === "hizli"){ if (!(r.sure && totalTime(r) <= 15)) return false; }
     else if (f === "spor"){ if (!(r.etiketler || []).includes("spor")) return false; }
     else if (recipeCat(r) !== f) return false; // kategori = yemeğin tek asıl kategorisi (karışma olmaz)
   }
@@ -2139,7 +2169,7 @@ function detailHTML(r, compact){
   return h;
 }
 
-const catMatch = (r, id) => id === "hizli" ? !!(r.sure && r.sure <= 15) : (r.etiketler || []).includes(id);
+const catMatch = (r, id) => id === "hizli" ? !!(r.sure && totalTime(r) <= 15) : (r.etiketler || []).includes(id);
 const VEG_DISH = /zeytinyağlı|dolma|sarma|sote|ıspanak|kabak|patlıcan|imam bayıldı|bezelye|brokoli|pırasa|lahana|kapuska|türlü|musakka|mücver|sebze|enginar|kereviz|bamya|mantar|karnabahar|taze fasulye|biber/;
 const NOT_VEG_DISH = /pilav|makarna|börek|gözleme|köfte|bulgur|mercimek|kuru fasulye|pilaki|risotto|kuskus|erişte|mantı|pizza|lazanya/;
 function recipeCat(r){
@@ -3270,6 +3300,63 @@ function openRemind(){
   el.hidden = false; renderRemind();
 }
 
+/* ---------- Sesli komut: eller hamurluyken "sonraki" demen yeter ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const mic = {on:false, rec:null, heard:"", ok:false};
+const VOICE_CMDS = [
+  [/^(sonraki|sonraki adım|ileri|devam|devam et|geç|tamam|tamamdır|oldu|bitti|next|next step|okay|ok|done)$/, "next"],
+  [/^(geri|önceki|önceki adım|geri dön|back|previous|go back)$/, "prev"],
+  [/^(tekrar|tekrarla|tekrar oku|bir daha|bir daha oku|yeniden|yeniden oku|repeat|again|say again)$/, "again"],
+  [/^(dur|sus|sessiz|yeter|kes|stop|quiet|be quiet)$/, "stop"],
+  [/(zamanlayıcı|sayaç|alarm|süre(yi)? başlat|süre tut|timer|start timer)/, "timer"],
+  [/^(malzemeler|malzeme|malzemeleri göster|ingredients)$/, "ings"]
+];
+function micStart(){
+  if (!SR || mic.rec) return;
+  const rec = new SR();
+  rec.lang = lang === "en" ? "en-US" : "tr-TR"; rec.continuous = true; rec.interimResults = false; rec.maxAlternatives = 3;
+  rec.onresult = e => {
+    for (let i = e.resultIndex; i < e.results.length; i++){
+      if (!e.results[i].isFinal) continue;
+      handleVoiceCmd([...e.results[i]].map(a => a.transcript));
+    }
+  };
+  rec.onerror = e => {
+    if (e.error === "not-allowed" || e.error === "service-not-allowed"){ mic.on = false; mic.heard = "Mikrofon izni verilmedi. Tarayıcı ayarlarından izin verebilirsin."; mic.rec = null; renderCook(); }
+  };
+  rec.onstart = () => { mic.ok = true; renderMic(); };
+  rec.onend = () => { if (mic.on && cook.open){ try { rec.start(); } catch(err) {} } else mic.rec = null; }; // telefon dinlemeyi kendiliğinden bitirirse yeniden başlat
+  mic.rec = rec;
+  try { rec.start(); } catch(err) {}
+}
+function micStop(){ mic.on = false; mic.ok = false; const r = mic.rec; mic.rec = null; if (r){ try { r.onend = null; r.stop(); } catch(err) {} } }
+function handleVoiceCmd(alts){
+  for (const raw of alts){
+    const t = String(raw).toLocaleLowerCase(lang === "en" ? "en" : "tr").replace(/[.,!?'"]/g, "").replace(/\s+/g, " ").trim();
+    if (!t || t.split(" ").length > 4) continue; // uzun cümleler büyük ihtimalle uygulamanın kendi okuması: komut sayılmaz
+    const hit = VOICE_CMDS.find(([re]) => re.test(t));
+    if (!hit) continue;
+    mic.heard = `“${raw.trim()}”`; doVoiceCmd(hit[1]); renderMic(); return;
+  }
+  const first = String(alts[0] || "").trim();
+  if (first && first.split(/\s+/).length <= 4){ mic.heard = `“${first}” anlaşılamadı`; renderMic(); }
+}
+function doVoiceCmd(c){
+  const click = sel => { const b = document.querySelector(sel); if (b && !b.disabled){ b.click(); return true; } return false; };
+  const r = REG.get(cook.key);
+  if (c === "next") click("#cookNext");
+  else if (c === "prev") click('#cook [data-act="cookPrev"]');
+  else if (c === "again"){ if (r && cook.step < r.adimlar.length){ if (voiceOn) speak(narrText(r, cook.step)); else showToast("Sesli okuma kapalı; “🔈 Sessiz” düğmesinden açabilirsin."); } }
+  else if (c === "stop") stopSpeech();
+  else if (c === "timer"){ if (!click("#cook .cook-timer-btn")) showToast("Bu adımda zamanlayıcı yok."); }
+  else if (c === "ings"){ const d = document.querySelector("#cook .cook-ings"); if (d) d.open = !d.open; }
+}
+function micBarHTML(){
+  if (!mic.on && !mic.heard) return "";
+  return `<div class="mic-bar${mic.on ? " on" : ""}" id="micBar" role="status"><span class="mic-dot" aria-hidden="true"></span><span class="mic-t">${mic.on ? `Dinliyorum · <b>“sonraki”</b>, <b>“geri”</b>, <b>“tekrar”</b>, <b>“zamanlayıcı”</b> de` : ""}</span>${mic.heard ? `<span class="mic-h">${esc(mic.heard)}</span>` : ""}</div>`;
+}
+function renderMic(){ const b = $("micBar"); if (b) b.outerHTML = micBarHTML() || `<div id="micBar" hidden></div>`; }
+
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
   const bar = document.querySelector(".tabs"), act = document.querySelector(".tab[aria-selected='true']");
@@ -3374,7 +3461,7 @@ const BADGES = [
   ["sandvicci", "🥪", "Sandviç ustası", "3 farklı sandviç yap.", () => [catCount("sandvic"), 3]],
   ["erkenci", "🌅", "Erkenci", "3 farklı kahvaltılık hazırla.", () => [catCount("kahvalti"), 3]],
   ["yesil", "🥗", "Yeşil sofra", "5 farklı sebze ya da etsiz yemek pişir.", () => [catCount("sebze") + catCount("etsiz"), 5]],
-  ["hizli", "⚡", "Hızlı eller", "15 dakikanın altındaki 5 tarifi pişir.", () => [cookedList().filter(r => r.sure && r.sure <= 15).length, 5]],
+  ["hizli", "⚡", "Hızlı eller", "15 dakikanın altındaki 5 tarifi pişir.", () => [cookedList().filter(r => r.sure && totalTime(r) <= 15).length, 5]],
   ["tamsofra", "🍽️", "Tam sofra", "Aynı gün bir çorba, bir ana yemek ve bir tatlı pişir.", () => [fullTableDay() ? 1 : 0, 1]],
   ["efsane", "🎖️", "Mutfak efsanesi", "50 farklı tarif pişir.", () => [cookedList().length, 50]]
 ];
@@ -3568,10 +3655,32 @@ function difficulty(r){
   return p <= 1 ? ["kolay", "Kolay"] : p === 2 ? ["orta", "Orta"] : ["zor", "Zor"];
 }
 function fmtDur(t){ if (!t) return ""; if (t < 60) return t + " dk"; const h = Math.floor(t / 60), m = t % 60; return m ? `${h} sa ${m} dk` : `${h} saat`; }
+/* ---------- Bekleme süresi: dinlendirme, mayalanma, buzdolabında bekletme ---------- */
+const WAIT_CACHE = new Map();
+function waitInfo(r){
+  if (WAIT_CACHE.has(r.key)) return WAIT_CACHE.get(r.key);
+  let wait = 0, all = 0;
+  for (const s0 of r.adimlar || []){
+    const s = String(s0).toLocaleLowerCase("tr"); let mx = 0;
+    for (const mm of s.matchAll(/(\d+(?:[,.]\d+)?)(?:\s*[-–]\s*(\d+))?\s*(dakika|dk|saat)\b([^.;]{0,40}?)(dinlendir|dinlensin|beklet|bekle\b|demlendir|demlen|mayalandır|mayalan|marine et|dondur|soğut)/g)){
+      if (/pişir|haşla|kaynat|kızart|kavur|fırın|çek\b|ısıt/.test(mm[4])) continue;
+      mx = Math.max(mx, parseFloat((mm[2] || mm[1]).replace(",", ".")) * (mm[3] === "saat" ? 60 : 1));
+    }
+    if (/bir gece|gece boyunca/.test(s) && /ıslat|beklet|bekle|dinlendir/.test(s)) mx = Math.max(mx, 480);
+    wait += mx;
+    for (const mm of s.matchAll(/(\d+(?:[,.]\d+)?)(?:\s*[-–]\s*(\d+))?\s*(dakika|dk|saat)\b/g)) all += parseFloat((mm[2] || mm[1]).replace(",", ".")) * (mm[3] === "saat" ? 60 : 1);
+  }
+  const active = Math.max(0, all - wait), sure = r.sure || 0;
+  // Tarif süresi beklemeyi zaten karşılıyorsa (ör. Pişi: 60 dk, içinde 40 dk mayalanma) ayrıca eklenmez
+  const extra = wait >= 20 && sure < active + wait * 0.8 ? Math.round(wait) : 0;
+  const info = {wait:extra, total:sure + extra};
+  WAIT_CACHE.set(r.key, info); return info;
+}
+const totalTime = r => waitInfo(r).total || r.sure || 0;
 function badgesHTML(r){
   const [k, l] = difficulty(r);
   const n = nutrition(r);
-  return `<span class="badges"><span class="bd bd-${k}">${l}</span>${r.sure ? `<span class="bd">⏱️ ${fmtDur(r.sure)}</span>` : ""}${n && n.kcal ? `<span class="bd">🔥 ${n.kcal} kcal</span>` : ""}</span>`;
+  return `<span class="badges"><span class="bd bd-${k}">${l}</span>${r.sure ? `<span class="bd">⏱️ ${fmtDur(r.sure)}</span>` : ""}${waitInfo(r).wait ? `<span class="bd bd-wait" title="Dinlendirme, mayalanma ya da buzdolabında bekleme">⏳ +${fmtDur(waitInfo(r).wait)} bekleme</span>` : ""}${n && n.kcal ? `<span class="bd">🔥 ${n.kcal} kcal</span>` : ""}</span>`;
 }
 function nutHTML(r){
   const n = nutrition(r); if (!n || !n.kcal) return "";
@@ -3678,7 +3787,7 @@ function renderResults(){
   const any = selected.size + extras.size > 0;
   // Tuz, yağ, su gibi temel malzemeler eşleşme sayılmaz; sadece asıl malzemelere bakılır
   const BASIC = new Set(GROUPS[0].items.map(([id]) => id));
-  const ev = BUILTIN.filter(fpass).filter(r => !pantryTime || (r.sure || 0) <= pantryTime).map(r => {
+  const ev = BUILTIN.filter(fpass).filter(r => !pantryTime || totalTime(r) <= pantryTime).map(r => {
     const main = r.malzemeler.filter(m => !BASIC.has(m.id));
     const have = main.filter(m => selected.has(m.id)).length;
     // Tuz, yağ, su gibi temel malzemeler her evde olur: seçili olmasalar da yemeği engellemez
@@ -3701,7 +3810,7 @@ function renderResults(){
       : x.flexOk ? `<small class="sug-ok">✓ Bu malzemelerle yapılır · ${esc(missNames.join(", ").toLocaleLowerCase("tr"))} isteğe bağlı</small>`
       : `<small class="sug-miss">🛒 Alınacak: ${esc(missNames.join(", ").toLocaleLowerCase("tr"))}</small>`;
     const mainAll = r.malzemeler.filter(m => !BASIC.has(m.id)), haveN = mainAll.filter(m => selected.has(m.id)).length;
-    const meta = [r.sure ? `⏱️ ${r.sure} dk` : "", mainAll.length ? `🧺 ${haveN}/${mainAll.length}` : ""].filter(Boolean).join(" · ");
+    const meta = [r.sure ? `⏱️ ${r.sure} dk` : "", mainAll.length ? `🧺 ${haveN}/${mainAll.length}` : "", isSeasonal(r) ? "🌱 mevsiminde" : ""].filter(Boolean).join(" · ");
     return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}${meta ? `<small class="sug-meta">${meta}</small>` : ""}</span><span class="sug-go" aria-hidden="true">›</span></button>`;
   };
   const readyS = ready.slice(0, 8), nearS = near.slice(0, 6);
@@ -3764,6 +3873,26 @@ function hintCats(q){
   if (q.length < 2) return [];
   return CATS.filter(([id, , , keys]) => keys.some(k => k.startsWith(q) || (q.startsWith(k) && k.length >= 2 && q.length <= k.length + 2)) && !filters.has(id));
 }
+const MONTHS = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const SEASON = {
+  1:["ispanak","pirasa","lahana","brokoli","havuc","pancar","limon","elma"], 2:["ispanak","pirasa","lahana","brokoli","havuc","pancar","limon","elma"],
+  3:["ispanak","pirasa","marul","havuc","lahana","limon"], 4:["ispanak","marul","bezelye","cilek","dereotu"],
+  5:["bezelye","cilek","kabak","salatalik","marul","taze_fasulye","dereotu"], 6:["kabak","domates","biber","kapya","patlican","salatalik","taze_fasulye","semizotu"],
+  7:["domates","biber","kapya","patlican","kabak","taze_fasulye","salatalik","semizotu"], 8:["domates","biber","kapya","patlican","kabak","taze_fasulye","salatalik"],
+  9:["domates","biber","kapya","patlican","elma","mantar"], 10:["balkabagi","ispanak","pirasa","lahana","mantar","elma","havuc","brokoli"],
+  11:["balkabagi","ispanak","pirasa","lahana","brokoli","havuc","pancar","elma","limon"], 12:["ispanak","pirasa","lahana","brokoli","havuc","pancar","limon","elma","balkabagi"]
+};
+const SUMMER_ONLY = ["patlican","kabak","taze_fasulye","semizotu","cilek"];
+function seasonNow(){ const m = new Date().getMonth() + 1; return {m, name:MONTHS[m - 1], ids:(SEASON[m] || []).filter(id => LABEL[id])}; }
+function seasonalRecipes(){
+  const {m, ids} = seasonNow(), winter = [10, 11, 12, 1, 2, 3, 4].includes(m);
+  return BUILTIN.filter(fpass).map(r => {
+    const got = r.malzemeler.filter(x => ids.includes(x.id)).length;
+    const off = winter ? r.malzemeler.filter(x => SUMMER_ONLY.includes(x.id)).length : 0;
+    return {r, sc: got * 2 - off * 3 - (recipeCat(r) === "dunya" ? 1 : 0), got};
+  }).filter(x => x.got && x.sc > 0 && !["kahve"].includes(recipeCat(x.r))).sort((a, b) => b.sc - a.sc || (a.r.sure || 99) - (b.r.sure || 99)).map(x => x.r);
+}
+const isSeasonal = r => { const {ids} = seasonNow(); return r.malzemeler.some(x => ids.includes(x.id)); };
 const openCats = new Set(); let catAutoDone = false;
 function timeCat(){ const h = new Date().getHours(); return h >= 5 && h < 11 ? "kahvalti" : h >= 11 && h < 15 ? "corba" : h >= 15 && h < 21 ? "etli" : "tatli"; }
 function renderDishList(){
@@ -3782,6 +3911,10 @@ function renderDishList(){
   }
   if (!q && !filters.size){
     // Her kategoriden en sevilen 8 tarif; tamamı için "Tümünü gör"
+    { // Mevsiminde: bu ay taze olan sebze ve meyvelerle yapılanlar
+      const sz = seasonNow(), items = seasonalRecipes(), open = openCats.has("mevsim");
+      if (items.length) html += `<section class="dish-sec cat-acc acc-season${open ? " open" : ""}" data-key="sec-mevsim"><button type="button" class="acc-head" data-act="catToggle" data-f="mevsim" aria-expanded="${open}"><span class="acc-emo" aria-hidden="true">🌱</span><span class="acc-txt"><b>${sz.name} ayında mevsiminde</b><small>${open ? "Taze, ucuz ve lezzetli: " : ""}${sz.ids.slice(0, 6).map(id => LABEL[id].toLocaleLowerCase("tr")).join(", ")}…</small></span><span class="acc-n">${Math.min(items.length, 24)}</span><span class="acc-chev" aria-hidden="true">▾</span></button>${open ? `<div class="acc-body"><div class="season-chips">${sz.ids.map(id => `<span class="season-chip">${ING_EMOJI[id] || "🥬"} ${LABEL[id]}</span>`).join("")}</div><div class="dish-grid">${items.slice(0, 24).map(r => dishCard(r, "pickDish", "")).join("")}</div></div>` : ""}</section>`;
+    }
     html += CATS.map(([id, l, emo]) => {
       const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : id === "hizli" ? sortRecipes(BUILTIN.filter(r => catMatch(r, "hizli"))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
       if (!items.length) return "";
@@ -4009,6 +4142,7 @@ function openCook(key, resume){
   const nx = $("cookNext"); if (nx) nx.focus();
 }
 function closeCook(){
+  micStop();
   stopSpeech();
   lastSpoken = "";
   cook.open = false;
@@ -4306,8 +4440,9 @@ function renderCook(){
     const min = stepMinutes(s);
     const tech = stepTechnique(r, s);
     const stepAnim = cookAnimAt !== cook.key + "|" + cook.step ? " step-in" : ""; cookAnimAt = cook.key + "|" + cook.step;
-    h += `<div class="cook-main${stepAnim}"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
+    h += `<div class="cook-main${stepAnim}"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${SR ? `<button type="button" class="fav cook-how mic-btn" data-act="micToggle" aria-pressed="${mic.on}">🎙️ ${mic.on ? "Sesli komut açık" : "Sesli komut"}</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
+      ${micBarHTML() || `<div id="micBar" hidden></div>`}
       <p class="cook-wake"><span id="cookWake">${wakeText()}</span></p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
   } else {
@@ -4505,8 +4640,21 @@ function planShopping(){
   }));
   return [...map.values()].map(e => ({...e, amountText:[...[...e.amounts].map(([u, q]) => fmt(q, u) + (u ? " " + u : "")), ...e.free].join(" + ")}));
 }
+const AISLES = [
+  ["manav", "🥬 Manav", ["🥕 Sebze ve yeşillik", "🍎 Meyve"], /domates|soğan|sarımsak|biber|patates|patlıcan|kabak|havuç|ıspanak|fasulye|salatalık|maydanoz|dereotu|marul|limon|mantar|bezelye|lahana|pırasa|brokoli|karnabahar|elma|muz|çilek|avokado|roka|nane|fesleğen|zencefil|kereviz|enginar|bamya|portakal|nar|turp|semizotu|pancar|üzüm|armut|mısır koçanı|taze/i],
+  ["kasap", "🥩 Kasap ve balıkçı", ["🍗 Et, tavuk ve balık"], /kıyma|et\b|kuşbaşı|tavuk|balık|somon|hamsi|levrek|sucuk|pastırma|hindi|kuzu|dana|ciğer|karides|köfte/i],
+  ["sut", "🧀 Süt ürünleri ve yumurta", ["🧀 Süt ürünleri ve yumurta"], /süt|yoğurt|peynir|kaşar|lor|labne|krema|tereyağı|yumurta|ayran|mozzarella|parmesan|kaymak/i],
+  ["firin", "🍞 Fırın", [], /ekmek|lavaş|tortilla|yufka|pide|simit|bazlama|hamburger/i],
+  ["kuru", "🌾 Bakliyat, tahıl ve makarna", ["🌾 Bakliyat, tahıl ve hamur"], /pirinç|bulgur|mercimek|nohut|fasulye|makarna|şehriye|erişte|un\b|irmik|yulaf|kinoa|tarhana|bakla|galeta/i],
+  ["bakkal", "🥫 Bakkal ve baharat", ["🥫 Dolap", "🍫 Tatlı malzemeleri", "☕️ Kahve", "🧂 Temel malzemeler"], /./]
+];
+const ID_AISLE = {}; GROUPS.forEach(g => { const a = AISLES.find(x => x[2].includes(g.title)); g.items.forEach(([id]) => { ID_AISLE[id] = a ? a[0] : "bakkal"; }); });
+["ekmek", "lavas", "yufka", "hamburger_ekmegi", "baklava_yufkasi", "gullac"].forEach(id => { ID_AISLE[id] = "firin"; });
+function aisleOf(e){ if (e.m && e.m.id && ID_AISLE[e.m.id]) return ID_AISLE[e.m.id]; const n = e.ad || ""; return (AISLES.find(a => a[0] !== "bakkal" && a[3].test(n)) || AISLES[5])[0]; }
+function groupedShopping(list){ return AISLES.map(a => [a, list.filter(e => aisleOf(e) === a[0])]).filter(([, l]) => l.length); }
 function planShopText(){
-  return "Haftalık alışveriş listesi:\n" + planShopping().map(e => "- " + e.ad + (e.amountText ? " (" + e.amountText + ")" : "")).join("\n");
+  const list = planShopping();
+  return "🛒 Haftalık alışveriş listesi\n" + groupedShopping(list).map(([a, l]) => "\n" + a[1] + "\n" + l.map(e => "• " + e.ad + (e.amountText ? " (" + e.amountText + ")" : "")).join("\n")).join("\n");
 }
 function renderPlan(){
   const total = plan.reduce((n, d) => n + d.length, 0);
@@ -4521,7 +4669,10 @@ function renderPlan(){
     const list = planShopping();
     h += `<div class="section"><div class="actions" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Haftalık alışveriş listen</h2><button type="button" class="fav" data-act="planClear">Menüyü temizle</button></div>`;
     h += list.length
-      ? `<p class="sub">Menündeki ${total} yemeğin eksikleri tek listede. Aldıkça “Aldım”a dokun.</p><ul class="need">${list.map(e => `<li><div class="need-row"><span>${esc(e.ad)}${e.amountText ? ` <span class="amt">${esc(e.amountText)}</span>` : ""}<span class="for">${esc([...e.dishes].join(", "))} için</span></span><button type="button" class="state buy" data-act="bought" data-k="${esc(e.id)}">Aldım</button></div></li>`).join("")}</ul><button type="button" class="ai-btn" data-act="copyPlan" style="margin-top:14px">Listeyi kopyala</button>${orderHTML("plan", list.map(e => e.ad))}`
+      ? `<p class="sub">Menündeki ${total} yemeğin eksikleri, <b>reyonlara göre</b> gruplu. Dolabında olanlar listeye girmez; aldıkça “Aldım”a dokun, malzeme dolabına eklenir.</p>
+        <div class="shop-sum">${groupedShopping(list).map(([a, l]) => `<span class="shop-pill">${a[1]} <b>${l.length}</b></span>`).join("")}</div>
+        ${groupedShopping(list).map(([a, l]) => `<div class="shop-aisle"><h3>${a[1]}</h3><ul class="need">${l.map(e => `<li><div class="need-row"><span>${esc(e.ad)}${e.amountText ? ` <span class="amt">${esc(e.amountText)}</span>` : ""}<span class="for">${esc([...e.dishes].join(", "))} için</span></span><button type="button" class="state buy" data-act="bought" data-k="${esc(e.id)}">Aldım</button></div></li>`).join("")}</ul></div>`).join("")}
+        <div class="shop-acts"><button type="button" class="ai-btn" data-act="copyPlan">📋 Listeyi kopyala</button><a class="fav shop-wa" href="https://wa.me/?text=${encodeURIComponent(planShopText())}" target="_blank" rel="noopener">💬 WhatsApp'ta gönder</a></div>${orderHTML("plan", list.map(e => e.ad))}`
       : `<p class="done">Menündeki tüm yemeklerin malzemeleri evde, alışverişe gerek yok!</p>`;
     h += `</div>`;
   }
@@ -4755,6 +4906,10 @@ document.addEventListener("click", e => {
     case "focusSearch": { const se = $("search"); if (se){ se.scrollIntoView({block:"center", behavior:"smooth"}); se.focus({preventScroll:true}); } break; }
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
+    case "micToggle":
+      if (mic.on){ micStop(); mic.heard = ""; }
+      else { mic.on = true; mic.heard = ""; micStart(); }
+      renderCook(); break;
     case "voicePick": cook.vp = !cook.vp; renderCook(); break;
     case "setVoice": voicePref.ses = el.dataset.v; saveVoicePref(); renderCook(); tryVoice(voicePref.ses); break;
     case "tryVoice": tryVoice(el.dataset.v); break;
@@ -4913,7 +5068,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
