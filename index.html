@@ -1298,7 +1298,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       <div class="foot-brand">
         <p class="foot-logo"><img class="brand-logo brand-img" src="icon-192.png?v=2" alt="" width="34" height="34"> Bugün ne pişirsem?</p>
         <p class="foot-slogan">Dolabındakiyle ne pişireceğini bul.</p>
-        <p class="foot-text">Evdeki malzemelerden yemek önerisi, adım adım sesli pişirme ve haftalık menü. Ücretsiz, reklamsız, üyeliksiz.</p>
+        <p class="foot-text">Evdeki malzemelerden yemek önerisi, adım adım pişirme modu ve haftalık menü. Ücretsiz, reklamsız, üyeliksiz.</p>
       </div>
       <nav class="foot-col" aria-label="Keşfet">
         <h3>Keşfet</h3>
@@ -1348,7 +1348,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 71</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 72</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2169,7 +2169,7 @@ function detailHTML(r, compact){
       <button type="button" data-act="servPlus" data-key="${ek}" aria-label="Bir kişi artır" ${serv >= 12 ? "disabled" : ""}>+</button>
     </div>`;
   h += `<div class="actions act2">
-    <button type="button" class="ai-btn cook-cta" data-act="cook" data-key="${ek}">▶ Pişirmeye başla${r.sure ? `<small>${r.sure} dk · adım adım, sesli</small>` : ""}</button>
+    <button type="button" class="ai-btn cook-cta" data-act="cook" data-key="${ek}">▶ Pişirmeye başla${r.sure ? `<small>${r.sure} dk · adım adım</small>` : ""}</button>
     <div class="act-row">
       <button type="button" class="act-i" data-act="fav" data-key="${ek}" aria-pressed="${fav}"><span class="act-e" aria-hidden="true">${fav ? "♥" : "♡"}</span><span>${fav ? "Favoride" : "Favori"}</span></button>
       ${planTarget !== null ? "" : `<label class="act-i act-plan"><span class="act-e" aria-hidden="true">📅</span><span>Menüye</span>${planCtl(r, true)}</label>`}
@@ -2696,7 +2696,7 @@ Yalnızca şu JSON'u döndür: {"kisi": sayı, "gunler": [["yemek adı", "yemek 
 const TOUR = [
   ["🧺", "Malzemelerini seç", "Evinde ne varsa dokun ya da buzdolabının fotoğrafını çek. Tuz, yağ gibi temel malzemeler zaten seçili."],
   ["💡", "Önerileri gör", "Seçtiklerinle hemen yapabileceğin yemekler anında çıkar. Eksik malzemeleri tek dokunuşla sipariş edebilirsin."],
-  ["🍳", "Adım adım pişir", "Pişirme modunda tarif büyük yazıyla, zamanlayıcıyla ve istersen sesli anlatımla seni yönlendirir. Takılırsan Şef'e sor!"]
+  ["🍳", "Adım adım pişir", "Pişirme modunda tarif adım adım, büyük yazıyla ve zamanlayıcıyla seni yönlendirir. Takılırsan Şef'e sor!"]
 ];
 let tourStep = 0;
 function renderTour(){
@@ -3390,7 +3390,6 @@ function renderMic(){ const b = $("micBar"); if (b) b.outerHTML = micBarHTML() |
 /* ---------- Yenilikler ---------- */
 const WHATS_NEW_VER = 71;
 const WHATS_NEW = [
-  ["🎙️", "Sesli komut", "Pişirirken “sonraki”, “geri”, “tekrar” de; telefona dokunmana gerek yok.", "wn-mic"],
   ["🌱", "Mevsiminde", "Bu ay taze olan sebzeler ve onlarla yapılan yemekler.", "wn-season"],
   ["🍚", "Artanları değerlendir", "Dünden kalan pilav, ekmek, patatesle ne yapabileceğini bul.", "wn-lo"],
   ["⏰", "Son kullanma takibi", "Bozulmak üzere olanları işaretle; öneriler önce onları kullansın.", "wn-skt"],
@@ -4213,7 +4212,9 @@ function closeCook(){
   if (mode === "fav" || mode === "recent") renderSaved();
 }
 /* ---------- Sesli pişirme modu: önce yapay zekâ sesi, olmazsa telefonun Türkçe sesi ---------- */
-let voiceOn = (() => { try { return localStorage.getItem("pisir-ses") === "1"; } catch(e){ return false; } })();
+let voiceOn = false; // sesli okuma kaldırıldı
+try { localStorage.removeItem("pisir-ses"); localStorage.removeItem("pisir-sesci"); localStorage.removeItem("pisir-anlatim"); } catch(e) {}
+try { if (typeof caches !== "undefined") caches.keys().then(ks => ks.filter(k => k.startsWith("pisir-ses")).forEach(k => caches.delete(k))); } catch(e) {}
 let lastSpoken = "";
 const canSpeak = () => "speechSynthesis" in window && typeof SpeechSynthesisUtterance === "function";
 function trVoice(){
@@ -4492,7 +4493,7 @@ function renderCook(){
   const n = r.adimlar.length;
   const serv = getServ(r), f = serv / (r.kisi || 4);
   let h = `<div class="cook-inner">
-    <div class="cook-top"><button type="button" class="cook-close" data-act="cookClose">Kapat</button><div class="cook-title" id="cookTitle">${esc(r.ad)}</div>${canSpeak() ? `<button type="button" class="voice-btn" data-act="voice" aria-pressed="${voiceOn}">${voiceOn ? "🔊 Sesli" : "🔈 Sessiz"}</button><span id="voiceKind" class="voice-kind"></span>${voiceOn ? `<button type="button" class="fav cook-vp-btn" data-act="voicePick" aria-expanded="${!!cook.vp}">🎙️ Ses</button>` : ""}` : ""}<span class="cook-count">${cook.step < n ? `Adım ${cook.step + 1} / ${n}` : "Bitti"}</span></div>
+    <div class="cook-top"><button type="button" class="cook-close" data-act="cookClose">Kapat</button><div class="cook-title" id="cookTitle">${esc(r.ad)}</div><span class="cook-count">${cook.step < n ? `Adım ${cook.step + 1} / ${n}` : "Bitti"}</span></div>
     <div class="cook-progress" aria-hidden="true"><span style="width:${Math.min(100, (cook.step + 1) / n * 100)}%"></span></div>
     <div class="cook-timers" id="cookTimers" aria-live="polite"></div>${cook.vp && voiceOn ? voicePanelHTML() : ""}`;
   if (cook.step < n){
@@ -4500,9 +4501,8 @@ function renderCook(){
     const min = stepMinutes(s);
     const tech = stepTechnique(r, s);
     const stepAnim = cookAnimAt !== cook.key + "|" + cook.step ? " step-in" : ""; cookAnimAt = cook.key + "|" + cook.step;
-    h += `<div class="cook-main${stepAnim}"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${SR ? `<button type="button" class="fav cook-how mic-btn" data-act="micToggle" aria-pressed="${mic.on}">🎙️ ${mic.on ? "Sesli komut açık" : "Sesli komut"}</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
+    h += `<div class="cook-main${stepAnim}"><div class="step-emo cat-${recipeCat(r)}" aria-hidden="true">${tech.emoji}</div><p class="cook-step">${esc(s)}</p>${tipHTML(r, s, tech)}<div class="cook-actions">${min ? `<button type="button" class="ai-btn cook-timer-btn" data-act="timer" data-min="${min}">⏱️ ${min} dakikalık zamanlayıcıyı başlat</button>` : ""}${tech.query ? `<a class="yt-btn cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(tech.query)}" target="_blank" rel="noopener">▶ Nasıl yapılır? <small>${esc(tech.label)}</small></a>` : ""}<a class="yt-btn yt-alt cook-how" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Tarifin videosu</a>${voiceOn ? `<button type="button" class="fav cook-how" data-act="speakAgain">🔁 Tekrar oku</button>` : ""}${sampleFn ? `<button type="button" class="fav cook-how" data-act="chefToggle" aria-expanded="${!!cook.chef}">👨‍🍳 Şef'e sor</button>` : ""}</div>${cook.chef ? chefHTML(r, cook.step < n ? cook.step : null) : ""}</div>
       <details class="cook-ings"><summary>Malzemeler (${serv} kişilik)</summary><ul>${r.malzemeler.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul></details>
-      ${micBarHTML() || `<div id="micBar" hidden></div>`}
       <p class="cook-wake"><span id="cookWake">${wakeText()}</span></p>
       <div class="cook-nav"><button type="button" data-act="cookPrev" ${cook.step === 0 ? "disabled" : ""}>Geri</button><button type="button" class="primary" id="cookNext" data-act="cookNext">${cook.step === n - 1 ? "Bitir" : "Sonraki adım"}</button></div>`;
   } else {
