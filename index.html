@@ -998,7 +998,60 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .ia-thumb{display:grid;place-items:center;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg);font-size:1.8rem}
 .ia-thumb img{width:100%;height:100%;object-fit:cover}
 .ia-name{font-weight:700;line-height:1.25}
+.ia-clean{margin:14px 0 0;font-size:.85rem}
 #imgadm .tour-card{max-height:92vh;overflow:auto}
+/* ---------- Tarif sayfası: sade eylemler ---------- */
+.have-bar{display:flex;flex-direction:column;gap:6px;margin:8px 0 14px;max-width:420px}
+.have-l{font-size:.9rem;color:var(--muted)}
+.have-l b{color:var(--ink)}
+.have-track{display:block;height:8px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.have-track span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#2B8A3E,#69DB7C);transition:width .4s ease}
+.act2{display:flex;flex-direction:column;align-items:stretch;gap:12px;max-width:520px}
+.cook-cta{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;padding:14px 18px;font-size:1.08rem;border-radius:16px}
+.cook-cta small{font-size:.78rem;font-weight:600;opacity:.85}
+.act-row{display:flex;gap:8px;align-items:stretch}
+.act-row > .act-i{flex:1 1 0;min-width:0}
+.act-i{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:64px;padding:8px 4px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;font-size:.8rem;font-weight:700;text-decoration:none;cursor:pointer}
+.act-e{font-size:1.25rem;line-height:1}
+.act-yt{color:#E03131}
+.act-i[aria-pressed="true"]{border-color:#E03131;background:color-mix(in srgb,#E03131 8%,var(--surface))}
+.act-i[aria-pressed="true"] .act-e{color:#E03131}
+.act-i[aria-expanded="true"]{border-color:var(--cobalt)}
+.act-plan .plan-sel{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.act2 .plan-ok{margin:0;font-size:.85rem;color:#2B8A3E;font-weight:700}
+.orig-vid{align-self:flex-start;font-size:.85rem}
+.ing-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px}
+.ing-head h3{margin:0}
+.ing-head .serv{margin:0}
+.sheet-cta{display:none}
+@media (max-width:760px){
+  #sheet .act2 .cook-cta{display:none}
+  #sheet .sheet-cta{display:block;position:sticky;bottom:0;z-index:6;margin:18px -20px -20px;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--surface) 70%,transparent)}
+  #sheet .sheet-cta .ai-btn{width:100%;padding:15px;font-size:1.08rem;border-radius:16px;box-shadow:0 8px 22px rgba(194,65,12,.3)}
+}
+@media (hover:hover){.act-i:hover{border-color:var(--cobalt)}}
+/* ---------- Haftalık menü: boş günler sade, bugün vurgulu ---------- */
+.day.is-empty{padding-top:10px;padding-bottom:10px}
+.day.is-empty .day-head{margin:0}
+.day.is-empty h3{color:var(--muted);font-weight:700}
+.day.is-today{border-color:var(--cobalt);box-shadow:0 0 0 1px var(--cobalt) inset}
+.today-tag{margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--cobalt);color:#fff;font-size:.7rem;font-weight:800;vertical-align:middle}
+/* ---------- Öneri kartları ---------- */
+.sug{background:var(--surface);border:1px solid var(--line);box-shadow:0 1px 2px rgba(29,36,51,.04)}
+.sug .sug-img{background:var(--cbg)}
+.sug-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.sug-miss{color:#B45309}
+:root[data-theme="dark"] .sug-miss{color:#FFC078}
+.sug-meta{color:var(--muted);font-size:.78rem}
+.sug-go{font-size:1.5rem;color:var(--muted);padding:0 4px}
+@media (prefers-reduced-motion: no-preference){
+  .act-i{transition:transform .12s ease,border-color .15s ease}
+  .act-i:active{transform:scale(.94)}
+  .act-i[aria-pressed="true"] .act-e{display:inline-block;animation:heartBurst .5s ease}
+  .have-track span{animation:growX .8s cubic-bezier(.2,.8,.2,1) backwards}
+  @keyframes growX{from{width:0}}
+  .sheet-cta .ai-btn{animation:fadeUp .4s ease .2s backwards}
+}
 </style>
 </head>
 <body>
@@ -1107,7 +1160,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 63</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 64</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -1900,23 +1953,29 @@ function detailHTML(r, compact){
     h += `<h2>${esc(r.ad)}</h2>${badgesHTML(r)}`;
     if (!wi && needsWiki(r)) getWikiImage(r).then(v => { if (!v) return; if (sheetKey === r.key) renderSheet(); if (mode === "dish" && currentKey === r.key) renderDishDetail(); });
     const meta = [r.mutfak, r.sure ? r.sure + " dakika" : ""].filter(Boolean).join(", ");
-    h += `<p class="sub">${esc(meta)}${meta ? ". " : ""}${r.malzemeler.length} malzemenin ${have} tanesi evde.</p>`;
+    const pct = Math.round(have / Math.max(1, r.malzemeler.length) * 100);
+    h += `${meta ? `<p class="sub">${esc(meta)}</p>` : ""}<div class="have-bar" title="Evdeki malzemeler"><span class="have-l">🧺 ${r.malzemeler.length} malzemenin <b>${have}</b> tanesi evde</span><span class="have-track"><span style="width:${pct}%"></span></span></div>`;
   }
-  h += `<div class="actions">
-    <button type="button" class="ai-btn" data-act="cook" data-key="${ek}">Pişirmeye başla</button>
-    <a class="yt-btn" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener">▶ Videolu tarif</a>
-    ${r.orijinal && norm(r.orijinal) !== norm(r.ad) ? `<a class="yt-btn yt-alt" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.orijinal + " recipe")}" target="_blank" rel="noopener">▶ “${esc(r.orijinal)}” videoları</a>` : ""}
-    ${planCtl(r)}
-    <button type="button" class="fav" data-act="fav" data-key="${ek}" aria-pressed="${fav}">${fav ? "♥ Favorilerde" : "♡ Favorilere ekle"}</button>
-    ${r.src === "b" ? `<button type="button" class="fav" data-act="shareMenu" data-key="${ek}" aria-expanded="${shareOpen === r.key}">📤 Paylaş</button>` : ""}
-    <div class="serv" role="group" aria-label="Kişi sayısı">
+  const servHTML = `<div class="serv" role="group" aria-label="Kişi sayısı">
       <button type="button" data-act="servMinus" data-key="${ek}" aria-label="Bir kişi azalt" ${serv <= 1 ? "disabled" : ""}>−</button>
       <span>${serv} kişilik</span>
       <button type="button" data-act="servPlus" data-key="${ek}" aria-label="Bir kişi artır" ${serv >= 12 ? "disabled" : ""}>+</button>
-    </div>${r.src === "b" ? shareBoxHTML(r) : ""}
+    </div>`;
+  h += `<div class="actions act2">
+    <button type="button" class="ai-btn cook-cta" data-act="cook" data-key="${ek}">▶ Pişirmeye başla${r.sure ? `<small>${r.sure} dk · adım adım, sesli</small>` : ""}</button>
+    <div class="act-row">
+      <button type="button" class="act-i" data-act="fav" data-key="${ek}" aria-pressed="${fav}"><span class="act-e" aria-hidden="true">${fav ? "♥" : "♡"}</span><span>${fav ? "Favoride" : "Favori"}</span></button>
+      ${planTarget !== null ? "" : `<label class="act-i act-plan"><span class="act-e" aria-hidden="true">📅</span><span>Menüye</span>${planCtl(r, true)}</label>`}
+      ${r.src === "b" ? `<button type="button" class="act-i" data-act="shareMenu" data-key="${ek}" aria-expanded="${shareOpen === r.key}"><span class="act-e" aria-hidden="true">📤</span><span>Paylaş</span></button>` : ""}
+      <a class="act-i" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener"><span class="act-e act-yt" aria-hidden="true">▶</span><span>Video</span></a>
+    </div>
+    ${planTarget !== null ? planCtl(r) : ""}
+    ${lastPlanMsg && lastPlanMsg.key === r.key ? `<p class="plan-ok">✓ ${DAYS[lastPlanMsg.day]} menüsüne eklendi</p>` : ""}
+    ${r.orijinal && norm(r.orijinal) !== norm(r.ad) ? `<a class="link-btn orig-vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.orijinal + " recipe")}" target="_blank" rel="noopener">▶ “${esc(r.orijinal)}” videoları</a>` : ""}
+    ${r.src === "b" ? shareBoxHTML(r) : ""}
   </div>`;
   h += nutHTML(r);
-  h += `<h3>Malzemeler</h3><p class="sub">Evde olanları işaretlemek için dokun.</p><ul class="need">${
+  h += `<div class="ing-head"><h3>Malzemeler</h3>${servHTML}</div><p class="sub">Evde olanları işaretlemek için dokun.</p><ul class="need">${
     r.malzemeler.map((m, i) => {
       const o = owned(m); const a = amountText(m, f);
       return `<li><div class="need-row"><span>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</span><span class="need-btns">${!o && sampleFn ? `<button type="button" class="sub-btn" data-act="subst" data-key="${ek}" data-idx="${i}">Yerine ne koyabilirim?</button>` : ""}<button type="button" class="state ${o ? "have" : "buy"}" data-act="own" data-key="${ek}" data-idx="${i}" aria-pressed="${o}">${o ? "Evde var" : "Alınacak"}</button></span></div>${!o ? substHTML(r, m) : ""}</li>`;
@@ -1929,7 +1988,7 @@ function detailHTML(r, compact){
   if (Math.abs(f - 1) > 0.001) h += `<p class="note">Malzemeler ${serv} kişiye göre ayarlandı. Adımlarda geçen miktarlar ${r.kisi} kişilik tarife göredir; malzeme listesindeki güncel miktarları kullan.</p>`;
   if (r.not) h += `<p class="note">${esc(r.not)}</p>`;
   if (r.src === "ai") h += `<p class="note">Bu tarif yapay zekâ tarafından oluşturuldu; miktarları ve pişirme sürelerini kendi tecrübenle kontrol et.</p>`;
-  if (!compact) h += bugHTML(r) + chefHTML(r, null) + reviewsHTML(r) + photosHTML(r);
+  if (!compact) h += bugHTML(r) + chefHTML(r, null) + reviewsHTML(r) + `<div class="sheet-cta"><button type="button" class="ai-btn" data-act="cook" data-key="${ek}">▶ Pişirmeye başla</button></div>`;
   return h;
 }
 
@@ -2919,6 +2978,7 @@ function renderImgAdmin(){
     ${lastWi ? `<figure class="ia-last"><img src="${esc(lastWi.s)}" alt="${esc(last.ad)}"><figcaption><b>Son üretilen: ${esc(last.ad)}</b> <button type="button" class="link-btn" data-act="imgOne" data-key="${esc(last.key)}">🔄 Beğenmedim, yeniden üret</button></figcaption></figure>` : ""}
     <div class="ia-tabs"><button type="button" class="chip" data-act="imgTab" data-v="eksik" aria-pressed="${imgAdm.tab === "eksik"}">Eksikler (${miss.length})</button><button type="button" class="chip" data-act="imgTab" data-v="hazir" aria-pressed="${imgAdm.tab === "hazir"}">Hazır olanlar (${ready.length})</button></div>
     <div class="ia-grid">${items.map(cell).join("") || `<p class="sub">Burada gösterilecek tarif yok.</p>`}</div>
+    <p class="ia-clean"><button type="button" class="link-btn" data-act="oldPhotoClean">🧹 Eski kullanıcı fotoğraflarını kalıcı olarak sil</button></p>
     <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="imgAdminClose">Kapat</button></div></div>`);
   el.hidden = false;
 }
@@ -2995,7 +3055,7 @@ const BADGES = [
   ["planli", "📅", "Planlı aşçı", "Haftalık menüne 5 yemek ekle.", () => [plan.reduce((n, d) => n + d.length, 0), 5]],
   ["dedektif", "🔎", "Dolap dedektifi", "Fotoğraftan malzemelerini tanıt.", () => [badgeStats.tara || 0, 1]],
   ["merakli", "💬", "Meraklı", "Şef'e bir soru sor.", () => [badgeStats.sef || 0, 1]],
-  ["fotografci", "📸", "Fotoğrafçı", "Yaptığın bir yemeğin fotoğrafını paylaş.", () => [Math.max(badgeStats.foto || 0, Object.keys(myPhotos).length), 1]],
+  ["mezeci", "🫒", "Meze ustası", "3 farklı meze hazırla.", () => [catCount("meze"), 3]],
   ["elestirmen", "⭐", "Eleştirmen", "Bir tarifi değerlendir.", () => [Math.max(badgeStats.yorum || 0, Object.keys(myReviews).length), 1]],
   ["seri3", "🔥", "Üç gün seri", "3 gün üst üste yemek pişir.", () => [streaks().best, 3]],
   ["seri7", "☄️", "Haftalık seri", "7 gün üst üste yemek pişir.", () => [streaks().best, 7]],
@@ -3308,8 +3368,10 @@ function renderResults(){
     const missNames = r.malzemeler.filter(m => !selected.has(m.id) && !BASIC.has(m.id)).map(m => m.ad);
     const note = !missNames.length ? `<small class="sug-ok">✓ Hepsi evde var</small>`
       : x.flexOk ? `<small class="sug-ok">✓ Bu malzemelerle yapılır · ${esc(missNames.join(", ").toLocaleLowerCase("tr"))} isteğe bağlı</small>`
-      : `<small class="sug-miss">Eksik: ${esc(missNames.join(", "))}</small>`;
-    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}</span></button>`;
+      : `<small class="sug-miss">🛒 Alınacak: ${esc(missNames.join(", ").toLocaleLowerCase("tr"))}</small>`;
+    const mainAll = r.malzemeler.filter(m => !BASIC.has(m.id)), haveN = mainAll.filter(m => selected.has(m.id)).length;
+    const meta = [r.sure ? `⏱️ ${r.sure} dk` : "", mainAll.length ? `🧺 ${haveN}/${mainAll.length}` : ""].filter(Boolean).join(" · ");
+    return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}${meta ? `<small class="sug-meta">${meta}</small>` : ""}</span><span class="sug-go" aria-hidden="true">›</span></button>`;
   };
   const readyS = ready.slice(0, 8), nearS = near.slice(0, 6);
   const sugBlock = (tag) => {
@@ -3919,7 +3981,7 @@ function renderCook(){
       if (STATS_URL && r.src === "b") fetch(STATS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({key:r.key})}).catch(() => {});
       setTimeout(confetti, 50);
     }
-    h += `<div class="cook-main"><p class="cook-finish">Afiyet olsun!</p><p class="sub">${esc(r.ad)} tarifinin tüm adımlarını tamamladın.</p>${PHOTO_URL && r.src === "b" ? `<div>${photoInput(r, "📷 Yemeğinin fotoğrafını çek ve paylaş", true)}${uploadState[r.key] ? `<p class="photo-msg">${esc(uploadState[r.key])}</p>` : ""}</div>` : ""}</div>
+    h += `<div class="cook-main"><p class="cook-finish">Afiyet olsun!</p><p class="sub">${esc(r.ad)} tarifinin tüm adımlarını tamamladın.</p></div>
       <div class="cook-nav"><button type="button" data-act="cookPrev">Geri</button><button type="button" class="primary" id="cookNext" data-act="cookClose">Kapat</button></div>`;
   }
   h += `</div>`;
@@ -4076,11 +4138,11 @@ async function runSubst(r, m){
   renderAll();
 }
 
-function planCtl(r){
+function planCtl(r, bare){
   const ek = esc(r.key);
   if (planTarget !== null) return `<button type="button" class="ai-btn" data-act="planAdd" data-key="${ek}">${DAYS[planTarget]} menüsüne ekle</button>`;
   const ok = lastPlanMsg && lastPlanMsg.key === r.key ? `<span class="plan-ok">✓ ${DAYS[lastPlanMsg.day]} menüsüne eklendi</span>` : "";
-  return `<select class="plan-sel" data-plan-key="${ek}" aria-label="Haftalık menüye ekle"><option value="">Menüye ekle…</option>${DAYS.map((d, i) => `<option value="${i}">${d}</option>`).join("")}</select>${ok}`;
+  return `<select class="plan-sel" data-plan-key="${ek}" aria-label="Haftalık menüye ekle"><option value="">Menüye ekle…</option>${DAYS.map((d, i) => `<option value="${i}">${d}</option>`).join("")}</select>${bare ? "" : ok}`;
 }
 function renderBanner(){
   $("planBanner").innerHTML = planTarget !== null
@@ -4109,10 +4171,10 @@ function planShopText(){
 }
 function renderPlan(){
   const total = plan.reduce((n, d) => n + d.length, 0);
-  let h = aiPlanHTML() + `<div class="plan-grid">${DAYS.map((d, i) => `<div class="day"><div class="day-head"><h3>${d}</h3><button type="button" class="link-btn" data-act="planPick" data-day="${i}">+ Yemek ekle</button></div>${
+  let h = aiPlanHTML() + `<div class="plan-grid">${DAYS.map((d, i) => `<div class="day${plan[i].length ? "" : " is-empty"}${i === (new Date().getDay() + 6) % 7 ? " is-today" : ""}"><div class="day-head"><h3>${d}${i === (new Date().getDay() + 6) % 7 ? ` <span class="today-tag">Bugün</span>` : ""}</h3><button type="button" class="link-btn" data-act="planPick" data-day="${i}">+ Yemek ekle</button></div>${
     plan[i].length
       ? `<ul class="day-list">${plan[i].map((k, j) => { const r = REG.get(k); return r ? `<li><button type="button" class="day-item" data-act="openSaved" data-key="${esc(k)}">${esc(r.ad)} <span class="amt">${getServ(r)} kişilik</span></button><button type="button" class="x" data-act="planRemove" data-day="${i}" data-idx="${j}" aria-label="${esc(r.ad)} yemeğini kaldır">✕</button></li>` : ""; }).join("")}</ul>`
-      : `<p class="sub" style="margin:0">Henüz yemek yok.</p>`
+      : ""
   }</div>`).join("")}</div>`;
   if (!total){
     h += `<div class="empty">Menün boş. Bir güne “+ Yemek ekle” ile başla ya da herhangi bir tarifteki “Menüye ekle” seçeneğini kullan.</div>`;
@@ -4290,6 +4352,14 @@ document.addEventListener("click", e => {
     case "imgAdminClose": { const ie = $("imgadm"); if (ie) ie.hidden = true; imgAdm.open = false; break; }
     case "imgStart": if (!imgAdm.run){ imgAdm.run = true; imgAdm.skip.clear(); imgRun(); } break;
     case "imgStop": imgAdm.run = false; imgAdm.msg = "Durduruldu. Kaldığın yerden devam edebilirsin."; renderImgAdmin(); break;
+    case "oldPhotoClean": {
+      if (!confirm("Kullanıcıların daha önce yüklediği bütün yemek fotoğrafları kalıcı olarak silinecek. Emin misin?")) break;
+      el.disabled = true; el.textContent = "⏳ Siliniyor…";
+      fetch(PHOTO_URL + "/temizle", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({admin:adminKey})})
+        .then(res => res.json().catch(() => null)).then(d => { imgAdm.msg = d && d.ok ? `🧹 ${d.silinen} kayıt silindi. Eski fotoğraflar artık tamamen kaldırıldı.` : "⚠️ Silinemedi: " + ((d && d.error) || "aracı kod güncel olmayabilir"); renderImgAdmin(); })
+        .catch(() => { imgAdm.msg = "⚠️ Bağlantı hatası."; renderImgAdmin(); });
+      break;
+    }
     case "imgTab": imgAdm.tab = el.dataset.v; renderImgAdmin(); break;
     case "imgOne": imgOne(el.dataset.key, !!(el.closest && el.closest("#imgadm"))); break;
     case "bugAdminClose": { const be = $("bugs"); if (be) be.hidden = true; break; }
@@ -4461,7 +4531,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
