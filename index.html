@@ -1237,6 +1237,102 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 @keyframes wnFlash{0%,100%{box-shadow:0 0 0 0 transparent}30%,70%{box-shadow:0 0 0 4px color-mix(in srgb,var(--cobalt) 45%,transparent)}}
 .wn-flash{animation:wnFlash 1.6s ease 2;border-radius:14px}
 @media (prefers-reduced-motion: no-preference){ .wn-row{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards} .wn-row:nth-child(2){animation-delay:.04s}.wn-row:nth-child(3){animation-delay:.08s}.wn-row:nth-child(4){animation-delay:.12s}.wn-row:nth-child(5){animation-delay:.16s}.wn-row:nth-child(6){animation-delay:.2s}.wn-row:nth-child(7){animation-delay:.24s} }
+/* ============ Sepet ============ */
+.tab-i{position:relative}
+.tab-badge{position:absolute;top:2px;right:calc(50% - 26px);min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:#E03131;color:#fff;font-size:.72rem;font-weight:800;line-height:20px;text-align:center;box-shadow:0 0 0 2px var(--surface);pointer-events:none}
+@media (min-width:700px){.tab-badge{position:static;margin-left:6px;display:inline-block;vertical-align:middle;box-shadow:none}}
+.fly-dot{position:fixed;z-index:9998;font-size:1.6rem;line-height:1;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25))}
+.cart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.cart-head h2{margin:0}
+.cart-head .sub{margin:4px 0 0}
+.cart-add{display:flex;gap:8px;margin:8px 0 12px}
+.cart-add .search{flex:1;min-width:0}
+.cart-quick{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:14px}
+.cq-l{font-size:.82rem;font-weight:800;color:var(--muted);margin-right:2px}
+.chip.mini.on{background:color-mix(in srgb,#2B8A3E 12%,var(--surface));border-color:#2B8A3E;color:#2B8A3E}
+.cart-aisle{margin:16px 0 4px}
+.cart-aisle h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:1rem}
+.cart-list{display:flex;flex-direction:column;gap:6px}
+.cart-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);touch-action:pan-y;transition:transform .2s ease,opacity .25s ease,background-color .2s ease;user-select:none}
+.cart-row.swipe-ok{background:color-mix(in srgb,#2B8A3E 14%,var(--surface));border-color:#2B8A3E}
+.cart-check{width:28px;height:28px;flex:0 0 28px;border-radius:50%;border:2px solid var(--line);background:var(--surface);color:#fff;font-weight:900;cursor:pointer;display:grid;place-items:center;padding:0}
+.cart-check[aria-pressed="true"]{background:#2B8A3E;border-color:#2B8A3E}
+.cart-e{font-size:1.25rem}
+.cart-name{flex:1;min-width:0;display:flex;flex-direction:column}
+.cart-name b{font-weight:700}
+.cart-name .amt{color:var(--muted);font-size:.85rem}
+.cart-name small{color:var(--muted);font-size:.75rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cart-row.is-done{opacity:.6}
+.cart-row.is-done .cart-name b{text-decoration:line-through}
+.cart-search{text-decoration:none;font-size:1.05rem;padding:4px}
+.cart-x{border:0;background:transparent;color:var(--muted);font-size:1rem;cursor:pointer;padding:6px}
+.cart-done{margin-top:14px;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.cart-done .cart-list{width:100%}
+.cart-empty{text-align:center;padding:30px 12px}
+.cart-empty-e{font-size:3rem;margin-bottom:6px}
+.cart-plan{margin:4px 0 8px}
+.cart-order{margin-top:16px}
+.cart-order .market{cursor:pointer;font:inherit}
+.cart-share{margin-top:16px}
+.share-code{font-size:2rem;font-weight:900;letter-spacing:.18em;margin:6px 0 10px;color:var(--cobalt)}
+.cart-join{display:flex;gap:8px;margin-top:10px}
+.cart-join .search{flex:1;min-width:0;text-transform:uppercase;letter-spacing:.1em}
+.cart-mini{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:5px 8px;font-size:.9rem;cursor:pointer;line-height:1}
+.cart-mini.on{border-color:#2B8A3E;background:color-mix(in srgb,#2B8A3E 10%,var(--surface))}
+.market-note{margin:6px 0 10px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,#2B8A3E 10%,var(--surface));font-size:.9rem}
+/* Market modu: büyük ve tek elle kullanılabilir */
+body.market-mode .hero,body.market-mode #dietBar,body.market-mode .site-foot{display:none}
+body.market-mode .cart-row{padding:16px 14px;border-radius:18px}
+body.market-mode .cart-name b{font-size:1.25rem}
+body.market-mode .cart-name .amt{font-size:1rem}
+body.market-mode .cart-check{width:38px;height:38px;flex-basis:38px}
+body.market-mode .cart-e{font-size:1.6rem}
+body.market-mode .cart-aisle h3{font-size:1.15rem}
+/* Geri al çubuğu */
+.snack{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateY(20px);opacity:0;pointer-events:none;z-index:9990;display:flex;align-items:center;gap:14px;max-width:calc(100% - 24px);padding:12px 16px;border-radius:14px;background:#1D2433;color:#fff;font-size:.9rem;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:opacity .25s ease,transform .3s cubic-bezier(.22,1,.36,1)}
+.snack.show{opacity:1;transform:none;pointer-events:auto}
+.snack button{border:0;background:transparent;color:#FFB37A;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+@media (min-width:700px){.snack{bottom:24px}}
+/* ============ Sade Dolabım ============ */
+.big-search{font-size:1.08rem;padding:16px 18px;border-radius:18px;border-width:2px}
+@media (min-width:700px){#pantryMode .toolbar{flex-wrap:wrap} #pantryMode .big-search{flex:1 1 100%} #pantryMode .scan-btn{flex:1 1 100%;justify-content:center}}
+.big-search:focus{border-color:var(--cobalt)}
+.multi-add{display:flex;align-items:center;gap:8px;width:100%;margin:10px 0 4px;padding:12px 14px;border:1.5px dashed var(--cobalt);border-radius:14px;background:color-mix(in srgb,var(--cobalt) 6%,var(--surface));color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.ma-k{font-weight:900;color:var(--cobalt);font-size:1.2rem}
+.ma-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ma-t small{color:var(--muted)}
+.cart-sum{font-size:1rem;margin:0}
+.freq-l{margin:14px 0 8px;font-size:.85rem;font-weight:800;color:var(--muted)}
+.more-btn{display:block;width:100%;margin:14px 0 0;padding:10px 12px;border:1px dashed var(--line);border-radius:14px;background:transparent;color:var(--muted);font:inherit;font-weight:700;cursor:pointer;text-align:left}
+.more-panel{margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:16px;background:var(--surface);display:flex;flex-direction:column;gap:6px}
+.more-panel .lo-btn{margin:4px 0}
+.live-count{margin:10px 0 0;font-size:.92rem;color:var(--muted)}
+.live-count b{color:var(--cobalt);font-size:1.1rem}
+/* İskelet yükleme */
+.skel-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.skel-card{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.skel{display:block;border-radius:10px;background:linear-gradient(100deg,var(--bg) 30%,color-mix(in srgb,var(--line) 70%,var(--bg)) 50%,var(--bg) 70%);background-size:200% 100%}
+.skel-img{width:64px;height:64px;flex:0 0 64px;border-radius:12px}
+.skel-lines{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center}
+.skel-l1{height:14px;width:60%}.skel-l2{height:10px;width:85%}.skel-l3{height:10px;width:40%}
+@media (prefers-reduced-motion: no-preference){
+  @keyframes bumpK{0%{transform:scale(1)}35%{transform:scale(1.35)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+  @keyframes rowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes rowOut{to{opacity:0;transform:translateX(70px);height:0;margin:0;padding-top:0;padding-bottom:0}}
+  @keyframes rowGone{to{opacity:0;transform:scale(.96)}}
+  @keyframes pulseC{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+  .bump{animation:bumpK .5s cubic-bezier(.22,1,.36,1)}
+  .tab-badge.bump{animation:bumpK .5s cubic-bezier(.22,1,.36,1)}
+  .cart-row{animation:rowIn .35s cubic-bezier(.22,1,.36,1) backwards}
+  .cart-row.leaving{animation:rowOut .28s ease forwards}
+  .cart-row.removing{animation:rowGone .2s ease forwards}
+  .live-count.pulse{animation:pulseC .45s ease}
+  .live-count.pulse b{display:inline-block;animation:bumpK .5s ease}
+  .skel{animation:shimmer 1.4s linear infinite}
+  .multi-add{animation:softIn .3s ease}
+  .more-panel{animation:softIn .35s cubic-bezier(.22,1,.36,1)}
+  .cart-empty-e{display:inline-block;animation:bob 2.6s ease-in-out infinite}
+}
 </style>
 </head>
 <body>
@@ -1247,7 +1343,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="dish" id="tab-dish"><span class="tab-i" aria-hidden="true">🔎</span><span class="tab-t">Yemek ara</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="plan" id="tab-plan"><span class="tab-i" aria-hidden="true">📅</span><span class="tab-t">Menü</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="fav" id="tab-fav"><span class="tab-i" aria-hidden="true">🏆</span><span class="tab-t">En sevilenler</span></button>
-      <button type="button" role="tab" class="tab" data-act="tab" data-mode="recent" id="tab-recent"><span class="tab-i" aria-hidden="true">🕘</span><span class="tab-t">Geçmiş</span></button>
+      <button type="button" role="tab" class="tab" data-act="tab" data-mode="cart" id="tab-cart"><span class="tab-i" aria-hidden="true">🛒</span><span class="tab-t">Sepet</span></button>
     </div>
     <div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></nav>
   <header class="hero">
@@ -1276,7 +1372,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
       <div class="toolbar">
-        <input class="search" id="search" type="search" placeholder="🔎 Malzeme ara: patlıcan, kıyma…" aria-label="Malzeme ara">
+        <input class="search big-search" id="search" type="search" enterkeyhint="done" autocomplete="off" placeholder="🔎 Dolabında ne var? Ör: domates, soğan, yumurta" aria-label="Dolabındaki malzemeleri yaz">
         <label class="fav scan-btn" title="Buzdolabının ya da tezgâhın fotoğrafını çek, malzemeleri biz bulalım">📸 <span>Fotoğraftan tanı</span><input type="file" accept="image/*" capture="environment" id="fridgeInput" hidden></label>
       </div>
       <div id="groups"></div>
@@ -1293,6 +1389,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 
   <section class="plan" id="planMode" aria-label="Haftalık menü" hidden></section>
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
+  <section class="cart" id="cartMode" aria-label="Sepet" hidden></section>
   <footer class="site-foot">
     <div class="foot-grid">
       <div class="foot-brand">
@@ -1319,7 +1416,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
           <li><button type="button" data-act="footGo" data-mode="dish">Yemek ara</button></li>
           <li><button type="button" data-act="footGo" data-mode="plan">Haftalık menü</button></li>
           <li><button type="button" data-act="footGo" data-mode="fav">En sevilenler ve rozetler</button></li>
-          <li><button type="button" data-act="footGo" data-mode="recent">Geçmiş</button></li>
+          <li><button type="button" data-act="footGo" data-mode="cart">Sepetim</button></li>
         </ul>
       </nav>
       <nav class="foot-col" aria-label="Destek">
@@ -1348,7 +1445,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 72</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 73</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2185,11 +2282,11 @@ function detailHTML(r, compact){
   h += `<div class="ing-head"><h3>Malzemeler</h3>${servHTML}</div><p class="sub">Evde olanları işaretlemek için dokun.</p><ul class="need">${
     r.malzemeler.map((m, i) => {
       const o = owned(m); const a = amountText(m, f);
-      return `<li><div class="need-row"><span>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</span><span class="need-btns">${!o && sampleFn ? `<button type="button" class="sub-btn" data-act="subst" data-key="${ek}" data-idx="${i}">Yerine ne koyabilirim?</button>` : ""}<button type="button" class="state ${o ? "have" : "buy"}" data-act="own" data-key="${ek}" data-idx="${i}" aria-pressed="${o}">${o ? "Evde var" : "Alınacak"}</button></span></div>${!o ? substHTML(r, m) : ""}</li>`;
+      return `<li><div class="need-row"><span>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</span><span class="need-btns">${!o && sampleFn ? `<button type="button" class="sub-btn" data-act="subst" data-key="${ek}" data-idx="${i}">Yerine ne koyabilirim?</button>` : ""}${!o ? (() => { const c = inCartFor(m.ad, m.id, r.ad); return `<button type="button" class="cart-mini${c ? " on" : ""}" data-act="cartAddOne" data-key="${ek}" data-idx="${i}" aria-pressed="${c}" aria-label="${c ? "Sepette" : "Sepete ekle"}" title="${c ? "Sepette" : "Sepete ekle"}">${c ? "✓🛒" : "🛒"}</button>`; })() : ""}<button type="button" class="state ${o ? "have" : "buy"}" data-act="own" data-key="${ek}" data-idx="${i}" aria-pressed="${o}">${o ? "Evde var" : "Alınacak"}</button></span></div>${!o ? substHTML(r, m) : ""}</li>`;
     }).join("")
   }</ul>`;
   h += miss.length
-    ? `<div class="shop"><h3>Alışveriş listen</h3><ul>${miss.map(m => { const a = amountText(m, f); return `<li>${esc(m.ad)}${a ? ` <span class="amt">${esc(a)}</span>` : ""}</li>`; }).join("")}</ul><button type="button" class="ai-btn" data-act="copy" data-key="${ek}">Listeyi kopyala</button>${orderHTML(r.key, miss.map(m => m.ad))}</div>`
+    ? (() => { const notIn = miss.filter(m => !inCartFor(m.ad, m.id, r.ad)); return `<div class="shop"><h3>🛒 Eksiklerin (${miss.length})</h3><p class="sub">${esc(miss.map(m => m.ad).join(", "))}</p><div class="shop-acts">${notIn.length ? `<button type="button" class="ai-btn" data-act="cartAddMissing" data-key="${ek}">🛒 ${notIn.length === miss.length ? "Eksiklerin hepsini" : `Kalan ${notIn.length} eksiği`} sepete ekle</button>` : `<span class="plan-ok">✓ Eksiklerin hepsi sepette</span>`}${cartCount() ? `<button type="button" class="fav" data-act="goCart">Sepete git (${cartCount()})</button>` : ""}</div></div>`; })()
     : `<p class="done">Tüm malzemeler evde, hemen başlayabilirsin.</p>`;
   h += `<h3>Tarif</h3><ol class="steps">${r.adimlar.map(s => `<li>${esc(s)}</li>`).join("")}</ol>`;
   if (Math.abs(f - 1) > 0.001) h += `<p class="note">Malzemeler ${serv} kişiye göre ayarlandı. Adımlarda geçen miktarlar ${r.kisi} kişilik tarife göredir; malzeme listesindeki güncel miktarları kullan.</p>`;
@@ -2373,7 +2470,8 @@ const HERO = {
   dish:["Ne pişirelim?","Bir kategori seç ya da yemek ara."],
   plan:["Haftalık menü","Günlere yemek ekle, alışveriş listen hazır."],
   fav:["En sevilenler","Türk ve dünya mutfağının en sevilenleri, senin favorilerin."],
-  recent:["Son baktıkların","En son açtığın tarifler."]
+  recent:["En sevilenler","Türk ve dünya mutfağının en sevilenleri, senin favorilerin."],
+  cart:["Sepetim","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin."]
 };
 function greeting(){
   const h = new Date().getHours();
@@ -2388,10 +2486,14 @@ function renderHero(){
   $("heroText").textContent = mode === "pantry" ? "Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim." : HERO[mode][1];
   $("heroCta").hidden = $("heroAi").hidden = true;
   const listMode = mode === "fav" || mode === "recent";
-  ["pantry","dish","plan","fav","recent"].forEach(m => $("tab-" + m).setAttribute("aria-selected", mode === m));
+  if (mode === "recent") mode = "fav"; // Geçmiş sekmesi kaldırıldı
+  ["pantry","dish","plan","fav","cart"].forEach(m => $("tab-" + m).setAttribute("aria-selected", mode === m));
+  $("cartMode").hidden = mode !== "cart";
+  document.body.classList.toggle("market-mode", marketMode && mode === "cart");
   requestAnimationFrame(moveTabPill);
   const planN = plan.reduce((n, d) => n + d.length, 0);
   $("tab-plan").innerHTML = `<span class="tab-i" aria-hidden="true">📅</span><span class="tab-t">Menü${planN ? ` (${planN})` : ""}</span>`;
+  { const cn = cartCount(); $("tab-cart").innerHTML = `<span class="tab-i" aria-hidden="true">🛒</span><span class="tab-t">Sepet</span>${cn ? `<span class="tab-badge" id="cartBadge" aria-label="${cn} ürün">${cn}</span>` : ""}`; }
   $("pantryMode").hidden = mode !== "pantry";
   $("dishMode").hidden = mode !== "dish";
   $("planMode").hidden = mode !== "plan";
@@ -3041,7 +3143,52 @@ function renderPrefs(){
 function openPrefs(onb){ prefsOnb = !!onb; prefSearchText = ""; renderPrefs(); }
 function closePrefs(){ const el = $("prefs"); if (el) el.hidden = true; renderAll(); }
 document.addEventListener("input", e => { if (e.target && e.target.id === "prefSearch"){ prefSearchText = e.target.value; renderPrefs(); } });
-let prefOpen = false, quickAll = false;
+let prefOpen = false, quickAll = false, moreOpen = false, readyN = 0, nearN = 0, liveShown = -1;
+function freqIngs(){
+  const basics = GROUPS[0].items.map(([b]) => b);
+  const ids = Object.entries(ingFreq).filter(([id]) => LABEL[id] && !basics.includes(id)).sort((a, b) => b[1] - a[1]).map(([id]) => id).slice(0, 8);
+  for (const id of QUICK) if (ids.length < 8 && !ids.includes(id)) ids.push(id);
+  return ids;
+}
+function bumpIngFreq(id){ ingFreq[id] = (ingFreq[id] || 0) + 1; try { localStorage.setItem("pisir-malz-sik", JSON.stringify(ingFreq)); } catch(e) {} }
+/* "domates, soğan yumurta" → malzemeler */
+function parseIngText(text){
+  const labels = Object.entries(LABEL).map(([id, l]) => [id, norm(l)]).sort((a, b) => b[1].length - a[1].length);
+  const ids = [], unknown = [];
+  String(text).split(/[,;\n]+|\s+ve\s+|\s+ile\s+/).map(x => x.trim()).filter(Boolean).forEach(ch => {
+    let rest = " " + norm(ch) + " ", hit = 0;
+    for (const [id, l] of labels){ if (rest.includes(" " + l + " ")){ ids.push(id); rest = rest.replace(" " + l + " ", " "); hit++; } }
+    rest.trim().split(/\s+/).filter(w => w.length >= 3).forEach(w => {
+      const m = labels.find(([id, l]) => !l.includes(" ") && l.length >= 3 && (w.startsWith(l) || (w.length >= 5 && fuzzyHit(LABEL[id], w))))
+        || labels.filter(([id, l]) => l.includes(" ") && l.split(" ").some(t => t === w || (w.length >= 4 && t.startsWith(w))))
+             .sort((a, b) => (a[1].split(" ").includes(w) ? 0 : 1) - (b[1].split(" ").includes(w) ? 0 : 1) || ((QUICK.indexOf(a[0]) + 1 || 999) - (QUICK.indexOf(b[0]) + 1 || 999)) || a[1].length - b[1].length)[0]; // "peynir" → Beyaz peynir, "mercimek" → Kırmızı mercimek
+      if (m){ ids.push(m[0]); hit++; } else if (!hit) unknown.push(w);
+    });
+    if (!hit && unknown.length > 1){ const joined = unknown.splice(unknown.length - ch.trim().split(/\s+/).filter(w => w.length >= 3).length).join(" "); if (joined) unknown.push(joined); }
+  });
+  return {ids:[...new Set(ids)], unknown:[...new Set(unknown.map(cap))]};
+}
+function multiAdd(fromEl){
+  const inp = $("search"), raw = inp.value.trim(); if (!raw) return;
+  const pm = parseIngText(raw);
+  if (!pm.ids.length && !pm.unknown.length) return;
+  pm.ids.forEach(id => { selected.add(id); bumpIngFreq(id); });
+  pm.unknown.forEach(x => extras.add(x));
+  inp.value = ""; save();
+  fly(fromEl || inp, ".mybox", pm.ids.length ? (ING_EMOJI[pm.ids[0]] || "🧺") : "🧺");
+  renderAll();
+  showToast(`🧺 ${pm.ids.length + pm.unknown.length} malzeme dolabına eklendi`);
+}
+function skelHTML(n){ return `<div class="skel-list" aria-hidden="true">${Array.from({length:n}, () => `<div class="skel-card"><span class="skel skel-img"></span><span class="skel-lines"><span class="skel skel-l1"></span><span class="skel skel-l2"></span><span class="skel skel-l3"></span></span></div>`).join("")}</div>`; }
+function liveCountHTML(){
+  return readyN || nearN ? `🍳 Şu an <b class="lc-n">${readyN}</b> yemek yapabilirsin${nearN ? ` · ${nearN} yemek için 1-2 malzeme eksik` : ""}` : `🍳 Biraz daha malzeme ekle, yemekler belirsin`;
+}
+function updateLiveCount(){
+  const el = $("liveCount"); if (!el) return;
+  el.innerHTML = liveCountHTML();
+  if (liveShown !== readyN && liveShown >= 0){ el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); }
+  liveShown = readyN;
+}
 function prefRowHTML(){
   const sureL = pantryTime ? (pantryTime === 60 ? "1 saate kadar" : `${pantryTime} dk'ya kadar`) : "her süre";
   const sum = `<button type="button" class="pref-sum" data-act="prefToggle" aria-expanded="${prefOpen}"><span>👥 ${kisiNow()} kişi</span><span>⏱️ ${sureL}</span>${prefs.sev.length ? `<span>🚫 ${prefs.sev.length} sevmediğin</span>` : ""}<span class="pref-sum-go">${prefOpen ? "Kapat ▲" : "Değiştir ▼"}</span></button>`;
@@ -3264,6 +3411,7 @@ function renderLeftover(){
     ${matches.length ? `<h3 class="lo-h">📖 Tariflerimizden</h3><div class="dish-grid lo-grid">${matches.slice(0, 8).map(r => dishCard(r, "openSaved", "")).join("")}</div>` : ""}
     ${sampleFn ? `<h3 class="lo-h">✨ Yapay zekâdan fikirler</h3><button type="button" class="ai-btn" data-act="loAI" ${!any || lo.state === "loading" ? "disabled" : ""}>${lo.state === "loading" ? "⏳ Fikirler hazırlanıyor…" : aiList.length ? "🔄 Yeni fikirler al" : "✨ Bu artanlarla ne yapabilirim?"}</button>
       ${!any ? `<p class="sub">Önce yukarıdan en az bir artan seç ya da yaz.</p>` : ""}
+      ${lo.state === "loading" ? skelHTML(3) : ""}
       ${lo.state === "error" ? `<p class="vp-msg">⚠️ ${esc(lo.msg)}</p>` : ""}
       ${aiList.length ? `<div class="lo-ai">${aiList.map(cardHTML).join("")}</div>` : ""}` : ""}
     <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="loClose">Kapat</button></div></div>`);
@@ -3388,12 +3536,15 @@ function micBarHTML(){
 function renderMic(){ const b = $("micBar"); if (b) b.outerHTML = micBarHTML() || `<div id="micBar" hidden></div>`; }
 
 /* ---------- Yenilikler ---------- */
-const WHATS_NEW_VER = 71;
+const WHATS_NEW_VER = 73;
 const WHATS_NEW = [
+  ["🛒", "Sepet", "Tariflerdeki eksikleri tek dokunuşla sepete at; reyonlara göre gruplu, aynı malzemeler birleşir.", "wn-cart"],
+  ["🛍️", "Market modu", "Markette büyük yazı, ekran açık; ürünü sağa kaydırınca “aldım” olur, dolabına geçer.", "wn-market"],
+  ["👨‍👩‍👧", "Ortak sepet", "Sepetini bir kodla paylaş; evdekiler aynı listeyi görsün.", "wn-share"],
+  ["🔎", "Yeni Dolabım", "Tek büyük arama kutusu: “domates, soğan, yumurta” yaz, hepsi birden eklensin.", "wn-pantry"],
   ["🌱", "Mevsiminde", "Bu ay taze olan sebzeler ve onlarla yapılan yemekler.", "wn-season"],
   ["🍚", "Artanları değerlendir", "Dünden kalan pilav, ekmek, patatesle ne yapabileceğini bul.", "wn-lo"],
   ["⏰", "Son kullanma takibi", "Bozulmak üzere olanları işaretle; öneriler önce onları kullansın.", "wn-skt"],
-  ["🛒", "Reyonlara göre alışveriş listesi", "Haftalık menünün eksikleri manav, kasap, bakkal diye gruplu; WhatsApp'tan gönder.", "wn-shop"],
   ["⏳", "Bekleme süreleri", "Dinlendirme ve buzdolabında bekleme artık tarif süresinde görünüyor.", "wn-wait"],
   ["🔔", "Akşam hatırlatması", "Her akşam seçtiğin saatte takvimin sana hatırlatsın.", "wn-remind"]
 ];
@@ -3410,11 +3561,222 @@ function openWhatsNew(){
 }
 function closeWhatsNew(){ const el = $("whatsnew"); if (el) el.hidden = true; }
 function goMode(m){ const t = document.querySelector(`[data-mode="${m}"]`); if (t) t.click(); }
+{ // Ortak sepet bağlantısıyla açıldıysa: Sepet'e geç ve katıl
+  try {
+    const u = new URL(location.href), k = (u.searchParams.get("sepet") || "").toUpperCase();
+    if (/^[A-Z0-9]{6}$/.test(k)){ u.searchParams.delete("sepet"); history.replaceState(null, "", u.pathname + u.search + u.hash); mode = "cart"; setTimeout(() => { if (cart.kod !== k) cartJoin(k); else renderAll(); }, 300); }
+  } catch(e) {}
+}
 setTimeout(() => {
   let seen = 0; try { seen = Number(localStorage.getItem("pisir-yenilik")) || 0; } catch(e) {}
   const tourOpen = $("tour") && !$("tour").hidden;
   if (seen < WHATS_NEW_VER && !tourOpen && localStorage.getItem("pisir-tur")) openWhatsNew();
 }, 1200);
+
+/* =================== 🛒 SEPET =================== */
+function closeSheetIfOpen(){ const sh = $("sheet"); if (sh && !sh.hidden){ try { closeSheet(); } catch(e){ sh.hidden = true; } } }
+let cart = load("pisir-sepet", {items:[], kod:"", sync:0});
+if (!cart || !Array.isArray(cart.items)) cart = {items:[], kod:"", sync:0};
+cart.items = cart.items.filter(x => x && x.id && !(x.del && x.t < Date.now() - 14 * 864e5)).map(x => Object.assign({amounts:{}, free:[], from:[], ing:"", done:false, del:false, t:0}, x));
+let cartFreq = load("pisir-sepet-sik", {}); if (!cartFreq || typeof cartFreq !== "object") cartFreq = {};
+let ingFreq = load("pisir-malz-sik", {}); if (!ingFreq || typeof ingFreq !== "object") ingFreq = {};
+let marketMode = false, cartDoneOpen = false, cartSyncMsg = "", cartOrderMsg = "";
+let cartMarket = (() => { try { return localStorage.getItem("pisir-market") || ""; } catch(e){ return ""; } })();
+const CART_URL = () => PHOTO_URL ? PHOTO_URL.replace(/\/foto$/, "/sepet") : "";
+const cartLive = () => cart.items.filter(x => !x.del);
+const cartCount = () => cartLive().filter(x => !x.done).length;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function saveCart(push = true){ try { localStorage.setItem("pisir-sepet", JSON.stringify(cart)); } catch(e) {} if (push && cart.kod) scheduleCartPush(); }
+function cartFind(name, ing){ const n = norm(name); return cartLive().find(x => (ing && x.ing === ing) || norm(x.ad) === n); }
+const inCart = (name, ing) => { const x = cartFind(name, ing); return !!(x && !x.done); };
+const inCartFor = (name, ing, dish) => { const x = cartFind(name, ing); return !!(x && !x.done && x.from.includes(dish)); };
+function amountStr(x){ return [...Object.entries(x.amounts || {}).map(([u, q]) => fmt(q, u) + (u ? " " + u : "")), ...(x.free || [])].join(" + "); }
+function cartAisle(x){ return aisleOf({m:{id:x.ing}, ad:x.ad}); }
+function cartEmoji(x){ return (x.ing && ING_EMOJI[x.ing]) || "🛒"; }
+function addToCart({ad, ing = "", qty = null, unit = "", from = ""}, opts = {}){
+  ad = String(ad || "").trim(); if (!ad) return null;
+  if (!opts.force && ing && selected.has(ing)){
+    snack(`${LABEL[ing] || ad} dolabında var.`, "Yine de ekle", () => { addToCart({ad, ing, qty, unit, from}, {force:true}); });
+    return null;
+  }
+  let x = cartFind(ad, ing);
+  if (x && x.done){ x.done = false; x.amounts = {}; x.free = []; }
+  if (!x){ x = {id:uid(), ad:ing && LABEL[ing] ? LABEL[ing] : cap(ad), ing:ing || "", amounts:{}, free:[], from:[], done:false, del:false, t:0}; cart.items.push(x); }
+  if (qty != null && isFinite(qty) && Number(qty) > 0) x.amounts[unit || ""] = (x.amounts[unit || ""] || 0) + Number(qty);
+  else if (unit && !x.free.includes(unit)) x.free.push(unit);
+  if (from && !x.from.includes(from)) x.from.push(from);
+  x.t = Date.now();
+  const fk = norm(x.ad); cartFreq[fk] = {ad:x.ad, ing:x.ing, n:((cartFreq[fk] || {}).n || 0) + 1};
+  try { localStorage.setItem("pisir-sepet-sik", JSON.stringify(cartFreq)); } catch(e) {}
+  saveCart();
+  return x;
+}
+function addRecipeIngToCart(r, m){
+  const f = getServ(r) / (r.kisi || 4);
+  return addToCart({ad:m.ad, ing:m.id || "", qty:m.qty != null ? m.qty * f : null, unit:m.unit || "", from:r.ad}, {force:true});
+}
+function cartRemove(id){
+  const x = cart.items.find(i => i.id === id); if (!x) return;
+  x.del = true; x.t = Date.now(); saveCart();
+  snack(`${x.ad} sepetten çıkarıldı.`, "Geri al", () => { x.del = false; x.t = Date.now(); saveCart(); });
+}
+function cartSetDone(id, done){
+  const x = cart.items.find(i => i.id === id); if (!x) return;
+  x.done = done; x.t = Date.now();
+  const toPantry = done && x.ing && !selected.has(x.ing);
+  if (toPantry){ selected.add(x.ing); save(); }
+  saveCart();
+  if (done) snack(`✓ ${x.ad} alındı${toPantry ? " · dolabına eklendi" : ""}.`, "Geri al", () => { x.done = false; x.t = Date.now(); if (toPantry){ selected.delete(x.ing); save(); } saveCart(); });
+}
+function cartText(){
+  const todo = cartLive().filter(x => !x.done);
+  return "🛒 Alışveriş listem\n" + AISLES.map(a => [a, todo.filter(x => cartAisle(x) === a[0])]).filter(([, l]) => l.length)
+    .map(([a, l]) => "\n" + a[1] + "\n" + l.map(x => "• " + x.ad + (amountStr(x) ? " (" + amountStr(x) + ")" : "")).join("\n")).join("\n");
+}
+function freqItems(){
+  const out = Object.values(cartFreq).sort((a, b) => b.n - a.n).map(x => ({ad:x.ad, ing:x.ing || ""}));
+  for (const [ad, ing] of [["Süt","sut"],["Ekmek","ekmek"],["Yumurta","yumurta"],["Domates","domates"],["Soğan","sogan"],["Yoğurt","yogurt"],["Beyaz peynir","peynir"],["Muz","muz"]])
+    if (out.length < 8 && !out.some(x => norm(x.ad) === norm(ad))) out.push({ad, ing});
+  return out.slice(0, 8);
+}
+/* Ortak sepet: değişiklikler 1,2 sn sonra gönderilir; Sepet açıkken 20 sn'de bir yenilenir */
+let cartPushT = null;
+function scheduleCartPush(){ clearTimeout(cartPushT); cartPushT = setTimeout(cartPush, 1200); }
+function cartMerge(remote){
+  const m = new Map(cart.items.map(x => [x.id, x]));
+  (remote || []).forEach(x => { const o = m.get(x.id); if (!o || x.t > o.t) m.set(x.id, Object.assign({amounts:{}, free:[], from:[], ing:""}, x)); });
+  cart.items = [...m.values()];
+}
+async function cartPush(){
+  if (!cart.kod || !CART_URL()) return;
+  try {
+    const res = await fetch(CART_URL(), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({kod:cart.kod, items:cart.items})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && Array.isArray(d.items)){ cartMerge(d.items); cart.sync = Date.now(); cartSyncMsg = ""; saveCart(false); }
+    else cartSyncMsg = res.status === 404 ? "Ortak sepet bulunamadı; süresi dolmuş olabilir." : ((d && d.error) || "Eşitlenemedi.");
+  } catch(e){ cartSyncMsg = "İnternet yok; bağlantı gelince eşitlenecek."; }
+  if (mode === "cart") renderCart();
+}
+async function cartPull(){
+  if (!cart.kod || !CART_URL() || document.hidden) return;
+  try {
+    const res = await fetch(CART_URL() + "?kod=" + cart.kod);
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && Array.isArray(d.items)){ const before = JSON.stringify(cart.items); cartMerge(d.items); cart.sync = Date.now(); cartSyncMsg = ""; saveCart(false); if (JSON.stringify(cart.items) !== before) renderAll(); else if (mode === "cart") renderCart(); }
+  } catch(e) {}
+}
+setInterval(() => { if (cart.kod && mode === "cart") cartPull(); }, 20000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden && cart.kod) cartPull(); });
+async function cartShare(){
+  if (!CART_URL()) return;
+  cartSyncMsg = "⏳ Kod oluşturuluyor…"; renderCart();
+  try {
+    const res = await fetch(CART_URL(), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({items:cart.items})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && d.kod){ cart.kod = d.kod; cartMerge(d.items); cart.sync = Date.now(); cartSyncMsg = ""; saveCart(false); }
+    else cartSyncMsg = (d && d.error) || "Kod oluşturulamadı. Cloudflare'deki aracı kod güncel olmayabilir.";
+  } catch(e){ cartSyncMsg = "Bağlantı hatası."; }
+  renderCart();
+}
+async function cartJoin(kod){
+  kod = String(kod || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (kod.length !== 6){ cartSyncMsg = "Kod 6 karakter olmalı."; renderCart(); return; }
+  cartSyncMsg = "⏳ Katılınıyor…"; renderCart();
+  try {
+    const res = await fetch(CART_URL(), {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({kod, items:cart.items})});
+    const d = await res.json().catch(() => null);
+    if (res.ok && d && Array.isArray(d.items)){ cart.kod = kod; cartMerge(d.items); cart.sync = Date.now(); cartSyncMsg = ""; saveCart(false); snack("👨‍👩‍👧 Ortak sepete katıldın."); renderAll(); return; }
+    cartSyncMsg = (d && d.error) || "Katılamadın.";
+  } catch(e){ cartSyncMsg = "Bağlantı hatası."; }
+  renderCart();
+}
+/* Geri al çubuğu */
+let snackT = null;
+function snack(text, label, fn){
+  let el = $("snack"); if (!el){ el = document.createElement("div"); el.id = "snack"; el.className = "snack"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+  el.innerHTML = ""; const sp = document.createElement("span"); sp.textContent = text; el.appendChild(sp);
+  if (label){ const b = document.createElement("button"); b.type = "button"; b.textContent = label; b.onclick = () => { el.classList.remove("show"); clearTimeout(snackT); if (fn) fn(); renderAll(); }; el.appendChild(b); }
+  el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+  clearTimeout(snackT); snackT = setTimeout(() => el.classList.remove("show"), 5200);
+}
+/* Uçan animasyon: eklediğin şey nereye gittiğini gösterir */
+function fly(fromEl, targetSel, emoji){
+  const a = fromEl && fromEl.getBoundingClientRect ? fromEl.getBoundingClientRect() : null;
+  requestAnimationFrame(() => {
+    const t = document.querySelector(targetSel);
+    if (!t) return;
+    const bump = () => { [t, t.closest(".tab") && t.closest(".tab").querySelector(".tab-badge")].forEach(x => { if (!x) return; x.classList.remove("bump"); void x.offsetWidth; x.classList.add("bump"); }); };
+    const b = t.getBoundingClientRect();
+    if (!a || !a.width || !b.width || matchMedia("(prefers-reduced-motion: reduce)").matches || !document.body.animate){ bump(); return; }
+    const dot = document.createElement("span"); dot.className = "fly-dot"; dot.textContent = emoji || "•"; dot.setAttribute("aria-hidden", "true");
+    const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, dx = b.left + b.width / 2 - x0, dy = b.top + b.height / 2 - y0;
+    dot.style.left = x0 + "px"; dot.style.top = y0 + "px"; document.body.appendChild(dot);
+    const midY = Math.min(0, dy) * 0.5 - 70;
+    const an = dot.animate([
+      {transform:"translate(-50%,-50%) scale(.9)", opacity:0},
+      {transform:"translate(-50%,-50%) scale(1.15)", opacity:1, offset:.12},
+      {transform:`translate(calc(-50% + ${dx * 0.5}px), calc(-50% + ${midY}px)) scale(1.1)`, opacity:1, offset:.5},
+      {transform:`translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(.4)`, opacity:.7}
+    ], {duration:720, easing:"cubic-bezier(.45,0,.35,1)"});
+    an.onfinish = () => { dot.remove(); bump(); };
+  });
+}
+/* Kaydırınca "aldım" */
+(function(){
+  let st = null;
+  document.addEventListener("pointerdown", e => { const row = e.target.closest && e.target.closest(".cart-row:not(.is-done)"); if (!row || e.target.closest("button,a,input")) return; st = {row, x:e.clientX, y:e.clientY, dx:0, on:false}; });
+  document.addEventListener("pointermove", e => { if (!st) return; const dx = e.clientX - st.x, dy = e.clientY - st.y; if (!st.on && Math.abs(dy) > 12 && Math.abs(dy) > Math.abs(dx)){ st = null; return; } if (dx > 8){ st.on = true; st.dx = dx; st.row.style.transform = `translateX(${Math.min(dx, 160)}px)`; st.row.classList.toggle("swipe-ok", dx > 90); } });
+  const end = () => { if (!st) return; const {row, dx, on} = st; st = null; row.style.transform = ""; row.classList.remove("swipe-ok"); if (on && dx > 90){ row.classList.add("leaving"); setTimeout(() => { cartSetDone(row.dataset.id, true); renderAll(); }, 240); } };
+  document.addEventListener("pointerup", end); document.addEventListener("pointercancel", end);
+})();
+function renderCart(){
+  const el = $("cartMode"); if (!el) return;
+  const live = cartLive(), todo = live.filter(x => !x.done), done = live.filter(x => x.done);
+  const mk = MARKETS.find(m => m.id === cartMarket);
+  const groups = AISLES.map(a => [a, todo.filter(x => cartAisle(x) === a[0])]).filter(([, l]) => l.length);
+  const planMiss = plan.some(d => d.length) ? planShopping().filter(e => !inCart(e.ad, e.m && e.m.id)) : [];
+  const row = x => `<div class="cart-row${x.done ? " is-done" : ""}" data-id="${x.id}" data-key="ci-${x.id}">
+      <button type="button" class="cart-check" data-act="cartDone" data-id="${x.id}" aria-pressed="${x.done}" aria-label="${x.done ? "Alınmadı yap" : "Aldım"}">${x.done ? "✓" : ""}</button>
+      <span class="cart-e" aria-hidden="true">${cartEmoji(x)}</span>
+      <span class="cart-name"><b>${esc(x.ad)}</b>${amountStr(x) ? `<span class="amt">${esc(amountStr(x))}</span>` : ""}${x.from.length && !x.done ? `<small>${esc(x.from.slice(0, 3).join(", "))} için</small>` : ""}</span>
+      ${!x.done && mk && mk.ara ? `<a class="cart-search" href="${esc(mk.ara(x.ad))}" target="_blank" rel="noopener" aria-label="${esc(mk.ad)}'da ara">🔎</a>` : ""}
+      <button type="button" class="cart-x" data-act="cartRemove" data-id="${x.id}" aria-label="Sepetten çıkar">✕</button>
+    </div>`;
+  let h = `<div class="cart-head"><div><p class="sub cart-sum">${todo.length ? `<b class="cart-n">${todo.length}</b> ürün alınacak${done.length ? ` · ${done.length} alındı` : ""}` : "Sepetin şu an boş."}</p></div>
+    ${todo.length ? `<button type="button" class="${marketMode ? "ai-btn" : "fav"} market-btn" data-act="marketToggle" aria-pressed="${marketMode}">${marketMode ? "✓ Market modundan çık" : "🛍️ Market modu"}</button>` : ""}</div>`;
+  if (marketMode) h += `<p class="market-note">🛍️ Market modu: ekran açık kalır. Aldığın ürünü <b>sağa kaydır</b> ya da daireye dokun.</p>`;
+  if (!marketMode){
+    h += `<div class="cart-add"><input class="search" id="cartInput" type="text" maxlength="120" placeholder="Sepete ekle: süt, ekmek, deterjan…" aria-label="Sepete ekle"><button type="button" class="ai-btn" data-act="cartAddText">Ekle</button></div>
+      <div class="cart-quick"><span class="cq-l">⚡ Sık alınanlar</span>${freqItems().map(x => { const on = inCart(x.ad, x.ing); return `<button type="button" class="chip mini${on ? " on" : ""}" data-act="cartQuick" data-ad="${esc(x.ad)}" data-ing="${esc(x.ing)}" aria-pressed="${on}">${(x.ing && ING_EMOJI[x.ing]) || "🛒"} ${esc(x.ad)}${on ? " ✓" : ""}</button>`; }).join("")}</div>`;
+    if (planMiss.length) h += `<button type="button" class="lo-btn cart-plan" data-act="cartAddPlan"><span class="lo-e" aria-hidden="true">📅</span><span><b>Menündeki ${planMiss.length} eksik malzemeyi ekle</b><small>${esc(planMiss.slice(0, 4).map(e => e.ad).join(", "))}${planMiss.length > 4 ? "…" : ""}</small></span><span class="sug-go" aria-hidden="true">＋</span></button>`;
+  }
+  if (!live.length){
+    h += `<div class="cart-empty"><div class="cart-empty-e" aria-hidden="true">🛒</div><p><b>Sepetin boş</b></p><p class="sub">Bir tarifteki eksiklerin yanındaki <b>🛒</b>'ye dokun ya da yukarıdan yazarak ekle.</p></div>`;
+  } else {
+    h += groups.map(([a, l]) => `<div class="cart-aisle" data-key="ca-${a[0]}"><h3>${a[1]} <span class="sec-count">${l.length}</span></h3><div class="cart-list">${l.map(row).join("")}</div></div>`).join("");
+    if (!todo.length) h += `<p class="done">🎉 Hepsini aldın! Aldıkların dolabına eklendi.</p>`;
+    if (done.length) h += `<div class="cart-done"><button type="button" class="link-btn" data-act="cartDoneToggle" aria-expanded="${cartDoneOpen}">✓ Alınanlar (${done.length}) ${cartDoneOpen ? "▲" : "▼"}</button>${cartDoneOpen ? `<div class="cart-list">${done.map(row).join("")}</div>` : ""}<button type="button" class="link-btn" data-act="cartClearDone">Alınanları temizle</button></div>`;
+    if (!marketMode && todo.length){
+      h += `<div class="shop-acts"><button type="button" class="fav" data-act="cartCopy">📋 Listeyi kopyala</button><a class="fav shop-wa" href="https://wa.me/?text=${encodeURIComponent(cartText())}" target="_blank" rel="noopener">💬 WhatsApp'ta gönder</a><button type="button" class="link-btn" data-act="cartClearAll">Sepeti boşalt</button></div>`;
+      h += `<div class="section cart-order"><h3>🏪 Sipariş ver</h3><p class="sub">Bir markete dokun: listen kopyalanır ve market açılır.${MARKETS.some(m => m.ara) ? " Migros ya da CarrefourSA seçersen her ürünün yanında <b>🔎</b> ile o ürünü doğrudan aratabilirsin." : ""}</p>
+        <div class="order-markets">${MARKETS.map(m => `<button type="button" class="market" data-act="cartOrder" data-m="${m.id}" aria-pressed="${cartMarket === m.id}">${m.ad} ↗</button>`).join("")}</div>
+        ${cartOrderMsg ? `<p class="order-tip">${esc(cartOrderMsg)}</p>` : ""}
+        <p class="note">Marketler dışarıdan sepet aktarmaya izin vermediği için ürünleri marketin kendi uygulamasında sepete eklemen gerekir.</p></div>`;
+    }
+  }
+  if (!marketMode && CART_URL()){
+    h += `<div class="section cart-share" id="cartShare"><h3>👨‍👩‍👧 Ortak sepet</h3>${cart.kod
+      ? `<p class="sub">Bu sepet <b>ortak</b>. Aynı kodu kullanan herkes aynı listeyi görür ve işaretler.</p><p class="share-code">${cart.kod}</p>
+         <div class="shop-acts"><a class="ai-btn shop-wa" href="https://wa.me/?text=${encodeURIComponent(`Ortak alışveriş sepetimize katıl 🛒 ${siteURL()}?sepet=${cart.kod}  (kod: ${cart.kod})`)}" target="_blank" rel="noopener">💬 Kodu gönder</a><button type="button" class="fav" data-act="cartPullNow">🔄 Şimdi eşitle</button><button type="button" class="link-btn" data-act="cartLeave">Ortak sepetten ayrıl</button></div>
+         ${cart.sync ? `<p class="note">Son eşitleme: ${new Date(cart.sync).toLocaleTimeString("tr-TR", {hour:"2-digit", minute:"2-digit"})}</p>` : ""}`
+      : `<p class="sub">Sepetini eşinle ya da ev arkadaşınla paylaş; aynı listeyi görür, markette birlikte işaretlersiniz.</p>
+         <div class="shop-acts"><button type="button" class="ai-btn" data-act="cartShare">🔗 Sepeti paylaş</button></div>
+         <div class="cart-join"><input class="search" id="cartJoinCode" type="text" maxlength="6" placeholder="Kodun var mı? Ör. K7M2QX" aria-label="Ortak sepet kodu" autocapitalize="characters"><button type="button" class="fav" data-act="cartJoin">Katıl</button></div>`}
+      ${cartSyncMsg ? `<p class="vp-msg">${esc(cartSyncMsg)}</p>` : ""}</div>`;
+  }
+  setHTML(el, h);
+}
+/* =================== /SEPET =================== */
 
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
@@ -3780,31 +4142,39 @@ function renderGroups(){
   if (total) html += total
     ? `<div class="chips">${mine.map(id => `<button type="button" class="chip on" data-act="ing" data-id="${id}" aria-label="${LABEL[id]} malzemesini çıkar"><span aria-hidden="true">${ING_EMOJI[id] || "🥄"}</span> ${LABEL[id]}${sktBadge(id)} ✕</button>`).join("")}${[...extras].map(x => `<button type="button" class="chip on" data-act="rmExtra" data-name="${esc(x)}" aria-label="${esc(x)} malzemesini çıkar">${esc(x)} ✕</button>`).join("")}</div>`
     : `<p class="sub" style="margin:0">Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.</p>`;
-  if (total && mine.length) html += `<button type="button" class="link-btn skt-tg" data-act="sktToggle" aria-expanded="${sktOpen}">⏰ Son kullanma tarihleri ${sktOpen ? "▲" : "▼"}</button>`;
-  if (total && sktOpen) html += sktPanelHTML(mine);
   if (total) html += `<p class="basic-note">🧂 Temel malzemeler (tuz, yağ, su…): ${basicN}/${basics.length} seçili</p></div>`;
-  html += `<button type="button" class="lo-btn" data-act="loOpen"><span class="lo-e" aria-hidden="true">🍚</span><span><b>Dünden artan mı var?</b><small>Artanları değerlendir, israf etme</small></span><span class="sug-go" aria-hidden="true">›</span></button>`;
+  if (total) html += `<p class="live-count" id="liveCount" aria-live="polite">${liveCountHTML()}</p>`;
   html += `<div class="suggest-strip" id="sugStrip"></div>`;
 
-  // 2) Arama varsa: tüm gruplardan eşleşenler düz bir liste hâlinde
+  // 2) Arama varsa: birden çok malzeme yazıldıysa tek dokunuşla hepsini ekle; ayrıca eşleşenler
   if (q){
+    const pm = parseIngText(raw);
+    if (pm.ids.length + pm.unknown.length >= 2 || (pm.ids.length === 1 && /[, ]/.test(raw.trim()) && pm.unknown.length)) html += `<button type="button" class="multi-add" data-act="multiAdd"><span class="ma-k" aria-hidden="true">↵</span><span class="ma-t"><b>${pm.ids.length + pm.unknown.length} malzemeyi birden ekle</b><small>${esc([...pm.ids.map(id => LABEL[id]), ...pm.unknown].join(", "))}</small></span></button>`;
     const hits = [];
     GROUPS.forEach(g => g.items.forEach(([id, l]) => { if (fuzzyHit(l, q) || (lang === "en" && fuzzyHit(EN_ING[l] || "", q))) hits.push([id, l]); }));
     const dishes = sortRecipes(BUILTIN.filter(r => nameHit(r, q))).slice(0, 8);
     if (hits.length) html += `<div class="group-head"><h2>🥕 Malzemeler</h2></div><div class="chips search-hits">${hits.map(([id, l]) => chipHTML(id, l)).join("")}</div>`;
     if (dishes.length) html += `<div class="group-head"><h2>🍽️ Yemekler</h2></div><div class="dish-grid search-dishes">${dishes.map(r => dishCard(r, "openSaved")).join("")}</div>`;
     const exact = Object.values(LABEL).some(l => norm(l) === q) || [...extras].some(x => norm(x) === q);
-    if (!exact && sampleFn && !dishes.length) html += `<div class="add-row"><p class="sub">Aradığın malzeme listede yoksa kendin ekleyebilirsin.</p><button type="button" class="ai-btn" data-act="addExtra" id="addExtra">“${esc(raw)}” malzemesini ekle</button></div>`;
-    else if (!hits.length && !dishes.length) html += `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>`;
+    if (!exact && sampleFn && !dishes.length && !(pm.ids.length + pm.unknown.length >= 2)) html += `<div class="add-row"><p class="sub">Aradığın malzeme listede yoksa kendin ekleyebilirsin.</p><button type="button" class="ai-btn" data-act="addExtra" id="addExtra">“${esc(raw)}” malzemesini ekle</button></div>`;
+    else if (!(pm.ids.length + pm.unknown.length >= 2) && !hits.length && !dishes.length) html += `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>`;
     setHTML($("groups"), html);
     hydrateImages($("groups"));
     return;
   }
 
   // 3) Malzemeler (en sık 16'sı; gerisi tek dokunuşla) ve küçük ayar satırı
-  const shown = QUICK.filter((id, i) => quickAll || i < 16 || selected.has(id));
-  html += `<div class="group"><div class="chips">${shown.map(id => chipHTML(id, LABEL[id])).join("")}${QUICK.length > shown.length ? `<button type="button" class="chip chip-more" data-act="quickMore">＋ ${QUICK.length - shown.length} malzeme daha</button>` : ""}</div></div>`;
-  html += prefRowHTML();
+  if (!q){
+    const top = freqIngs(), shown = quickAll ? QUICK : top;
+    html += `<div class="group freq-group"><p class="freq-l">${quickAll ? "Tüm malzemeler" : "⚡ Sık kullandıkların"}</p><div class="chips">${shown.map(id => chipHTML(id, LABEL[id])).join("")}<button type="button" class="chip chip-more" data-act="quickMore">${quickAll ? "− Daha az göster" : "＋ Tüm malzemeler"}</button></div></div>`;
+  }
+  html += `<button type="button" class="more-btn" data-act="moreToggle" aria-expanded="${moreOpen}">⚙️ Daha fazla ${moreOpen ? "▲" : "▼"}</button>`;
+  if (moreOpen){
+    html += `<div class="more-panel">${prefRowHTML()}
+      ${mine.length ? `<button type="button" class="link-btn skt-tg" data-act="sktToggle" aria-expanded="${sktOpen}">⏰ Son kullanma tarihleri ${sktOpen ? "▲" : "▼"}</button>${sktOpen ? sktPanelHTML(mine) : ""}` : ""}
+      <button type="button" class="lo-btn" data-act="loOpen"><span class="lo-e" aria-hidden="true">🍚</span><span><b>Dünden artan mı var?</b><small>Artanları değerlendir, israf etme</small></span><span class="sug-go" aria-hidden="true">›</span></button>
+      <button type="button" class="lo-btn" data-act="remindOpen"><span class="lo-e" aria-hidden="true">⏰</span><span><b>Akşam hatırlatması</b><small>Her akşam “Bugün ne pişirsem?” diye hatırlatsın</small></span><span class="sug-go" aria-hidden="true">›</span></button></div>`;
+  }
   // Öneri şeridi malzeme listesinin içinde: liste yeniden çizilirken şeridin içeriği (ve görselleri) korunur
   const oldStrip = $("sugStrip"), keep = oldStrip ? [...oldStrip.childNodes] : [];
   setHTML($("groups"), html);
@@ -3873,6 +4243,7 @@ function renderResults(){
     return `<button type="button" class="sug cat-${recipeCat(r)}" data-act="openSaved" data-key="${esc(r.key)}"><span class="sug-img">${wi ? `<img src="${esc(wi.s)}" alt="">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="sug-t"><b>${esc(r.ad)}</b>${note}${meta ? `<small class="sug-meta">${meta}</small>` : ""}</span><span class="sug-go" aria-hidden="true">›</span></button>`;
   };
   const readyS = ready.slice(0, 8), nearS = near.slice(0, 6);
+  readyN = ready.length; nearN = near.length; setTimeout(updateLiveCount, 0);
   const sugBlock = (tag) => {
     if (!readyS.length && !nearS.length) return "";
     let h = "";
@@ -3916,7 +4287,7 @@ function aiPantryHTML(){
   const list = aiPantry.keys.map(k => REG.get(k)).filter(Boolean).filter(fpass);
   let h = `<div class="section ai-box"><h2>Dünya mutfağından öneriler</h2><p class="sub">Yapay zekâ, kendi eklediğin malzemeler dahil elindekilerle farklı ülke mutfaklarından yemekler önerir${filters.size ? "; seçtiğin filtreler de dikkate alınır" : ""}.</p>`;
   h += `<button type="button" class="ai-btn" data-act="aiSuggest" ${loading ? "disabled" : ""}>${loading ? "Öneriler hazırlanıyor…" : list.length ? "Yeni öneriler al" : "Öneri al"}</button>`;
-  if (loading) h += `<p class="loading">Bu birkaç saniye sürebilir.</p>`;
+  if (loading) h += `<p class="loading">Bu birkaç saniye sürebilir.</p>${skelHTML(3)}`;
   if (aiPantry.state === "error") h += `<p class="missing">${esc(aiPantry.msg)}</p>`;
   if (list.length) h += `<div style="margin-top:16px">${list.map(cardHTML).join("")}</div>`;
   return h + `</div>`;
@@ -4156,6 +4527,7 @@ function renderAll(){
   if (mode === "dish"){ renderBanner(); renderDishList(); renderDishDetail(); }
   if (mode === "plan") renderPlan();
   if (mode === "fav" || mode === "recent") renderSaved();
+  if (mode === "cart") renderCart();
   renderBar();
   renderSheet();
   if (cook.open) renderCook();
@@ -4706,11 +5078,12 @@ const AISLES = [
   ["sut", "🧀 Süt ürünleri ve yumurta", ["🧀 Süt ürünleri ve yumurta"], /süt|yoğurt|peynir|kaşar|lor|labne|krema|tereyağı|yumurta|ayran|mozzarella|parmesan|kaymak/i],
   ["firin", "🍞 Fırın", [], /ekmek|lavaş|tortilla|yufka|pide|simit|bazlama|hamburger/i],
   ["kuru", "🌾 Bakliyat, tahıl ve makarna", ["🌾 Bakliyat, tahıl ve hamur"], /pirinç|bulgur|mercimek|nohut|fasulye|makarna|şehriye|erişte|un\b|irmik|yulaf|kinoa|tarhana|bakla|galeta/i],
+  ["temizlik", "🧴 Temizlik ve ev", [], /deterjan|sabun|peçete|kağıt havlu|tuvalet kağıdı|çamaşır|bulaşık|şampuan|diş macunu|çöp poşeti|sünger|yumuşatıcı|ıslak mendil|streç|alüminyum folyo|pil\b/i],
   ["bakkal", "🥫 Bakkal ve baharat", ["🥫 Dolap", "🍫 Tatlı malzemeleri", "☕️ Kahve", "🧂 Temel malzemeler"], /./]
 ];
 const ID_AISLE = {}; GROUPS.forEach(g => { const a = AISLES.find(x => x[2].includes(g.title)); g.items.forEach(([id]) => { ID_AISLE[id] = a ? a[0] : "bakkal"; }); });
 ["ekmek", "lavas", "yufka", "hamburger_ekmegi", "baklava_yufkasi", "gullac"].forEach(id => { ID_AISLE[id] = "firin"; });
-function aisleOf(e){ if (e.m && e.m.id && ID_AISLE[e.m.id]) return ID_AISLE[e.m.id]; const n = e.ad || ""; return (AISLES.find(a => a[0] !== "bakkal" && a[3].test(n)) || AISLES[5])[0]; }
+function aisleOf(e){ if (e.m && e.m.id && ID_AISLE[e.m.id]) return ID_AISLE[e.m.id]; const n = e.ad || ""; return (AISLES.find(a => a[0] !== "bakkal" && a[3].test(n)) || AISLES[AISLES.length - 1])[0]; }
 function groupedShopping(list){ return AISLES.map(a => [a, list.filter(e => aisleOf(e) === a[0])]).filter(([, l]) => l.length); }
 function planShopText(){
   const list = planShopping();
@@ -4726,13 +5099,11 @@ function renderPlan(){
   if (!total){
     h += `<div class="empty">Menün boş. Bir güne “+ Yemek ekle” ile başla ya da herhangi bir tarifteki “Menüye ekle” seçeneğini kullan.</div>`;
   } else {
-    const list = planShopping();
-    h += `<div class="section"><div class="actions" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Haftalık alışveriş listen</h2><button type="button" class="fav" data-act="planClear">Menüyü temizle</button></div>`;
+    const list = planShopping(), notIn = list.filter(e => !inCart(e.ad, e.m && e.m.id));
+    h += `<div class="section plan-cart"><div class="actions" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">🛒 Menünün alışverişi</h2><button type="button" class="fav" data-act="planClear">Menüyü temizle</button></div>`;
     h += list.length
-      ? `<p class="sub">Menündeki ${total} yemeğin eksikleri, <b>reyonlara göre</b> gruplu. Dolabında olanlar listeye girmez; aldıkça “Aldım”a dokun, malzeme dolabına eklenir.</p>
-        <div class="shop-sum">${groupedShopping(list).map(([a, l]) => `<span class="shop-pill">${a[1]} <b>${l.length}</b></span>`).join("")}</div>
-        ${groupedShopping(list).map(([a, l]) => `<div class="shop-aisle"><h3>${a[1]}</h3><ul class="need">${l.map(e => `<li><div class="need-row"><span>${esc(e.ad)}${e.amountText ? ` <span class="amt">${esc(e.amountText)}</span>` : ""}<span class="for">${esc([...e.dishes].join(", "))} için</span></span><button type="button" class="state buy" data-act="bought" data-k="${esc(e.id)}">Aldım</button></div></li>`).join("")}</ul></div>`).join("")}
-        <div class="shop-acts"><button type="button" class="ai-btn" data-act="copyPlan">📋 Listeyi kopyala</button><a class="fav shop-wa" href="https://wa.me/?text=${encodeURIComponent(planShopText())}" target="_blank" rel="noopener">💬 WhatsApp'ta gönder</a></div>${orderHTML("plan", list.map(e => e.ad))}`
+      ? `<p class="sub">Menündeki ${total} yemek için <b>${list.length}</b> malzeme eksik${notIn.length < list.length ? `; <b>${list.length - notIn.length}</b> tanesi zaten sepetinde` : ""}. Aynı malzemeler birleşir, dolabındakiler eklenmez.</p>
+        <div class="shop-acts">${notIn.length ? `<button type="button" class="ai-btn" data-act="cartAddPlan">🛒 ${notIn.length} eksiği sepete ekle</button>` : ""}<button type="button" class="fav" data-act="goCart">Sepete git${cartCount() ? ` (${cartCount()})` : ""}</button></div>`
       : `<p class="done">Menündeki tüm yemeklerin malzemeleri evde, alışverişe gerek yok!</p>`;
     h += `</div>`;
   }
@@ -4754,7 +5125,7 @@ document.addEventListener("click", e => {
   if (["cook","cookNext","cookPrev","speakAgain","tryVoice","setVoice","setStyle"].includes(act) && voiceOn) unlockAudio();
   if (act === "openSaved" && el.closest("#leftover")) { const le = $("leftover"); if (le) le.hidden = true; }
   switch (act){
-    case "tab": if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
+    case "tab": if (marketMode && el.dataset.mode !== "cart"){ marketMode = false; releaseWake(); } if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
     case "filter": {
       const f = el.dataset.f;
       if (mode !== "dish"){
@@ -4768,7 +5139,12 @@ document.addEventListener("click", e => {
       }
       break;
     }
-    case "ing": { const id = el.dataset.id; selected.has(id) ? selected.delete(id) : selected.add(id); save(); renderAll(); break; }
+    case "ing": {
+      const id = el.dataset.id;
+      if (selected.has(id)) selected.delete(id);
+      else { selected.add(id); bumpIngFreq(id); if (!el.closest(".mybox")) fly(el, ".mybox", ING_EMOJI[id] || "🥄"); }
+      save(); renderAll(); break;
+    }
     case "addExtra": addExtra(); break;
     case "rmExtra": extras.delete(el.dataset.name); save(); renderAll(); break;
     case "clear": selected.clear(); extras.clear(); manual = {}; open.clear(); aiPantry = {state:"idle", keys:[], msg:""}; save(); renderAll(); break;
@@ -4911,6 +5287,74 @@ document.addEventListener("click", e => {
         .catch(() => { imgAdm.msg = "⚠️ Bağlantı hatası."; renderImgAdmin(); });
       break;
     }
+    case "goCart": closeSheetIfOpen(); mode = "cart"; renderAll(); window.scrollTo(0, 0); break;
+    case "cartAddOne": {
+      if (!r) break; const m = r.malzemeler[Number(el.dataset.idx)]; if (!m) break;
+      const x = cartFind(m.ad, m.id);
+      if (x && !x.done && x.from.includes(r.ad)){ cartRemove(x.id); }
+      else { addRecipeIngToCart(r, m); fly(el, "#tab-cart .tab-i", ING_EMOJI[m.id] || "🛒"); } // başka tarif için sepetteyse miktarı eklenir
+      renderAll(); break;
+    }
+    case "cartAddMissing": {
+      if (!r) break; let n = 0;
+      r.malzemeler.filter(m => !owned(m) && !inCartFor(m.ad, m.id, r.ad)).forEach(m => { addRecipeIngToCart(r, m); n++; });
+      if (n){ fly(el, "#tab-cart .tab-i", "🛒"); snack(`🛒 ${n} malzeme sepete eklendi.`, "Sepete git", () => { closeSheetIfOpen(); mode = "cart"; window.scrollTo(0, 0); }); }
+      renderAll(); break;
+    }
+    case "cartAddPlan": {
+      let n = 0;
+      planShopping().filter(e => !inCart(e.ad, e.m && e.m.id)).forEach(e => {
+        const ents = [...e.amounts];
+        const x = addToCart({ad:e.ad, ing:(e.m && e.m.id) || "", qty:ents.length ? ents[0][1] : null, unit:ents.length ? ents[0][0] : (e.free[0] || ""), from:[...e.dishes][0] || ""}, {force:true});
+        if (x){ ents.slice(1).forEach(([u, q]) => { x.amounts[u] = (x.amounts[u] || 0) + q; }); [...e.dishes].slice(1).forEach(d => { if (!x.from.includes(d)) x.from.push(d); }); n++; }
+      });
+      saveCart();
+      if (n){ fly(el, "#tab-cart .tab-i", "🛒"); snack(`🛒 Menünün ${n} eksiği sepete eklendi.`, mode === "cart" ? "" : "Sepete git", () => { mode = "cart"; window.scrollTo(0, 0); }); }
+      renderAll(); break;
+    }
+    case "cartAddText": {
+      const inp = $("cartInput"); const raw = inp ? inp.value.trim() : ""; if (!raw) break;
+      const pm = parseIngText(raw); let n = 0;
+      pm.ids.forEach(id => { if (addToCart({ad:LABEL[id], ing:id})) n++; });
+      pm.unknown.forEach(x => { if (addToCart({ad:x})) n++; });
+      if (inp) inp.value = "";
+      if (n) fly(el, "#tab-cart .tab-i", pm.ids.length ? (ING_EMOJI[pm.ids[0]] || "🛒") : "🛒");
+      renderAll(); setTimeout(() => { const i2 = $("cartInput"); if (i2) i2.focus(); }, 50); break;
+    }
+    case "cartQuick": {
+      const ad = el.dataset.ad, ing = el.dataset.ing || "";
+      const x = cartFind(ad, ing);
+      if (x && !x.done) cartRemove(x.id);
+      else if (addToCart({ad, ing})) fly(el, "#tab-cart .tab-i", (ing && ING_EMOJI[ing]) || "🛒");
+      renderAll(); break;
+    }
+    case "cartDone": {
+      const id = el.dataset.id, x = cart.items.find(i => i.id === id); if (!x) break;
+      const row = el.closest(".cart-row");
+      if (!x.done && row){ row.classList.add("leaving"); setTimeout(() => { cartSetDone(id, true); renderAll(); }, 260); }
+      else { cartSetDone(id, !x.done); renderAll(); }
+      break;
+    }
+    case "cartRemove": { const row = el.closest(".cart-row"); if (row) row.classList.add("removing"); setTimeout(() => { cartRemove(el.dataset.id); renderAll(); }, 200); break; }
+    case "cartDoneToggle": cartDoneOpen = !cartDoneOpen; renderCart(); break;
+    case "cartClearDone": { const ds = cartLive().filter(x => x.done); ds.forEach(x => { x.del = true; x.t = Date.now(); }); saveCart(); snack(`${ds.length} alınan ürün temizlendi.`, "Geri al", () => { ds.forEach(x => { x.del = false; x.t = Date.now(); }); saveCart(); }); renderAll(); break; }
+    case "cartClearAll": { const all = cartLive(); all.forEach(x => { x.del = true; x.t = Date.now(); }); saveCart(); snack("Sepet boşaltıldı.", "Geri al", () => { all.forEach(x => { x.del = false; x.t = Date.now(); }); saveCart(); }); renderAll(); break; }
+    case "cartCopy": copyToClipboard(cartText()); showToast("📋 Liste kopyalandı"); break;
+    case "cartOrder": {
+      const m = MARKETS.find(x => x.id === el.dataset.m); if (!m) break;
+      cartMarket = m.id; try { localStorage.setItem("pisir-market", m.id); } catch(e) {}
+      copyToClipboard(cartText());
+      cartOrderMsg = `✓ Listen kopyalandı ve ${m.ad} açıldı.${m.ara ? " Ürünlerin yanındaki 🔎 ile tek tek aratabilirsin." : " Ürünleri uygulamanın arama kutusuna yapıştırıp arayabilirsin."}`;
+      window.open(m.ana, "_blank", "noopener"); renderCart(); break;
+    }
+    case "marketToggle":
+      marketMode = !marketMode;
+      if (marketMode) requestWake(); else releaseWake();
+      renderAll(); window.scrollTo(0, 0); break;
+    case "cartShare": cartShare(); break;
+    case "cartJoin": cartJoin(($("cartJoinCode") || {}).value); break;
+    case "cartLeave": cart.kod = ""; cartSyncMsg = ""; saveCart(false); snack("Ortak sepetten ayrıldın; liste bu telefonda kaldı."); renderAll(); break;
+    case "cartPullNow": cartPull(); break;
     case "sktToggle": sktOpen = !sktOpen; renderGroups(); break;
     case "sktSet": {
       const id = el.dataset.id, d = el.dataset.d;
@@ -4962,17 +5406,23 @@ document.addEventListener("click", e => {
       break;
     }
     case "prefToggle": prefOpen = !prefOpen; renderGroups(); break;
-    case "quickMore": quickAll = true; renderGroups(); break;
+    case "quickMore": quickAll = !quickAll; renderGroups(); break;
+    case "moreToggle": moreOpen = !moreOpen; renderGroups(); break;
+    case "multiAdd": multiAdd(el); break;
     case "focusSearch": { const se = $("search"); if (se){ se.scrollIntoView({block:"center", behavior:"smooth"}); se.focus({preventScroll:true}); } break; }
     case "combo": { const c = COMBOS[Number(el.dataset.i)]; if (c){ c[1].forEach(id => selected.add(id)); save(); renderAll(); } break; }
     case "dailyPick": dailySel = Number(el.dataset.i) || 0; renderDaily(); if (mode === "pantry") renderResults(); break;
     case "wnClose": closeWhatsNew(); break;
     case "whatsNew": openWhatsNew(); break;
     case "wn-mic": closeWhatsNew(); goMode("dish"); { const r = REG.get("b:Menemen") || BUILTIN[0]; openCook(r.key, false); setTimeout(() => { const b = document.querySelector('#cook [data-act="micToggle"]'); if (b){ b.scrollIntoView({block:"center"}); b.classList.add("wn-flash"); } else showToast("Sesli komut bu tarayıcıda desteklenmiyor. Chrome ya da Safari'de dene."); }, 350); } break;
+    case "wn-cart": closeWhatsNew(); if (!cartLive().length){ addToCart({ad:"Süt", ing:"sut"}, {force:true}); addToCart({ad:"Domates", ing:"domates"}, {force:true}); } goMode("cart"); break;
+    case "wn-market": closeWhatsNew(); if (!cartCount()) addToCart({ad:"Ekmek", ing:"ekmek"}, {force:true}); mode = "cart"; marketMode = true; requestWake(); renderAll(); window.scrollTo(0, 0); break;
+    case "wn-share": closeWhatsNew(); goMode("cart"); setTimeout(() => { const x = $("cartShare"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 250); break;
+    case "wn-pantry": closeWhatsNew(); goMode("pantry"); setTimeout(() => { const x = $("search"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.focus({preventScroll:true}); x.classList.add("wn-flash"); } }, 200); break;
     case "wn-season": closeWhatsNew(); goMode("dish"); openCats.clear(); openCats.add("mevsim"); renderDishList(); setTimeout(() => { const x = document.querySelector('[data-key="sec-mevsim"]'); if (x){ x.scrollIntoView({block:"start", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 150); break;
     case "wn-lo": closeWhatsNew(); goMode("pantry"); setTimeout(openLeftover, 200); break;
     case "wn-skt": closeWhatsNew(); goMode("pantry"); setTimeout(() => { if (![...selected].some(id => !GROUPS[0].items.some(([b]) => b === id))){ ["domates","sogan","yumurta"].forEach(id => selected.add(id)); save(); }
-      sktOpen = true; renderAll(); const x = document.querySelector(".skt-tg"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
+      sktOpen = true; moreOpen = true; renderAll(); const x = document.querySelector(".skt-tg"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
     case "wn-shop": closeWhatsNew(); if (!plan.some(d => d.length)){ plan[(new Date().getDay() + 6) % 7].push("b:Karnıyarık"); save(); } goMode("plan"); setTimeout(() => { const x = document.querySelector(".shop-sum"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 300); break;
     case "wn-wait": closeWhatsNew(); openSheet("b:Tiramisu"); setTimeout(() => { const x = document.querySelector("#sheetBody .bd-wait"); if (x) x.classList.add("wn-flash"); }, 300); break;
     case "wn-remind": closeWhatsNew(); openRemind(); break;
@@ -4994,7 +5444,7 @@ document.addEventListener("click", e => {
     case "selectGroup": { const g = GROUPS[Number(el.dataset.g)]; const all = g.items.every(([id]) => selected.has(id)); g.items.forEach(([id]) => all ? selected.delete(id) : selected.add(id)); save(); renderAll(); break; }
     case "subst": if (r) runSubst(r, r.malzemeler[Number(el.dataset.idx)]); break;
     case "illus": runIllus(key); break;
-    case "planAdd": if (r && planTarget !== null){ plan[planTarget].push(key); planTarget = null; mode = "plan"; save(); renderAll(); window.scrollTo(0, 0); } break;
+    case "planAdd": if (r && planTarget !== null){ fly(el, "#tab-plan .tab-i", "📅"); plan[planTarget].push(key); planTarget = null; mode = "plan"; save(); renderAll(); window.scrollTo(0, 0); } break;
     case "planPick": planTarget = Number(el.dataset.day); mode = "dish"; $("dishSearch").value = ""; currentKey = null; dishState = null; renderAll(); window.scrollTo(0, 0); break;
     case "planCancel": planTarget = null; mode = "plan"; renderAll(); break;
     case "planRemove": plan[Number(el.dataset.day)].splice(Number(el.dataset.idx), 1); save(); renderAll(); break;
@@ -5013,6 +5463,10 @@ document.addEventListener("click", e => {
   }
 });
 
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target && e.target.id === "cartInput"){ e.preventDefault(); const b = document.querySelector('[data-act="cartAddText"]'); if (b) b.click(); }
+  if (e.key === "Enter" && e.target && e.target.id === "cartJoinCode"){ e.preventDefault(); cartJoin(e.target.value); }
+});
 document.addEventListener("input", e => {
   if (e.target.id === "loText"){ lo.text = e.target.value; const b = document.querySelector('[data-act="loAI"]'); if (b && lo.state !== "loading") b.disabled = !(lo.sel.size || lo.text.trim()); }
 });
@@ -5031,10 +5485,16 @@ document.addEventListener("change", e => {
   const s = e.target.closest("select[data-plan-key]"); if (!s || s.value === "") return;
   const key = s.dataset.planKey, day = Number(s.value);
   if (!REG.has(key)) return;
-  plan[day].push(key); lastPlanMsg = {key, day}; save(); renderAll();
+  plan[day].push(key); lastPlanMsg = {key, day}; fly(s.closest(".act-i") || s, "#tab-plan .tab-i", "📅"); save(); renderAll();
 });
 $("search").addEventListener("input", renderGroups);
-$("search").addEventListener("keydown", e => { if (e.key === "Enter" && $("addExtra")) addExtra(); });
+$("search").addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  const pm = parseIngText($("search").value);
+  if (pm.ids.length || pm.unknown.length) multiAdd($("search"));
+  else if ($("addExtra")) addExtra();
+});
 $("dishSearch").addEventListener("input", () => { renderDishList(); renderDaily(); });
 $("dishSearch").addEventListener("keydown", e => {
   if (e.key !== "Enter") return;
@@ -5138,7 +5598,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
@@ -5335,7 +5795,7 @@ renderAll();
 { const mt = location.hash.match(/^#t=([a-z0-9-]+)/); if (mt && BY_SLUG.has(mt[1])) openSheet(BY_SLUG.get(mt[1]), {root:true}); }
 { const mg = location.hash.match(/^#rehber-([a-z]+)/); if (mg && GUIDE_BY.has(mg[1])) openGuide(mg[1], {root:true}); }
 // Ana ekran kısayolu ile gelindiyse ilgili sekmeyi aç (?sekme=ara / menu / sevilen)
-{ const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"recent"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
+{ const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"fav", sepet:"cart"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
 { const fb = $("footBugs"); if (fb) fb.hidden = !adminKey; const fi = $("footImg"); if (fi) fi.hidden = !adminKey; } // hata bildirimleri yalnızca yöneticiye görünür
 // İlk kez gelen kişiye kısa tanıtım
 try { if (!localStorage.getItem("pisir-tur") && !/^#(t=|rehber-)/.test(location.hash)) renderTour(); } catch(e) {}
