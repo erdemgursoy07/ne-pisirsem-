@@ -1113,17 +1113,11 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .hero-glow i:nth-child(1){right:-12%;top:-40%;background:radial-gradient(circle,rgba(255,146,84,.55),transparent 65%)}
 .hero-glow i:nth-child(2){right:22%;bottom:-55%;background:radial-gradient(circle,rgba(250,176,5,.35),transparent 65%)}
 .hero-card > .hero-glow{position:absolute;z-index:0}
+.hero-card > .hero-float{position:absolute;inset:0;z-index:0}
 .hero-card > :not(.hero-glow):not(.hero-float){position:relative;z-index:1}
 @media (max-width:699px){.tab-pill{border-radius:16px}}
 
 @media (prefers-reduced-motion: no-preference){
-  /* --- Çocuksu kaçan hareketleri kapat --- */
-  .brand-logo,.brand:hover .brand-logo,.start-emo,.lo-btn .lo-e,.acc-emo,.acc-head[aria-expanded="true"] .acc-emo,.acc-head:hover .acc-emo,
-  .acc-head[aria-expanded="true"] .acc-n,.cat:active > span:first-child,.cat:hover > span:first-child,.back-cats .back-arrow,
-  .chip[aria-pressed="true"] > span:first-child,.tab[aria-selected="true"] .tab-i,.dm-tag,.badge.ok .badge-emo,.stat b,.empty,
-  .cook-main.step-in .step-emo{animation:none}
-  .dm-tag{background:none;-webkit-background-clip:initial;background-clip:initial;color:#C2410C}
-  :root[data-theme="dark"] .dm-tag{color:#FF9354}
 
   @keyframes softIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   @keyframes blurIn{from{opacity:0;filter:blur(8px);transform:translateY(6px)}to{opacity:1;filter:blur(0);transform:none}}
@@ -1166,7 +1160,6 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   /* Seçimler: zıplama yerine yumuşak dolgu ve hafif ışık halkası */
   .chip{transition:background-color .3s ease,color .3s ease,border-color .3s ease,transform .2s ease}
   .chip[aria-pressed="true"]{animation:pressGlow .6s ease-out}
-  .fav[aria-pressed="true"],[data-act="fav"][aria-pressed="true"],.act-i[aria-pressed="true"] .act-e,.dc-fav{animation:scaleIn .35s cubic-bezier(.22,1,.36,1)}
 
   /* Açılır-kapanır: içerik süzülerek iner, ok yumuşak döner */
   .acc-body{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards}
@@ -1180,7 +1173,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 
   /* Pişirme modu: yeni adım bulanıklıktan netleşir */
   .cook-main.step-in .cook-step{animation:blurIn .55s cubic-bezier(.22,1,.36,1) backwards}
-  .cook-main.step-in .step-emo{animation:scaleIn .45s cubic-bezier(.22,1,.36,1) backwards}
+  .cook-main.step-in .step-emo{animation:scaleIn .45s cubic-bezier(.22,1,.36,1) backwards, bob .6s ease .1s}
 
   /* Başlıkların altında ince çizgi açılır */
   .sec-head h2,.sug-h{position:relative}
@@ -1220,6 +1213,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
   <header class="hero">
     <div class="hero-card">
       <div class="hero-glow" aria-hidden="true"><i></i><i></i></div>
+      <div class="hero-float" aria-hidden="true"><span>🍅</span><span>🥕</span><span>🧄</span><span>🍋</span><span>🫑</span><span>🧀</span></div>
       <div class="hero-text">
         <p class="greet" id="greet"></p>
         <h1 id="heroTitle">Dolabında ne var?</h1>
@@ -1313,7 +1307,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 67</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 68</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
