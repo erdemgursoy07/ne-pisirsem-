@@ -1358,6 +1358,38 @@ body[data-mode="plan"] #daily{margin:0 0 18px}
 @media (prefers-reduced-motion: no-preference){
   .site-foot li button:hover .fe,.site-foot li a:hover .fe{animation:bob .5s ease}
 }
+/* ===== Yeni Yemek ara ===== */
+#dishMode.dish{max-width:980px;margin-inline:auto;width:100%}
+body[data-mode="dish"] .hero{max-width:980px;margin-inline:auto}
+.dq-bar{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.dq-chip{white-space:nowrap}
+.dq-chip[aria-pressed="true"]{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
+.dq-diet{margin:0 0 12px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.dq-diet .diet-bar{margin:0}
+.dq-understood{margin:0 0 10px;font-size:.85rem;color:var(--muted)}
+.dq-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 10px}
+.dq-sort{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--muted);font-weight:700}
+.dq-sort select{font:inherit;font-weight:700;color:var(--ink);padding:6px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.recent-row{margin:4px 0 14px}
+.rr-l{display:block;font-size:.82rem;font-weight:800;color:var(--muted);margin-bottom:6px}
+.rr-list{display:flex;flex-wrap:wrap;gap:6px}
+.rc-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:.85rem;font-weight:700;cursor:pointer;max-width:100%}
+.cat-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (min-width:700px){.cat-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (min-width:1000px){.cat-tiles{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.cat-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:104px;padding:12px 6px;border:1px solid var(--line);border-radius:18px;background:var(--cbg,var(--surface));color:var(--ink);font:inherit;cursor:pointer;text-align:center}
+.ct-e{font-size:1.9rem;line-height:1}
+.ct-t{font-weight:800;font-size:.86rem;line-height:1.2}
+.ct-n{font-size:.72rem;color:var(--muted);font-weight:700}
+.cat-tile.cat-mevsim{background:color-mix(in srgb,#2B8A3E 10%,var(--surface))}
+.cat-tile.cat-hizli{background:color-mix(in srgb,#F59F00 12%,var(--surface))}
+@media (prefers-reduced-motion: no-preference){
+  .cat-tile{transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s ease;animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards}
+  .cat-tile:active{transform:scale(.96)}
+  @media (hover:hover){.cat-tile:hover{transform:translateY(-3px);box-shadow:0 12px 26px -14px rgba(29,36,51,.35)} .cat-tile:hover .ct-e{display:inline-block;animation:bob .5s ease}}
+  .cat-tiles > :nth-child(2){animation-delay:.03s}.cat-tiles > :nth-child(3){animation-delay:.06s}.cat-tiles > :nth-child(4){animation-delay:.09s}.cat-tiles > :nth-child(5){animation-delay:.12s}.cat-tiles > :nth-child(6){animation-delay:.15s}.cat-tiles > :nth-child(n+7){animation-delay:.18s}
+  .dq-understood,.dq-diet{animation:softIn .3s ease}
+}
 </style>
 </head>
 <body>
@@ -1407,7 +1439,7 @@ body[data-mode="plan"] #daily{margin:0 0 18px}
 
   <section class="dish" id="dishMode" aria-label="Yemek ara" hidden>
     <div id="planBanner"></div>
-    <input class="search dish-input" id="dishSearch" type="search" placeholder="Yemek ara: “çor”, “et”, “karnıyarık”…" aria-label="Yemek adı">
+    <input class="search dish-input" id="dishSearch" type="search" placeholder="🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…" aria-label="Yemek adı">
     <div class="dish-list" id="dishList"></div>
     <div class="detail" id="dishDetail" aria-live="polite"></div>
   </section>
@@ -1470,7 +1502,7 @@ body[data-mode="plan"] #daily{margin:0 0 18px}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 74</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 75</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2245,6 +2277,7 @@ function fpass(r){
   for (const f of filters){
     if (f === "hizli"){ if (!(r.sure && totalTime(r) <= 15)) return false; }
     else if (f === "spor"){ if (!(r.etiketler || []).includes("spor")) return false; }
+    else if (f === "mevsim"){ if (!isSeasonal(r)) return false; }
     else if (recipeCat(r) !== f) return false; // kategori = yemeğin tek asıl kategorisi (karışma olmaz)
   }
   return true;
@@ -2504,7 +2537,7 @@ function greeting(){
 }
 function renderHero(){
   document.body.dataset.mode = mode;
-  $("dietBar").hidden = mode !== "dish";
+  $("dietBar").hidden = true; // beslenme tercihleri artık Yemek ara'daki "🥗 Beslenme" düğmesinde
   if (!$("dietBar").hidden) $("dietBar").innerHTML = dietBarHTML();
   $("greet").textContent = greeting();
   $("heroTitle").textContent = HERO[mode][0];
@@ -4208,6 +4241,7 @@ function renderGroups(){
 
 // Dolabım'dan başka bir bölüme geçince seçimler sıfırlanır (temel malzemeler varsayılan olarak seçili kalır)
 function resetPantry(){
+  { const mineNow = [...selected].filter(id => !GROUPS[0].items.some(([b]) => b === id)); if (mineNow.length){ lastPantry = mineNow; try { localStorage.setItem("pisir-son-dolap", JSON.stringify(lastPantry)); } catch(e) {} } }
   selected = new Set(GROUPS[0].items.map(([id]) => id)); pantryInspire = false;
   extras.clear(); manual = {}; open.clear(); openGroups.clear();
   aiPantry = {state:"idle", keys:[], msg:""};
@@ -4350,42 +4384,111 @@ function seasonalRecipes(){
 const isSeasonal = r => { const {ids} = seasonNow(); return r.malzemeler.some(x => ids.includes(x.id)); };
 const openCats = new Set(); let catAutoDone = false;
 function timeCat(){ const h = new Date().getHours(); return h >= 5 && h < 11 ? "kahvalti" : h >= 11 && h < 15 ? "corba" : h >= 15 && h < 21 ? "etli" : "tatli"; }
+let lastPantry = load("pisir-son-dolap", []); if (!Array.isArray(lastPantry)) lastPantry = [];
+const dq = {t30:false, light:false, easy:false, mine:false, sort:"pop", dietOpen:false};
+const minePantry = () => [...new Set([...[...selected].filter(id => !GROUPS[0].items.some(([b]) => b === id)), ...lastPantry])];
+const TILE_ORDER = ["mevsim","hizli","corba","etli","sebze","etsiz","dunya","meze","kahvalti","sandvic","atistirmalik","tatli","kahve","spor"];
+function catInfo(id){ if (id === "mevsim") return ["mevsim", `${seasonNow().name}'da mevsiminde`, "🌱"]; return CAT_BY_ID[id]; }
+function catCountOf(id){ return id === "mevsim" ? seasonalRecipes().length : BUILTIN.filter(r => id === "spor" || id === "hizli" ? catMatch(r, id) : recipeCat(r) === id).length; }
+const DQ_STOP = new Set("içinde içeren olan olsun ile ve yemeği yemekleri yemek yemekler tarifi tarifleri tarif için bir akşam öğle sabah öğlen yemeğe dakikada dakikalık altı altında en çok az bana ne şey".split(" "));
+const DQ_CATS = [[/^çorba/, "corba"], [/^tatlı/, "tatli"], [/^kahvaltı/, "kahvalti"], [/^meze/, "meze"], [/^(sandviç|tost|dürüm)/, "sandvic"], [/^(atıştırma|aperatif)/, "atistirmalik"], [/^kahve/, "kahve"], [/^(dünya|yabancı)/, "dunya"], [/^sporcu|^protein/, "spor"]];
+/* "30 dakikada tavuk", "etsiz çorba", "içinde patlıcan olan", "soğansız" → anlamlı süzgeçler */
+function parseDishQuery(raw){
+  const out = {words:[], ing:[], ex:[], cats:[], maxT:0, light:false, easy:false, noMeat:false, any:false};
+  let t = String(raw || "").toLocaleLowerCase("tr");
+  const mm = t.match(/(\d+)\s*(dakikadan|dakikada|dakikalık|dakika|dk)\S*/); if (mm){ out.maxT = Number(mm[1]); t = t.replace(mm[0], " "); }
+  const mh = t.match(/(\d+)\s*saat\S*/); if (mh){ out.maxT = Number(mh[1]) * 60; t = t.replace(mh[0], " "); }
+  if (/\b(hızlı|pratik|çabuk)\b/.test(t) && !out.maxT){ out.maxT = 30; } t = t.replace(/\b(hızlı|pratik|çabuk)\b/g, " ");
+  if (/\b(hafif|diyet|light)\b|düşük kalori/.test(t)){ out.light = true; t = t.replace(/\b(hafif|diyet|light)\b|düşük kalori(li)?/g, " "); }
+  if (/\b(kolay|basit)\b/.test(t)){ out.easy = true; t = t.replace(/\b(kolay|basit)\b/g, " "); }
+  if (/\b(etsiz|vejetaryen|vegan)\b/.test(t)){ out.noMeat = true; t = t.replace(/\b(etsiz|vejetaryen|vegan)\b/g, " "); }
+  t = t.replace(/(\S+)\s+(olmayan|olmasın|hariç)/g, (m0, w) => { const pm = parseIngText(w); out.ex.push(...pm.ids); return " "; });
+  const words = [];
+  t.split(/[\s,;]+/).filter(Boolean).forEach(w => {
+    const sx = w.match(/^(.{3,})(sız|siz|suz|süz)$/);
+    if (sx){ const pm = parseIngText(sx[1]); if (pm.ids.length){ out.ex.push(...pm.ids); return; } }
+    const c = DQ_CATS.find(([re]) => re.test(w)); if (c){ out.cats.push(c[1]); return; }
+    if (DQ_STOP.has(w) || w.length < 3) return;
+    words.push(w);
+  });
+  // Kalan kelimelerden malzemeleri ayıkla; geri kalanı yemek adında aranır
+  const pm = parseIngText(words.join(", "));
+  const ingWords = new Set();
+  pm.ids.forEach(id => { const l = norm(LABEL[id]); words.forEach(w => { const nw = norm(w); if (nw.startsWith(l) || l.split(" ").some(tk => tk === nw || (nw.length >= 4 && tk.startsWith(nw))) || fuzzyHit(LABEL[id], w)) ingWords.add(w); }); });
+  out.ing = pm.ids; out.words = words.filter(w => !ingWords.has(w));
+  out.any = !!(out.maxT || out.light || out.easy || out.noMeat || out.ex.length || out.cats.length || out.ing.length);
+  return out;
+}
+function dqMatch(r, pq){
+  if (pq.maxT && totalTime(r) > pq.maxT) return false;
+  if (pq.light){ const n = nutrition(r); if (!n || !n.kcal || n.kcal > 500) return false; }
+  if (pq.easy && difficulty(r)[0] !== "kolay") return false;
+  if (pq.noMeat && r.malzemeler.some(m => MEAT.has(m.id))) return false;
+  if (pq.ex.length && r.malzemeler.some(m => pq.ex.includes(m.id))) return false;
+  if (pq.cats.length && !pq.cats.some(c => c === "spor" ? catMatch(r, "spor") : recipeCat(r) === c)) return false;
+  // Malzeme: tarifte o malzeme olmalı (ya da adında geçmeli)
+  if (pq.ing.length && !pq.ing.every(id => r.malzemeler.some(m => m.id === id) || fuzzyHit(r.ad, LABEL[id]))) return false;
+  if (pq.words.length && !pq.words.every(w => nameHit(r, norm(w)))) return false;
+  return true;
+}
+function quickPass(r){
+  if (dq.t30 && totalTime(r) > 30) return false;
+  if (dq.light){ const n = nutrition(r); if (!n || !n.kcal || n.kcal > 500) return false; }
+  if (dq.easy && difficulty(r)[0] !== "kolay") return false;
+  if (dq.mine){ const mine = minePantry(); const main = r.malzemeler.filter(m => !GROUPS[0].items.some(([b]) => b === m.id)); const have = main.filter(m => mine.includes(m.id)).length; if (!main.length || have < Math.max(1, Math.ceil(main.length * 0.5)) || main.length - have > 3) return false; }
+  return true;
+}
+function sortDish(list){
+  if (dq.sort === "fast") return list.slice().sort((a, b) => totalTime(a) - totalTime(b));
+  if (dq.sort === "light") return list.slice().sort((a, b) => ((nutrition(a) || {}).kcal || 9999) - ((nutrition(b) || {}).kcal || 9999));
+  if (dq.mine){ const mine = minePantry(); const miss = r => r.malzemeler.filter(m => !GROUPS[0].items.some(([b]) => b === m.id) && !mine.includes(m.id)).length; return sortRecipes(list).sort((a, b) => miss(a) - miss(b)); }
+  return sortRecipes(list);
+}
+function dishQuickHTML(){
+  const nd = diets.size, mine = minePantry();
+  const chip = (k, label) => `<button type="button" class="chip mini dq-chip" data-act="dqToggle" data-k="${k}" aria-pressed="${dq[k]}">${label}</button>`;
+  return `<div class="dq-bar" role="group" aria-label="Hızlı filtreler">${chip("t30", "⏱️ 30 dk altı")}${chip("light", "🔥 Hafif")}${chip("easy", "⭐ Kolay")}${mine.length ? chip("mine", "🧺 Dolabımdakiyle") : ""}
+    <button type="button" class="chip mini dq-chip" data-act="dqDiet" aria-expanded="${dq.dietOpen}" aria-pressed="${nd > 0}">🥗 ${nd ? DIETS.filter(d => diets.has(d[0])).map(d => d[2]).join(", ") : "Beslenme"} ▾</button></div>
+    ${dq.dietOpen ? `<div class="dq-diet">${dietBarHTML()}</div>` : ""}`;
+}
+function sortHTML(n){
+  return `<div class="dq-head"><span class="sec-count"><b>${n}</b> tarif</span><label class="dq-sort">Sırala <select id="dqSort" aria-label="Sıralama"><option value="pop"${dq.sort === "pop" ? " selected" : ""}>En sevilen</option><option value="fast"${dq.sort === "fast" ? " selected" : ""}>En hızlı</option><option value="light"${dq.sort === "light" ? " selected" : ""}>En hafif</option></select></label></div>`;
+}
 function renderDishList(){
-  if (!catAutoDone && mode === "dish"){ catAutoDone = true; if (!openCats.size) openCats.add(timeCat()); }
   const raw = $("dishSearch").value.trim();
   const q = norm(raw);
-  let list = sortRecipes(BUILTIN.filter(r => (!q || nameHit(r, q)) && fpass(r)));
+  const pq = parseDishQuery(raw);
+  const quickOn = dq.t30 || dq.light || dq.easy || dq.mine;
+  let html = dishQuickHTML();
+  // Arama: yapılandırılmış anlam varsa onunla, yoksa ad + malzeme ile
+  let list = BUILTIN.filter(r => fpass(r) && quickPass(r));
+  if (q){
+    let hit = list.filter(r => dqMatch(r, pq));
+    if (!hit.length && pq.words.length && !pq.any){ hit = list.filter(r => pq.words.some(w => nameHit(r, norm(w)))); } // yalnızca düz aramada gevşet
+    list = hit;
+  }
+  list = filters.has("mevsim") && !q ? seasonalRecipes().filter(r => fpass(r) && quickPass(r)) : sortDish(list);
   if (q){ const fq = fold(q); list = [...list.filter(r => fold(r.ad).includes(fq)), ...list.filter(r => !fold(r.ad).includes(fq))]; } // birebir eşleşenler önce
-  let html = "";
-  const hints = hintCats(q);
-  if (hints.length){
-    html += `<div class="hints">${hints.map(([id, l, emo]) => { const n = BUILTIN.filter(r => id === "spor" || id === "hizli" ? catMatch(r, id) : recipeCat(r) === id).length; return `<button type="button" class="hint cat-${id}" data-act="pickCat" data-f="${id}"><span aria-hidden="true">${emo}</span> ${l} <small>${n} tarif</small></button>`; }).join("")}</div>`;
+  if (q && pq.any){
+    const bits = [pq.maxT ? `⏱️ ${fmtDur(pq.maxT)} altı` : "", pq.light ? "🔥 Hafif" : "", pq.easy ? "⭐ Kolay" : "", pq.noMeat ? "🥕 Etsiz" : "",
+      ...pq.cats.map(c => { const ci = CAT_BY_ID[c]; return ci ? `${ci[2]} ${ci[1]}` : ""; }), ...pq.ing.map(id => `${ING_EMOJI[id] || "🥄"} ${LABEL[id]}`), ...pq.ex.map(id => `🚫 ${LABEL[id]}`), ...pq.words.map(w => `“${esc(w)}”`)].filter(Boolean);
+    html += `<p class="dq-understood">🔎 Anladığım: ${bits.join(" · ")}</p>`;
   }
-  if (raw && sampleFn && !hints.length && raw.length >= 3){
-    html += `<div class="ai-row"><button type="button" class="ai-btn" data-act="aiDish" ${dishState && dishState.state === "loading" ? "disabled" : ""}>✨ “${esc(raw)}” için tarif oluştur</button></div>`;
-  }
-  if (!q && !filters.size){
-    // Her kategoriden en sevilen 8 tarif; tamamı için "Tümünü gör"
-    { // Mevsiminde: bu ay taze olan sebze ve meyvelerle yapılanlar
-      const sz = seasonNow(), items = seasonalRecipes(), open = openCats.has("mevsim");
-      if (items.length) html += `<section class="dish-sec cat-acc acc-season${open ? " open" : ""}" data-key="sec-mevsim"><button type="button" class="acc-head" data-act="catToggle" data-f="mevsim" aria-expanded="${open}"><span class="acc-emo" aria-hidden="true">🌱</span><span class="acc-txt"><b>${sz.name} ayında mevsiminde</b><small>${open ? "Taze, ucuz ve lezzetli: " : ""}${sz.ids.slice(0, 6).map(id => LABEL[id].toLocaleLowerCase("tr")).join(", ")}…</small></span><span class="acc-n">${Math.min(items.length, 24)}</span><span class="acc-chev" aria-hidden="true">▾</span></button>${open ? `<div class="acc-body"><div class="season-chips">${sz.ids.map(id => `<span class="season-chip">${ING_EMOJI[id] || "🥬"} ${LABEL[id]}</span>`).join("")}</div><div class="dish-grid">${items.slice(0, 24).map(r => dishCard(r, "pickDish", "")).join("")}</div></div>` : ""}</section>`;
-    }
-    html += CATS.map(([id, l, emo]) => {
-      const items = id === "spor" ? byProtein(BUILTIN.filter(r => catMatch(r, id))) : id === "hizli" ? sortRecipes(BUILTIN.filter(r => catMatch(r, "hizli"))) : sortRecipes(BUILTIN.filter(r => recipeCat(r) === id));
-      if (!items.length) return "";
-      const more = items.length > 12 ? `<button type="button" class="see-all cat-${id}" data-act="filter" data-f="${id}">Tümünü gör · ${items.length} tarif</button>` : "";
-      const open = openCats.has(id);
-      const peek = items.slice(0, 3).map(r => r.ad).join(", ") + (items.length > 3 ? "…" : "");
-      return `<section class="dish-sec cat-acc${open ? " open" : ""}" data-key="sec-${id}"><button type="button" class="acc-head cat-${id}" data-act="catToggle" data-f="${id}" aria-expanded="${open}"><span class="acc-emo" aria-hidden="true">${emo}</span><span class="acc-txt"><b>${l}</b><small>${open ? `${items.length} tarif` : esc(peek)}</small></span><span class="acc-n">${items.length}</span><span class="acc-chev" aria-hidden="true">▾</span></button>${open ? `<div class="acc-body"><div class="dish-grid">${items.slice(0, 12).map(r => dishCard(r, "pickDish", id === "spor" ? proteinNote(r) : "")).join("")}</div>${more}</div>` : ""}</section>`;
-    }).join("");
+  if (!q && !filters.size && !quickOn){
+    const rec = recents.map(k => REG.get(k)).filter(Boolean).slice(0, 6);
+    if (rec.length) html += `<div class="recent-row"><span class="rr-l">🕘 Son baktıkların</span><div class="rr-list">${rec.map(r => `<button type="button" class="rc-pill" data-act="pickDish" data-key="${esc(r.key)}"><span aria-hidden="true">${recipeEmoji(r)}</span> ${esc(r.ad)}</button>`).join("")}</div></div>`;
+    html += `<div class="cat-tiles">${TILE_ORDER.map(id => { const c = catInfo(id); if (!c) return ""; const n = catCountOf(id); if (!n) return ""; return `<button type="button" class="cat-tile cat-${id}" data-act="filter" data-f="${id}"><span class="ct-e" aria-hidden="true">${c[2]}</span><span class="ct-t">${esc(id === "mevsim" ? "Mevsiminde" : c[1])}</span><span class="ct-n">${n} tarif</span></button>`; }).join("")}</div>`;
   } else if (list.length){
-    const c = filters.size ? CAT_BY_ID[[...filters][0]] : null;
-    if (c && !q) html += inspire3HTML(c[0], list);
-    if (c) html += `<button type="button" class="back-cats" data-act="backCats" data-f="${c[0]}"><span class="back-arrow" aria-hidden="true">←</span> Tüm kategoriler</button><div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${c[1]}</h2><span class="sec-count">${list.length} tarif</span></div>`;
+    const c = filters.size ? catInfo([...filters][0]) : null;
+    if (c) html += `<button type="button" class="back-cats" data-act="backCats" data-f="${c[0]}"><span class="back-arrow" aria-hidden="true">←</span> Kategoriler</button><div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${esc(c[1])}</h2></div>`;
+    if (c && c[0] === "mevsim") html += `<div class="season-chips">${seasonNow().ids.map(id => `<span class="season-chip">${ING_EMOJI[id] || "🥬"} ${LABEL[id]}</span>`).join("")}</div>`;
+    html += sortHTML(list.length);
     const isSpor = filters.has("spor");
-    html += `<div class="dish-grid">${(isSpor ? byProtein(list) : list).map(r => dishCard(r, "pickDish", isSpor ? proteinNote(r) : "")).join("")}</div>`;
-  } else if (!hints.length && !(raw && sampleFn)){
-    html += raw ? `<p class="empty">“${esc(raw)}” bulunamadı. Başka bir yazımla dene.</p>` : `<p class="empty">Bu kategoride yemek yok.</p>`;
+    html += `<div class="dish-grid">${(isSpor && dq.sort === "pop" ? byProtein(list) : list).slice(0, 120).map(r => dishCard(r, "pickDish", isSpor ? proteinNote(r) : "")).join("")}</div>`;
+  } else {
+    if (filters.size){ const c = catInfo([...filters][0]); if (c) html += `<button type="button" class="back-cats" data-act="backCats" data-f="${c[0]}"><span class="back-arrow" aria-hidden="true">←</span> Kategoriler</button>`; }
+    html += `<p class="empty">${raw ? `“${esc(raw)}” için uygun yemek bulunamadı.` : "Bu filtrelerle yemek yok."}${quickOn || diets.size ? " Filtrelerden birini kaldırmayı dene." : ""}</p>`;
+    if (raw && sampleFn && raw.length >= 3) html += `<div class="ai-row"><button type="button" class="ai-btn" data-act="aiDish" ${dishState && dishState.state === "loading" ? "disabled" : ""}>✨ “${esc(raw)}” için tarif oluştur</button></div>`;
   }
   setHTML($("dishList"), html);
   hydrateImages($("dishList"));
@@ -4502,7 +4605,7 @@ function renderDaily(){
   const show = mode === "plan" && planTarget === null; // günün menüsü Menü sekmesinin en üstünde
   box.hidden = !show; if (!show) return;
   if (!dailyMenu().length){ box.hidden = true; return; }
-  setHTML(box, dailyCardHTML());
+  setHTML(box, dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : ""));
 }
 
 /* ---------- Tarif sayfası: yemeğe nereden dokunulursa dokunulsun üstte açılır ---------- */
@@ -5160,6 +5263,7 @@ document.addEventListener("click", e => {
       } else {
         filters = (filters.has(f) && filters.size === 1) ? new Set() : new Set([f]); // tek seçim
         renderAll();
+        if (el.classList.contains("cat-tile")) window.scrollTo({top:0, behavior:"smooth"});
         if (el.classList.contains("see-all")) $("dishMode").scrollIntoView({block:"start"});
       }
       break;
@@ -5222,7 +5326,7 @@ document.addEventListener("click", e => {
       if (!voiceOn) stopSpeech();
       if (voiceOn && cook.key && REG.get(cook.key)) ensureNarration(REG.get(cook.key)); // anlatımı hemen hazırlamaya başla
       lastSpoken = ""; renderCook(); break;
-    case "goDaily": dailyOpen = !dailyOpen; renderDaily(); if (mode === "pantry") renderResults(); break; // menü olduğu yerde açılır/kapanır
+    case "goDaily": dailyOpen = !dailyOpen; renderDaily(); break; // menü olduğu yerde açılır/kapanır
     case "diet": { const dd = el.dataset.d; diets.has(dd) ? diets.delete(dd) : diets.add(dd); saveDiets(); renderAll(); break; }
     case "share": if (r) shareRecipe(r); break;
     case "shareList": if (r) shareText(`${r.ad} alışveriş listesi`, `🛒 ${r.ad} için alışveriş listesi\n${shopText(r)}\n\nTarif: ${recipeUrl(r)}`); break;
@@ -5425,11 +5529,9 @@ document.addEventListener("click", e => {
       if (!wasOpen){ const sec = document.querySelector(`[data-key="sec-${f}"]`); if (sec && sec.getBoundingClientRect().top < 70) sec.scrollIntoView({block:"start", behavior:"smooth"}); }
       break;
     }
-    case "backCats": {
-      const f = el.dataset.f; filters = new Set(); $("dishSearch").value = ""; openCats.clear(); openCats.add(f);
-      renderAll(); const sec = document.querySelector(`[data-key="sec-${f}"]`); if (sec) sec.scrollIntoView({block:"start"});
-      break;
-    }
+    case "backCats": filters = new Set(); $("dishSearch").value = ""; renderAll(); window.scrollTo({top:0, behavior:"smooth"}); break;
+    case "dqToggle": { const k = el.dataset.k; dq[k] = !dq[k]; if (k === "mine" && dq.mine) dq.sort = "pop"; renderDishList(); break; }
+    case "dqDiet": dq.dietOpen = !dq.dietOpen; renderDishList(); break;
     case "prefToggle": prefOpen = !prefOpen; renderGroups(); break;
     case "quickMore": quickAll = !quickAll; renderGroups(); break;
     case "moreToggle": moreOpen = !moreOpen; renderGroups(); break;
@@ -5444,7 +5546,7 @@ document.addEventListener("click", e => {
     case "wn-market": closeWhatsNew(); if (!cartCount()) addToCart({ad:"Ekmek", ing:"ekmek"}, {force:true}); mode = "cart"; marketMode = true; requestWake(); renderAll(); window.scrollTo(0, 0); break;
     case "wn-share": closeWhatsNew(); goMode("cart"); setTimeout(() => { const x = $("cartShare"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 250); break;
     case "wn-pantry": closeWhatsNew(); goMode("pantry"); setTimeout(() => { const x = $("search"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.focus({preventScroll:true}); x.classList.add("wn-flash"); } }, 200); break;
-    case "wn-season": closeWhatsNew(); goMode("dish"); openCats.clear(); openCats.add("mevsim"); renderDishList(); setTimeout(() => { const x = document.querySelector('[data-key="sec-mevsim"]'); if (x){ x.scrollIntoView({block:"start", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 150); break;
+    case "wn-season": closeWhatsNew(); mode = "dish"; planTarget = null; $("dishSearch").value = ""; filters = new Set(["mevsim"]); renderAll(); window.scrollTo(0, 0); break;
     case "wn-lo": closeWhatsNew(); goMode("pantry"); setTimeout(openLeftover, 200); break;
     case "wn-skt": closeWhatsNew(); goMode("pantry"); setTimeout(() => { if (![...selected].some(id => !GROUPS[0].items.some(([b]) => b === id))){ ["domates","sogan","yumurta"].forEach(id => selected.add(id)); save(); }
       sktOpen = true; moreOpen = true; renderAll(); const x = document.querySelector(".skt-tg"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
@@ -5496,6 +5598,7 @@ document.addEventListener("input", e => {
   if (e.target.id === "loText"){ lo.text = e.target.value; const b = document.querySelector('[data-act="loAI"]'); if (b && lo.state !== "loading") b.disabled = !(lo.sel.size || lo.text.trim()); }
 });
 document.addEventListener("change", e => {
+  if (e.target.id === "dqSort"){ dq.sort = e.target.value; renderDishList(); return; }
   const imgIn = e.target.closest && e.target.closest("input[data-img-key]");
   if (imgIn && imgIn.files && imgIn.files[0]){
     const r = REG.get(imgIn.dataset.imgKey); const file = imgIn.files[0]; imgIn.value = "";
@@ -5623,7 +5726,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
