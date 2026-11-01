@@ -1025,8 +1025,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .ing-head .serv{margin:0}
 .sheet-cta{display:none}
 @media (max-width:760px){
-  #sheet .sheet-cta{display:block;position:static;margin:22px 0 4px}
-  #sheet .sheet-cta .ai-btn{width:100%;padding:15px;font-size:1.08rem;border-radius:16px;box-shadow:0 8px 22px rgba(194,65,12,.3)}
+
 }
 @media (hover:hover){.act-i:hover{border-color:var(--cobalt)}}
 /* ---------- Haftalık menü: boş günler sade, bugün vurgulu ---------- */
@@ -1710,6 +1709,13 @@ html.force-splash .splash{display:flex}
 }
 @media (prefers-reduced-motion: reduce){ .sp-float span{opacity:.9} .sp-steam{display:none} }
 
+/* ===================== YÜZEN "PİŞİR" DÜĞMESİ ===================== */
+#sheet .sheet-cta{display:flex;justify-content:flex-end;position:sticky;bottom:calc(16px + env(safe-area-inset-bottom,0px));height:0;margin:0;z-index:7;pointer-events:none}
+#sheet .cta-pill{position:absolute;right:0;bottom:0;pointer-events:none;width:auto;min-height:0;padding:14px 22px;border-radius:999px;font-size:1.02rem;box-shadow:0 12px 28px -8px rgba(194,65,12,.6),0 2px 6px rgba(0,0,0,.12);
+  opacity:0;transform:translateY(calc(30px + var(--lag,0px))) scale(.85);transition:opacity .3s ease,transform .45s cubic-bezier(.34,1.56,.64,1)}
+#sheet.cta-float .cta-pill{opacity:1;pointer-events:auto;transform:translateY(var(--lag,0px)) scale(1)}
+#sheet.cta-float .sheet-cta{pointer-events:none}
+@media (prefers-reduced-motion: reduce){ #sheet .cta-pill{transition:opacity .2s ease} }
 </style>
 </head>
 <body>
@@ -1826,7 +1832,7 @@ html.force-splash .splash{display:flex}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 81</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 82</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2734,7 +2740,7 @@ function detailHTML(r, compact){
   if (Math.abs(f - 1) > 0.001) h += `<p class="note">Malzemeler ${serv} kişiye göre ayarlandı. Adımlarda geçen miktarlar ${r.kisi} kişilik tarife göredir; malzeme listesindeki güncel miktarları kullan.</p>`;
   if (r.not) h += `<p class="note">${esc(r.not)}</p>`;
   if (r.src === "ai") h += `<p class="note">Bu tarif yapay zekâ tarafından oluşturuldu; miktarları ve pişirme sürelerini kendi tecrübenle kontrol et.</p>`;
-  if (!compact) h += bugHTML(r) + chefHTML(r, null) + reviewsHTML(r) + `<div class="sheet-cta"><button type="button" class="ai-btn" data-act="cook" data-key="${ek}">▶ Pişirmeye başla</button></div>`;
+  if (!compact) h += bugHTML(r) + chefHTML(r, null) + reviewsHTML(r) + `<div class="sheet-cta" aria-hidden="true"><button type="button" class="ai-btn cta-pill" data-act="cook" data-key="${ek}" tabindex="-1">▶ Pişir</button></div>`;
   return h;
 }
 
@@ -4232,6 +4238,32 @@ function renderCart(){
   const shown = sp && getComputedStyle(sp).display !== "none";
   const fast = matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (sp){ if (!shown) sp.remove(); else setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 650); }, fast ? 400 : 1500); } }
+
+/* Yüzen "Pişir" düğmesi */
+(function(){
+  const inner = document.querySelector("#sheet .sheet-inner"), sh = $("sheet");
+  if (!inner || !sh) return;
+  let last = 0, t = null;
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function check(){
+    const top = inner.querySelector(".act2 .cook-cta");
+    let show = false;
+    if (top && top.offsetParent){ const r = top.getBoundingClientRect(), ir = inner.getBoundingClientRect(); show = r.bottom < ir.top + 70 || r.top > ir.bottom - 20; }
+    else show = inner.scrollTop > 200;
+    sh.classList.toggle("cta-float", show);
+    const pill = inner.querySelector(".cta-pill"); if (pill){ pill.tabIndex = show ? 0 : -1; pill.parentElement.setAttribute("aria-hidden", show ? "false" : "true"); }
+  }
+  inner.addEventListener("scroll", () => {
+    const y = inner.scrollTop, dy = y - last; last = y;
+    check();
+    if (calm) return;
+    const pill = inner.querySelector(".cta-pill"); if (!pill) return;
+    pill.style.setProperty("--lag", Math.max(-14, Math.min(14, -dy * 0.6)) + "px"); // kaydırma yönünün tersine hafif gecikme: ekranla birlikte "yaylanır"
+    clearTimeout(t); t = setTimeout(() => pill.style.setProperty("--lag", "0px"), 90);
+  }, {passive:true});
+  new MutationObserver(() => { last = inner.scrollTop; check(); }).observe(sh, {attributes:true, attributeFilter:["hidden"], subtree:false});
+  new MutationObserver(() => check()).observe($("sheetBody"), {childList:true});
+})();
 
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
