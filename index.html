@@ -1655,15 +1655,6 @@ h2{letter-spacing:-.01em}
 @media (min-width:700px) and (max-width:1559px){ .topbar .brand span{display:none} }
 @media (min-width:700px) and (max-width:1023px){ .topbar .tab:not([aria-selected="true"]) .tab-t{display:none} .topbar .tab:not([aria-selected="true"]){padding:8px 10px} }
 @media (min-width:1100px){ html.sheet-open .topbar .tab:not([aria-selected="true"]) .tab-t{display:none} html.sheet-open .topbar .tab:not([aria-selected="true"]){padding:8px 10px} }
-/* ===================== AÇILIŞ EKRANI ===================== */
-.splash{display:none}
-@media (display-mode: standalone){
-  .splash{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg);color:var(--ink);transition:opacity .45s ease}
-  .splash img{border-radius:24px;box-shadow:0 14px 34px -12px rgba(194,65,12,.6)}
-  .splash b{font-size:1.2rem}
-  .splash.out{opacity:0;pointer-events:none}
-}
-
 /* ===================== KARANLIK MOD DÜZELTMELERİ ===================== */
 :root[data-theme="dark"] .lo-e{background:#3A3214}
 :root[data-theme="dark"] .bd-orta,:root[data-theme="dark"] .daily .bd-orta{background:#3A3214;color:#FFD43B}
@@ -1678,10 +1669,65 @@ h2{letter-spacing:-.01em}
 :root[data-theme="dark"] .rc-emo{filter:drop-shadow(0 8px 16px rgba(0,0,0,.5))}
 :root[data-theme="dark"] .ia-free{background:#16301D;color:#B2F2BB}
 :root[data-theme="dark"] .actions .yt-btn{background:transparent}
+/* ===================== ANİMASYONLU AÇILIŞ EKRANI ===================== */
+.splash{display:none}
+@media (display-mode: standalone){ .splash{display:flex} }
+html.force-splash .splash{display:flex}
+.splash{position:fixed;inset:0;z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:16px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 35%,#FF8A3D 0%,#E8590C 45%,#B8320B 100%);color:#fff;transition:opacity .55s ease,transform .6s cubic-bezier(.22,1,.36,1)}
+.sp-glow{position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(255,224,170,.55),rgba(255,224,170,0) 65%);top:50%;left:50%;transform:translate(-50%,-62%)}
+.sp-logo{position:relative;z-index:1}
+.sp-logo img{display:block;border-radius:30px;box-shadow:0 22px 50px -14px rgba(80,20,0,.6),0 0 0 6px rgba(255,255,255,.18)}
+.sp-steam{position:absolute;left:50%;top:-34px;transform:translateX(-50%);display:flex;gap:10px}
+.sp-steam i{display:block;width:7px;height:26px;border-radius:8px;background:rgba(255,255,255,.85);opacity:0}
+.sp-name{position:relative;z-index:1;margin-top:10px;font-size:1.65rem;font-weight:900;letter-spacing:-.01em;text-shadow:0 3px 14px rgba(80,20,0,.35)}
+.sp-tag{position:relative;z-index:1;font-size:.95rem;font-weight:600;opacity:.92}
+.sp-dots{position:relative;z-index:1;display:flex;gap:7px;margin-top:10px}
+.sp-dots i{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.5}
+.sp-float span{position:absolute;font-size:2rem;opacity:0;filter:drop-shadow(0 6px 10px rgba(80,20,0,.3))}
+.sp-float span:nth-child(1){left:12%;top:18%}.sp-float span:nth-child(2){right:14%;top:22%}.sp-float span:nth-child(3){left:18%;bottom:24%}
+.sp-float span:nth-child(4){right:16%;bottom:20%}.sp-float span:nth-child(5){left:8%;top:48%}.sp-float span:nth-child(6){right:8%;top:50%}
+.sp-float span:nth-child(7){left:44%;top:11%}.sp-float span:nth-child(8){left:46%;bottom:11%}
+.splash.out{opacity:0;transform:scale(1.08);pointer-events:none}
+@media (prefers-reduced-motion: no-preference){
+  @keyframes spLogo{0%{transform:scale(.5) rotate(-12deg);opacity:0}55%{transform:scale(1.08) rotate(3deg);opacity:1}75%{transform:scale(.97) rotate(-1deg)}100%{transform:none;opacity:1}}
+  @keyframes spSteam{0%{opacity:0;transform:translateY(10px) scaleX(1)}30%{opacity:.9}100%{opacity:0;transform:translateY(-26px) scaleX(1.7)}}
+  @keyframes spUp{from{opacity:0;transform:translateY(14px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+  @keyframes spDot{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+  @keyframes spFloat{0%{opacity:0;transform:translateY(16px) scale(.6) rotate(-10deg)}35%{opacity:.95;transform:translateY(0) scale(1) rotate(0)}100%{opacity:.95;transform:translateY(-10px) scale(1) rotate(8deg)}}
+  @keyframes spGlow{0%,100%{transform:translate(-50%,-62%) scale(1)}50%{transform:translate(-50%,-62%) scale(1.12)}}
+  .sp-logo{animation:spLogo .8s cubic-bezier(.22,1,.36,1) both}
+  .sp-steam i{animation:spSteam 1.4s ease-in .45s infinite}
+  .sp-steam i:nth-child(2){animation-delay:.75s}.sp-steam i:nth-child(3){animation-delay:1.05s}
+  .sp-name{animation:spUp .6s cubic-bezier(.22,1,.36,1) .35s both}
+  .sp-tag{animation:spUp .6s cubic-bezier(.22,1,.36,1) .55s both}
+  .sp-dots{animation:spUp .5s ease .75s both}
+  .sp-dots i{animation:spDot 1s ease-in-out infinite}.sp-dots i:nth-child(2){animation-delay:.15s}.sp-dots i:nth-child(3){animation-delay:.3s}
+  .sp-float span{animation:spFloat 1.6s cubic-bezier(.22,1,.36,1) both}
+  .sp-float span:nth-child(2){animation-delay:.1s}.sp-float span:nth-child(3){animation-delay:.2s}.sp-float span:nth-child(4){animation-delay:.3s}
+  .sp-float span:nth-child(5){animation-delay:.15s}.sp-float span:nth-child(6){animation-delay:.25s}.sp-float span:nth-child(7){animation-delay:.35s}.sp-float span:nth-child(8){animation-delay:.4s}
+  .sp-glow{animation:spGlow 2.4s ease-in-out infinite}
+  .splash.out .sp-logo{transform:scale(1.25);transition:transform .6s cubic-bezier(.22,1,.36,1)}
+}
+@media (prefers-reduced-motion: reduce){ .sp-float span{opacity:.9} .sp-steam{display:none} }
+
+/* ===================== "PİŞİRMEYE BAŞLA": KAYDIRMAYLA SAKLANIR ===================== */
+@media (max-width:760px){
+  #sheet .sheet-cta{transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .3s ease}
+  #sheet.cta-hide .sheet-cta{transform:translateY(130%);opacity:0;pointer-events:none}
+}
 </style>
 </head>
 <body>
-<div class="splash" id="splash" aria-hidden="true"><img src="icon-192.png?v=2" alt="" width="96" height="96"><b>Bugün ne pişirsem?</b></div>
+<div class="splash" id="splash" aria-hidden="true">
+  <div class="sp-glow"></div>
+  <div class="sp-float"><span>🍅</span><span>🥕</span><span>🧄</span><span>🍋</span><span>🫑</span><span>🧀</span><span>🌶️</span><span>🥚</span></div>
+  <div class="sp-logo"><span class="sp-steam"><i></i><i></i><i></i></span><img src="icon-192.png?v=2" alt="" width="112" height="112"></div>
+  <b class="sp-name">Bugün ne pişirsem?</b>
+  <small class="sp-tag">Dolabındakiyle ne pişireceğini bul</small>
+  <span class="sp-dots"><i></i><i></i><i></i></span>
+</div>
+<script>try{if(/[?&]splash=1/.test(location.search))document.documentElement.classList.add("force-splash")}catch(e){}</script>
 <div class="wrap">
   <nav class="topbar" aria-label="Ana menü"><button type="button" class="brand" data-act="goHome" aria-label="Ana sayfa: Bugün ne pişirsem?"><img class="brand-logo brand-img" src="icon-192.png?v=2" alt="" width="42" height="42"><span>Bugün ne pişirsem?</span></button>
     <div class="tabs" role="tablist" aria-label="Görünüm">
@@ -1786,7 +1832,7 @@ h2{letter-spacing:-.01em}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 79</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 80</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -4188,7 +4234,26 @@ function renderCart(){
 /* =================== /SEPET =================== */
 
 /* Açılış ekranı: uygulama hazır olunca yumuşakça kaybolur */
-setTimeout(() => { const sp = $("splash"); if (sp){ sp.classList.add("out"); setTimeout(() => sp.remove(), 500); } }, 350);
+{ const sp = $("splash");
+  const shown = sp && getComputedStyle(sp).display !== "none";
+  const fast = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (sp){ if (!shown) sp.remove(); else setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 650); }, fast ? 400 : 1500); } }
+
+/* "Pişirmeye başla" düğmesi: aşağı kaydırınca aşağı kayıp gizlenir, yukarı kaydırınca geri gelir */
+(function(){
+  const inner = document.querySelector("#sheet .sheet-inner"), sh = $("sheet");
+  if (!inner || !sh) return;
+  let last = 0, acc = 0;
+  inner.addEventListener("scroll", () => {
+    const y = inner.scrollTop, dy = y - last; last = y;
+    const atTop = y < 60, atEnd = y + inner.clientHeight >= inner.scrollHeight - 80;
+    if (atTop || atEnd){ sh.classList.remove("cta-hide"); acc = 0; return; }
+    acc = (dy > 0) === (acc > 0) ? acc + dy : dy; // aynı yönde biriken kaydırma miktarı
+    if (acc > 24) sh.classList.add("cta-hide");
+    else if (acc < -16) sh.classList.remove("cta-hide");
+  }, {passive:true});
+  new MutationObserver(() => { if (sh.hidden){ sh.classList.remove("cta-hide"); last = 0; acc = 0; } }).observe(sh, {attributes:true, attributeFilter:["hidden"]});
+})();
 
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
