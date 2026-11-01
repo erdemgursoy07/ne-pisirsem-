@@ -1025,8 +1025,7 @@ body[data-mode="pantry"] #heroText{margin:6px 0 0}
 .ing-head .serv{margin:0}
 .sheet-cta{display:none}
 @media (max-width:760px){
-  #sheet .act2 .cook-cta{display:none}
-  #sheet .sheet-cta{display:block;position:sticky;bottom:0;z-index:6;margin:18px -20px -20px;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--surface) 70%,transparent)}
+  #sheet .sheet-cta{display:block;position:static;margin:22px 0 4px}
   #sheet .sheet-cta .ai-btn{width:100%;padding:15px;font-size:1.08rem;border-radius:16px;box-shadow:0 8px 22px rgba(194,65,12,.3)}
 }
 @media (hover:hover){.act-i:hover{border-color:var(--cobalt)}}
@@ -1711,11 +1710,6 @@ html.force-splash .splash{display:flex}
 }
 @media (prefers-reduced-motion: reduce){ .sp-float span{opacity:.9} .sp-steam{display:none} }
 
-/* ===================== "PİŞİRMEYE BAŞLA": KAYDIRMAYLA SAKLANIR ===================== */
-@media (max-width:760px){
-  #sheet .sheet-cta{transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .3s ease}
-  #sheet.cta-hide .sheet-cta{transform:translateY(130%);opacity:0;pointer-events:none}
-}
 </style>
 </head>
 <body>
@@ -1832,7 +1826,7 @@ html.force-splash .splash{display:flex}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 80</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 81</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -4238,22 +4232,6 @@ function renderCart(){
   const shown = sp && getComputedStyle(sp).display !== "none";
   const fast = matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (sp){ if (!shown) sp.remove(); else setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 650); }, fast ? 400 : 1500); } }
-
-/* "Pişirmeye başla" düğmesi: aşağı kaydırınca aşağı kayıp gizlenir, yukarı kaydırınca geri gelir */
-(function(){
-  const inner = document.querySelector("#sheet .sheet-inner"), sh = $("sheet");
-  if (!inner || !sh) return;
-  let last = 0, acc = 0;
-  inner.addEventListener("scroll", () => {
-    const y = inner.scrollTop, dy = y - last; last = y;
-    const atTop = y < 60, atEnd = y + inner.clientHeight >= inner.scrollHeight - 80;
-    if (atTop || atEnd){ sh.classList.remove("cta-hide"); acc = 0; return; }
-    acc = (dy > 0) === (acc > 0) ? acc + dy : dy; // aynı yönde biriken kaydırma miktarı
-    if (acc > 24) sh.classList.add("cta-hide");
-    else if (acc < -16) sh.classList.remove("cta-hide");
-  }, {passive:true});
-  new MutationObserver(() => { if (sh.hidden){ sh.classList.remove("cta-hide"); last = 0; acc = 0; } }).observe(sh, {attributes:true, attributeFilter:["hidden"]});
-})();
 
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
