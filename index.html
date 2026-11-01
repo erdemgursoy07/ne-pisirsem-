@@ -1461,8 +1461,6 @@ body[data-mode="dish"] .hero{max-width:980px;margin-inline:auto}
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
   <section class="cart" id="cartMode" aria-label="Sepet" hidden></section>
   <footer class="site-foot">
-    <details class="foot-more" id="footMore">
-    <summary><span class="fe" aria-hidden="true">ℹ️</span> Daha fazla: kategoriler, yardım ve rehberler</summary>
     <div class="foot-grid">
       <nav class="foot-col" aria-label="Keşfet">
         <h3><span class="fe" aria-hidden="true">🧭</span> Keşfet</h3>
@@ -1511,9 +1509,8 @@ body[data-mode="dish"] .hero{max-width:980px;margin-inline:auto}
         </ul>
       </nav>
     </div>
-    </details>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 76</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 77</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -3846,9 +3843,6 @@ function renderCart(){
   setHTML(el, h);
 }
 /* =================== /SEPET =================== */
-
-/* Alt bilgi: bilgisayarda açık, telefonda kapalı */
-{ const fm = $("footMore"); if (fm && matchMedia("(min-width:700px)").matches) fm.open = true; }
 
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
