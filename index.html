@@ -1390,6 +1390,19 @@ body[data-mode="dish"] .hero{max-width:980px;margin-inline:auto}
   .cat-tiles > :nth-child(2){animation-delay:.03s}.cat-tiles > :nth-child(3){animation-delay:.06s}.cat-tiles > :nth-child(4){animation-delay:.09s}.cat-tiles > :nth-child(5){animation-delay:.12s}.cat-tiles > :nth-child(6){animation-delay:.15s}.cat-tiles > :nth-child(n+7){animation-delay:.18s}
   .dq-understood,.dq-diet{animation:softIn .3s ease}
 }
+/* Sade alt bilgi */
+#dishDetail:empty{display:none}
+@media (min-width:1000px){.site-foot .foot-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.foot-more{border:0}
+.foot-more > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:6px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font-weight:700;font-size:.92rem;color:var(--muted)}
+.foot-more > summary::-webkit-details-marker{display:none}
+.foot-more > summary::after{content:"▾";margin-left:auto;transition:transform .25s ease}
+.foot-more[open] > summary::after{transform:rotate(180deg)}
+.foot-more[open] > .foot-grid{margin-top:16px}
+@media (min-width:700px){ .foot-more > summary{display:none} .foot-more > .foot-grid{margin-top:0} }
+.site-foot{padding-top:20px}
+.foot-bottom{margin-top:14px}
+@media (prefers-reduced-motion: no-preference){ .foot-more[open] > .foot-grid{animation:softIn .35s cubic-bezier(.22,1,.36,1)} }
 </style>
 </head>
 <body>
@@ -1448,12 +1461,9 @@ body[data-mode="dish"] .hero{max-width:980px;margin-inline:auto}
   <section class="saved" id="savedMode" aria-label="En sevilenler" hidden></section>
   <section class="cart" id="cartMode" aria-label="Sepet" hidden></section>
   <footer class="site-foot">
+    <details class="foot-more" id="footMore">
+    <summary><span class="fe" aria-hidden="true">ℹ️</span> Daha fazla: kategoriler, yardım ve rehberler</summary>
     <div class="foot-grid">
-      <div class="foot-brand">
-        <p class="foot-logo"><img class="brand-logo brand-img" src="icon-192.png?v=2" alt="" width="34" height="34"> Bugün ne pişirsem?</p>
-        <p class="foot-slogan">Dolabındakiyle ne pişireceğini bul.</p>
-        <p class="foot-text">Evdeki malzemelerden yemek önerisi, adım adım pişirme modu ve haftalık menü. Ücretsiz, reklamsız, üyeliksiz.</p>
-      </div>
       <nav class="foot-col" aria-label="Keşfet">
         <h3><span class="fe" aria-hidden="true">🧭</span> Keşfet</h3>
         <ul>
@@ -1501,8 +1511,9 @@ body[data-mode="dish"] .hero{max-width:980px;margin-inline:auto}
         </ul>
       </nav>
     </div>
+    </details>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 75</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 76</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -3836,6 +3847,9 @@ function renderCart(){
 }
 /* =================== /SEPET =================== */
 
+/* Alt bilgi: bilgisayarda açık, telefonda kapalı */
+{ const fm = $("footMore"); if (fm && matchMedia("(min-width:700px)").matches) fm.open = true; }
+
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
   const bar = document.querySelector(".tabs"), act = document.querySelector(".tab[aria-selected='true']");
@@ -4499,7 +4513,7 @@ function renderDishDetail(){
   if (dishState && dishState.state === "loading"){ box.innerHTML = `<div class="empty">“${esc(dishState.query)}” için tarif hazırlanıyor. Bu birkaç saniye sürebilir…</div>`; return; }
   if (dishState && dishState.state === "error"){ box.innerHTML = `<div class="empty">${esc(dishState.msg)}</div>`; return; }
   const r = currentKey && REG.get(currentKey);
-  setHTML(box, r ? detailHTML(r, false) : `<div class="empty">Bir yemek seç; malzemelerini, hangilerinin evde olduğunu ve neleri alman gerektiğini gösterelim.</div>`);
+  setHTML(box, r ? detailHTML(r, false) : "");
 }
 
 function savedRow(r){
@@ -5726,7 +5740,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Daha fazla: kategoriler, yardım ve rehberler":"More: categories, help and guides","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
