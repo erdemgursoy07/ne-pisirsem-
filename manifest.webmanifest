@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Bugün ne pişirsem?",
-  "short_name": "Ne pişirsem?",
-  "description": "Evdeki malzemelerden yemek önerisi, buzdolabı fotoğrafından malzeme tanıma, adım adım pişirme modu, akıllı alışveriş sepeti ve 85 yöresel tarifle Türkiye mutfağı haritası.",
+  "name": "Dolabımda ne var?",
+  "short_name": "Dolabımda",
+  "description": "Dolabındaki malzemelerle ne pişirebileceğini bul: 445 tarif, buzdolabı fotoğrafından malzeme tanıma, adım adım pişirme modu, akıllı alışveriş sepeti ve 7 bölgeden 125 yöresel tarif.",
   "lang": "tr",
   "dir": "ltr",
   "start_url": "./",
