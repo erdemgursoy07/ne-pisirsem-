@@ -367,7 +367,9 @@ html.sheet-open{overflow:hidden}
   .daily-mini{flex-direction:column;align-items:flex-start;gap:6px}
   .dm-items{gap:4px 12px;font-size:.92rem}
   .brand{font-size:.95rem;gap:8px}
-  .theme-btn{padding:0 10px;font-size:.8rem}
+  .theme-btn svg{flex:0 0 auto}
+.sec-head h2 svg{width:1.25em;height:.875em;vertical-align:-.06em;margin-right:.15em}
+.theme-btn{padding:0 10px;font-size:.8rem}
 }
 /* Canlı öneriler */
 .sug-list{display:grid;gap:8px}
@@ -1814,7 +1816,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="fav" id="tab-fav"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span><span class="tab-t">En sevilenler</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="cart" id="tab-cart"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></span><span class="tab-t">Sepet</span></button>
     </div>
-    <div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn">🇬🇧 EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></nav>
+    <div class="top-actions"><button type="button" class="theme-btn" data-act="lang" id="langBtn"><svg viewBox="0 0 60 30" width="20" height="14" aria-hidden="true" style="display:inline-block;vertical-align:-2px;border-radius:2px" preserveAspectRatio="none"><clipPath id="gbc"><rect width="60" height="30"/></clipPath><g clip-path="url(#gbc)"><rect width="60" height="30" fill="#012169"/><path d="M0,0 60,30M60,0 0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 60,30M60,0 0,30" stroke="#C8102E" stroke-width="2.4"/><path d="M30,0V30M0,15H60" stroke="#fff" stroke-width="10"/><path d="M30,0V30M0,15H60" stroke="#C8102E" stroke-width="6"/></g></svg> EN</button><button type="button" class="theme-btn" data-act="theme" id="themeBtn">🌙 Karanlık</button></div></nav>
   <header class="hero">
     <div class="hero-card">
       <div class="hero-glow" aria-hidden="true"><i></i><i></i></div>
@@ -1909,7 +1911,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Dolabımda ne var? · Sürüm 91</span>
+      <span>© 2026 Dolabımda ne var? · Sürüm 92</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -5208,7 +5210,7 @@ function renderSaved(){
   } else if (favTab === "pop"){
     const app = (statsState.top || []).map(([k, n]) => [REG.get(k), n]).filter(([r]) => r);
     if (app.length >= 5){ const counts = new Map(app.map(([r, n]) => [r.key, n])); h += sec("📈 Bu uygulamada en çok pişirilenler", "Tüm kullanıcıların pişirme modunda sonuna kadar yaptığı tarifler.", app.slice(0, 12).map(([r]) => r), r => `${counts.get(r.key)} kez pişirildi`); }
-    h += sec("🇹🇷 Türk mutfağının en sevilenleri", "", TOP_TR.map(n => REG.get("b:" + n)).filter(Boolean));
+    h += sec(`${FLAG_TR} Türk mutfağının en sevilenleri`, "", TOP_TR.map(n => REG.get("b:" + n)).filter(Boolean));
     h += sec("🌍 Dünyanın en sevilenleri", "", TOP_WORLD.map(n => REG.get("b:" + n)).filter(Boolean));
     loadStats();
   } else {
@@ -6650,7 +6652,7 @@ const EN_EXACT = {
   "+ Yemek ekle":"+ Add dish","Henüz yemek yok.":"No dishes yet.","Menüyü temizle":"Clear menu","Haftalık alışveriş listen":"Weekly shopping list","Aldım":"Got it","Haftalık menüye ekle":"Add to weekly menu",
   "Menün boş. Bir güne “+ Yemek ekle” ile başla ya da herhangi bir tarifteki “Menüye ekle” seçeneğini kullan.":"Your menu is empty. Start with “+ Add dish” on a day or use “Add to menu” on any recipe.",
   "Pazartesi":"Monday","Salı":"Tuesday","Çarşamba":"Wednesday","Perşembe":"Thursday","Cuma":"Friday","Cumartesi":"Saturday","Pazar":"Sunday",
-  "🇹🇷 Türk mutfağının en sevilenleri":"🇹🇷 Most-loved Turkish dishes","🌍 Dünyanın en sevilenleri":"🌍 World favorites","❤️ Kaydettiklerin":"❤️ Your saved recipes","👩‍🍳 Senin en çok pişirdiklerin":"👩‍🍳 Your most cooked","📈 Bu uygulamada en çok pişirilenler":"📈 Most cooked in this app",
+  "🇹🇷 Türk mutfağının en sevilenleri":"🇹🇷 Most-loved Turkish dishes","Türk mutfağının en sevilenleri":"Most-loved Turkish dishes","🌍 Dünyanın en sevilenleri":"🌍 World favorites","❤️ Kaydettiklerin":"❤️ Your saved recipes","👩‍🍳 Senin en çok pişirdiklerin":"👩‍🍳 Your most cooked","📈 Bu uygulamada en çok pişirilenler":"📈 Most cooked in this app",
   "Türkiye’de en çok sevilen ve en sık yapılan yemeklerden derlendi.":"Picked from the most-loved, most-cooked dishes in Turkey.","Dünyada en çok bilinen ve sevilen yemeklerden derlendi.":"Picked from the best-known and most-loved dishes worldwide.","Tüm kullanıcıların pişirme modunda sonuna kadar yaptığı tarifler.":"Recipes all users cooked to the end in cooking mode.",
   "Beğendiğin bir tarifte “♡ Favorilere ekle”ye dokun, burada seni beklesin.":"Tap “♡ Add to favorites” on a recipe you like and it will wait for you here.","Geçmişi temizle":"Clear history",
   "Bir yemek seç; malzemelerini, hangilerinin evde olduğunu ve neleri alman gerektiğini gösterelim.":"Pick a dish and we'll show its ingredients, what you already have and what to buy.",
@@ -6805,9 +6807,11 @@ if (typeof MutationObserver === "function"){
     }
   }).observe(document.documentElement, {subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:TR_ATTRS});
 }
+const FLAG_TR = `<svg viewBox="0 0 30 20" width="20" height="14" aria-hidden="true" style="display:inline-block;vertical-align:-2px;border-radius:2px"><rect width="30" height="20" fill="#E30A17"/><circle cx="11.2" cy="10" r="5" fill="#fff"/><circle cx="12.5" cy="10" r="4" fill="#E30A17"/><polygon points="14.80,10.00 16.49,9.41 16.53,7.62 17.61,9.05 19.32,8.53 18.30,10.00 19.32,11.47 17.61,10.95 16.53,12.38 16.49,10.59" fill="#fff"/></svg>`;
+const FLAG_GB = `<svg viewBox="0 0 60 30" width="20" height="14" aria-hidden="true" style="display:inline-block;vertical-align:-2px;border-radius:2px" preserveAspectRatio="none"><clipPath id="gbc"><rect width="60" height="30"/></clipPath><g clip-path="url(#gbc)"><rect width="60" height="30" fill="#012169"/><path d="M0,0 60,30M60,0 0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 60,30M60,0 0,30" stroke="#C8102E" stroke-width="2.4"/><path d="M30,0V30M0,15H60" stroke="#fff" stroke-width="10"/><path d="M30,0V30M0,15H60" stroke="#C8102E" stroke-width="6"/></g></svg>`;
 function applyLang(){
   document.documentElement.lang = lang;
-  const b = $("langBtn"); if (b){ b.textContent = lang === "en" ? "🇹🇷 TR" : "🇬🇧 EN"; b.setAttribute("aria-label", lang === "en" ? "Türkçeye geç" : "Switch to English"); }
+  const b = $("langBtn"); if (b){ b.innerHTML = lang === "en" ? FLAG_TR + " TR" : FLAG_GB + " EN"; b.setAttribute("aria-label", lang === "en" ? "Türkçeye geç" : "Switch to English"); }
 }
 function setLang(l){
   lang = l; try { localStorage.setItem("pisir-dil", l); } catch(e) {}
