@@ -1909,7 +1909,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Dolabımda ne var? · Sürüm 90</span>
+      <span>© 2026 Dolabımda ne var? · Sürüm 91</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -3091,7 +3091,7 @@ function renderHero(){
 
 /* ---------- Tarif bağlantıları ve paylaşım ---------- */
 // Paylaşım bağlantısı, sitenin gerçekten açıldığı adresten üretilir (depo adı değişse de doğru kalır)
-const SITE_URL = /^https?:$/.test(location.protocol) ? location.origin + location.pathname.replace(/index\.html$/, "").replace(/[^/]*$/, m => m.includes(".") ? "" : m).replace(/([^/])$/, "$1/") : "https://dolabimdanevar.com/";
+const SITE_URL = /^https?:$/.test(location.protocol) ? location.origin + location.pathname.replace(/index\.html$/, "").replace(/[^/]*$/, m => m.includes(".") ? "" : m).replace(/([^/])$/, "$1/") : "https://erdemgursoy07.github.io/ne-pisirsem-/"; // alan adı alınırsa burası değişecek
 const slugify = t => t.toLocaleLowerCase("tr").replace(/ç/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u").replace(/[âà]/g, "a").replace(/[îì]/g, "i").replace(/û/g, "u").replace(/[éè]/g, "e").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const SLUG = new Map(), BY_SLUG = new Map();
 BUILTIN.forEach(r => { const sl = slugify(r.ad); SLUG.set(r.key, sl); BY_SLUG.set(sl, r.key); });
