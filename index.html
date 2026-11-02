@@ -1795,6 +1795,23 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
 .dish-daily .daily{margin-top:10px}
 /* Alt menü: 4 sekme ekranı eşit doldursun; gizli sekme yer kaplamasın */
 .tabs .tab[hidden]{display:none!important}
+/* iPhone: düğmelere çift dokununca yakınlaştırma olmasın (iki parmakla yakınlaştırma çalışmaya devam eder) */
+html,body{touch-action:manipulation}
+button,a,label,select,input,textarea,[data-act],.tab{touch-action:manipulation}
+/* iPhone: 16 pikselden küçük yazı kutularına dokununca sayfa kendiliğinden yakınlaşmasın */
+@media (max-width:760px){ input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select{font-size:max(16px,1em)} }
+/* Çalışan zamanlayıcı göstergesi üst menüdeki düğmelerin üstüne binmesin: alt menünün hemen üstünde dursun */
+.pill{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);right:14px}
+@media (min-width:761px){ .pill{bottom:24px} }
+/* × temizleme düğmesi */
+.clr-wrap{position:relative;display:flex;flex:1 1 auto;min-width:0;align-items:center}
+.clr-wrap.clr-block{display:block;width:100%}
+.clr-wrap > input{width:100%;padding-right:46px}
+.clr-btn{position:absolute;right:8px;top:0;bottom:0;margin:auto 0;width:30px;height:30px;padding:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--muted) 18%,transparent);color:var(--ink);font:inherit;font-size:20px;line-height:1;font-weight:500;display:grid;place-items:center;cursor:pointer}
+.clr-btn:active{background:color-mix(in srgb,var(--muted) 32%,transparent)}
+.clr-wrap > input:placeholder-shown + .clr-btn{display:none}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
+@media (prefers-reduced-motion: no-preference){ .clr-btn{animation:scaleIn .15s ease} }
 </style>
 </head>
 <body>
@@ -1843,7 +1860,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
   <div class="layout" id="pantryMode">
     <section class="pantry" aria-label="Malzemeler">
       <div class="toolbar">
-        <input class="search big-search" id="search" type="search" enterkeyhint="done" autocomplete="off" placeholder="🔎 Örn: domates, soğan, yumurta…" aria-label="Dolabındaki malzemeleri yaz">
+        <span class="clr-wrap"><input class="search big-search" id="search" type="search" enterkeyhint="done" autocomplete="off" placeholder="🔎 Örn: domates, soğan, yumurta…" aria-label="Dolabındaki malzemeleri yaz"><button type="button" class="clr-btn" aria-label="Yazıyı temizle" tabindex="-1">×</button></span>
         <label class="fav scan-btn" title="Buzdolabının ya da tezgâhın fotoğrafını çek, malzemeleri biz bulalım">📸 <span>Fotoğraftan tanı</span><input type="file" accept="image/*" capture="environment" id="fridgeInput" hidden></label>
       </div>
       <div id="groups"></div>
@@ -1853,7 +1870,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
 
   <section class="dish" id="dishMode" aria-label="Yemek ara" hidden>
     <div id="planBanner"></div>
-    <input class="search dish-input" id="dishSearch" type="search" placeholder="🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…" aria-label="Yemek adı">
+    <span class="clr-wrap clr-block"><input class="search dish-input" id="dishSearch" type="search" placeholder="🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…" aria-label="Yemek adı"><button type="button" class="clr-btn" aria-label="Yazıyı temizle" tabindex="-1">×</button></span>
     <div class="dish-list" id="dishList"></div>
     <div class="detail" id="dishDetail" aria-live="polite"></div>
   </section>
@@ -1911,7 +1928,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Ne Pişti? · Sürüm 97</span>
+      <span>© 2026 Ne Pişti? · Sürüm 100</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -3193,12 +3210,14 @@ function chefHTML(r, step){
   return `<section class="chef"><h3>👨‍🍳 Şef'e sor</h3>
     ${c.msgs.length ? "" : `<p class="sub">Tarifle ilgili takıldığın her şeyi sor: “Hamurum cıvık oldu”, “Fırınım yok, ne yapayım?”</p>`}
     <div class="chef-msgs">${c.msgs.map(m => `<div class="msg ${m.role}">${esc(m.text)}</div>`).join("")}${c.loading ? `<div class="msg chef typing">Şef düşünüyor…</div>` : ""}</div>
-    <div class="chef-form"><input type="text" class="search chef-input" data-chef-key="${esc(r.key)}"${step != null ? ` data-step="${step}"` : ""} placeholder="Sorunu yaz…" maxlength="300" aria-label="Şef'e sorun"><button type="button" class="ai-btn" data-act="chefAsk" data-key="${esc(r.key)}"${step != null ? ` data-step="${step}"` : ""} ${c.loading ? "disabled" : ""}>Sor</button></div></section>`;
+    <div class="chef-form"><span class="clr-wrap"><input type="text" class="search chef-input" data-chef-key="${esc(r.key)}"${step != null ? ` data-step="${step}"` : ""} placeholder="Sorunu yaz…" maxlength="300" aria-label="Şef'e sorun"><button type="button" class="clr-btn" aria-label="Yazıyı temizle" tabindex="-1">×</button></span><button type="button" class="ai-btn" data-act="chefAsk" data-key="${esc(r.key)}"${step != null ? ` data-step="${step}"` : ""} ${c.loading ? "disabled" : ""}>Sor</button></div></section>`;
 }
 async function chefAsk(r, q, step){
   q = (q || "").trim(); if (!q || !sampleFn) return;
   const c = chefFor(r.key); if (c.loading) return;
-  c.msgs.push({role:"user", text:q}); c.loading = true; refreshChef(r.key); bumpStat("sef");
+  c.msgs.push({role:"user", text:q}); c.loading = true;
+  document.querySelectorAll(".chef-input").forEach(i => { if (i.dataset.chefKey === r.key){ i.value = ""; } }); // gönderilen soru kutuda kalmasın
+  refreshChef(r.key); bumpStat("sef");
   const past = c.msgs.slice(-7, -1).map(m => `${m.role === "user" ? "Kullanıcı" : "Şef"}: ${m.text}`).join("\n");
   const prompt = `Sen sıcakkanlı, pratik bir ev aşçısı şefsin. Kullanıcı "${r.ad}" tarifini yapıyor${step != null && r.adimlar[step] ? ` ve şu an ${step + 1}. adımda: "${r.adimlar[step]}"` : ""}.
 Malzemeler: ${r.malzemeler.map(m => m.ad).join(", ")}.
@@ -3215,6 +3234,13 @@ function refreshChef(key){
   if (mode === "dish" && currentKey === key) renderDishDetail();
   const box = document.querySelector(".chef-msgs"); if (box) box.scrollTop = box.scrollHeight;
 }
+/* Yazı kutularındaki × düğmesi: kutuyu temizler ve sonuçları sıfırlar */
+document.addEventListener("click", e => {
+  const b = e.target && e.target.closest ? e.target.closest(".clr-btn") : null; if (!b) return;
+  e.preventDefault(); e.stopPropagation();
+  const inp = b.parentElement.querySelector("input"); if (!inp) return;
+  inp.value = ""; inp.dispatchEvent(new Event("input", {bubbles:true})); inp.focus();
+}, true);
 document.addEventListener("keydown", e => {
   const inp = e.target && e.target.closest ? e.target.closest(".chef-input") : null;
   if (!inp || e.key !== "Enter") return;
@@ -4374,7 +4400,7 @@ function renderCart(){
     ${todo.length ? `<button type="button" class="${marketMode ? "ai-btn" : "fav"} market-btn" data-act="marketToggle" aria-pressed="${marketMode}">${marketMode ? "✓ Market modundan çık" : "🛍️ Market modu"}</button>` : ""}</div>`;
   if (marketMode) h += `<p class="market-note">🛍️ Market modu: ekran açık kalır. Aldığın ürünü <b>sağa kaydır</b> ya da daireye dokun.</p>`;
   if (!marketMode){
-    h += `<div class="cart-add"><input class="search" id="cartInput" type="text" maxlength="120" placeholder="Sepete ekle: süt, ekmek, deterjan…" aria-label="Sepete ekle"><button type="button" class="ai-btn" data-act="cartAddText">Ekle</button></div>
+    h += `<div class="cart-add"><span class="clr-wrap"><input class="search" id="cartInput" type="text" maxlength="120" placeholder="Sepete ekle: süt, ekmek, deterjan…" aria-label="Sepete ekle"><button type="button" class="clr-btn" aria-label="Yazıyı temizle" tabindex="-1">×</button></span><button type="button" class="ai-btn" data-act="cartAddText">Ekle</button></div>
       <div class="cart-quick"><span class="cq-l">⚡ Sık alınanlar</span>${freqItems().map(x => { const on = inCart(x.ad, x.ing); return `<button type="button" class="chip mini${on ? " on" : ""}" data-act="cartQuick" data-ad="${esc(x.ad)}" data-ing="${esc(x.ing)}" aria-pressed="${on}">${(x.ing && ING_EMOJI[x.ing]) || "🛒"} ${esc(x.ad)}${on ? " ✓" : ""}</button>`; }).join("")}</div>`;
     if (planMiss.length) h += `<button type="button" class="lo-btn cart-plan" data-act="cartAddPlan"><span class="lo-e" aria-hidden="true">📅</span><span><b>Menündeki ${planMiss.length} eksik malzemeyi ekle</b><small>${esc(planMiss.slice(0, 4).map(e => e.ad).join(", "))}${planMiss.length > 4 ? "…" : ""}</small></span><span class="sug-go" aria-hidden="true">＋</span></button>`;
   }
@@ -6136,7 +6162,14 @@ document.addEventListener("click", e => {
   if (["cook","cookNext","cookPrev","speakAgain","tryVoice","setVoice","setStyle"].includes(act) && voiceOn) unlockAudio();
   if (act === "openSaved" && el.closest("#leftover")) { const le = $("leftover"); if (le) le.hidden = true; }
   switch (act){
-    case "tab": if (marketMode && el.dataset.mode !== "cart"){ marketMode = false; releaseWake(); } if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); break;
+    case "tab": if (el.dataset.mode === mode && !cook.open){
+        // Bulunduğun sekmeye tekrar dokununca: önce en başa kay; zaten en baştaysan Yemek ara'da kategorilere dön
+        if (window.scrollY > 8) window.scrollTo({top:0, behavior:"smooth"});
+        else if (mode === "dish" && (filters.size || $("dishSearch").value.trim() || dq.t30 || dq.light || dq.easy || dq.kid || dq.mine)){ filters = new Set(); yoreSel = null; $("dishSearch").value = ""; renderAll(); }
+        else if (mode === "fav" && favTab !== "fav"){ favTab = "fav"; renderSaved(); }
+        break;
+      }
+      if (marketMode && el.dataset.mode !== "cart"){ marketMode = false; releaseWake(); } if (mode === "pantry" && el.dataset.mode !== "pantry") resetPantry(); mode = el.dataset.mode; currentKey = null; dishState = null; if (mode !== "dish"){ planTarget = null; filters = new Set(); } renderAll(); { const top = () => window.scrollTo({top:0, left:0, behavior:"instant"}); top(); requestAnimationFrame(top); } break; // yeni sekme her zaman anında en baştan açılır
     case "filter": {
       const f = el.dataset.f;
       if (mode !== "dish"){
