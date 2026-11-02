@@ -573,7 +573,7 @@ header.hero{padding:28px 0 20px}
 .tab-i{margin-right:6px}
 /* Telefonda: uygulamalardaki gibi alt menü */
 @media (max-width:699px){
-  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;border-radius:0;border:0;border-top:1.5px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;background:var(--surface);box-shadow:0 -6px 20px rgba(13,21,40,.08);overflow:visible}
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;border-radius:0;border:0;border-top:1.5px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px));display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--surface);box-shadow:0 -6px 20px rgba(13,21,40,.08);overflow:visible}
   .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;font-size:.68rem;line-height:1.1;white-space:normal;text-align:center;border-radius:12px}
   .tab-i{margin:0;font-size:1.35rem}
   .wrap{padding-bottom:92px}
@@ -1791,6 +1791,8 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
 @media (prefers-reduced-motion: no-preference){ .pc-row{animation:softIn .35s cubic-bezier(.22,1,.36,1) backwards} .pc-box{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards} }
 .dish-daily{margin:2px 0 14px}
 .dish-daily .daily{margin-top:10px}
+/* Alt menü: 4 sekme ekranı eşit doldursun; gizli sekme yer kaplamasın */
+.tabs .tab[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -1907,7 +1909,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 86</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 88</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2479,6 +2481,10 @@ const sortRecipes = list => list.slice().sort((a, b) => ((TOP_RANK.has(a.key) ? 
 const POPULAR = new Set(["Mercimek çorbası","Ezogelin çorbası","Menemen","Karnıyarık","Kuru fasulye","Pirinç pilavı","İzmir köfte","Tavuk sote","Zeytinyağlı taze fasulye","Mercimek köftesi","Kısır","Hünkar beğendi","Tas kebabı","Sütlaç","Revani","Çoban salatası","Fırında tavuk ve patates"]);
 
 /* ---------- Yardımcılar ---------- */
+/* ---------- iOS uygulaması (Capacitor) içinde mi çalışıyoruz? Sitede hepsi kapalı kalır ---------- */
+const NATIVE = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());
+const CAP = name => (NATIVE && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
+if (NATIVE) document.documentElement.classList.add("native", "force-splash");
 const mqMatch = q => { try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch(e){ return false; } };
 const $ = id => document.getElementById(id);
 const norm = s => String(s || "").toLocaleLowerCase("tr").trim();
@@ -3090,7 +3096,15 @@ const slugify = t => t.toLocaleLowerCase("tr").replace(/ç/g, "c").replace(/ğ/g
 const SLUG = new Map(), BY_SLUG = new Map();
 BUILTIN.forEach(r => { const sl = slugify(r.ad); SLUG.set(r.key, sl); BY_SLUG.set(sl, r.key); });
 const recipeUrl = r => SLUG.has(r.key) ? `${SITE_URL}#t=${SLUG.get(r.key)}` : SITE_URL; // bağlantı uygulamada tarifi doğrudan açar
+const canShareNative = () => !!CAP("Share") || !!navigator.share;
+async function nativeShare(title, text){
+  const sh = CAP("Share");
+  if (sh){ try { await sh.share({title, text, dialogTitle:title}); } catch(e) {} return true; }
+  if (navigator.share){ try { await navigator.share({title, text}); } catch(e) {} return true; }
+  return false;
+}
 async function shareText(title, text){
+  if (CAP("Share")){ await nativeShare(title, text); return; }
   if (navigator.share){
     try { await navigator.share({title, text}); return; } catch(e){ if (e && e.name === "AbortError") return; }
   }
@@ -3103,7 +3117,7 @@ function recipeShareText(r){
 }
 function shareBoxHTML(r){
   if (shareOpen !== r.key) return "";
-  return `<div class="share-box"><a class="share-opt wa" href="https://wa.me/?text=${encodeURIComponent(recipeShareText(r))}" target="_blank" rel="noopener">🟢 WhatsApp</a><button type="button" class="share-opt" data-act="shareCopy" data-key="${esc(r.key)}">🔗 Bağlantıyı kopyala</button>${navigator.share ? `<button type="button" class="share-opt" data-act="shareNative" data-key="${esc(r.key)}">📱 Diğer uygulamalar</button>` : ""}${shareMsg ? `<p class="photo-msg">${esc(shareMsg)}</p>` : ""}</div>`;
+  return `<div class="share-box"><a class="share-opt wa" href="https://wa.me/?text=${encodeURIComponent(recipeShareText(r))}" target="_blank" rel="noopener">🟢 WhatsApp</a><button type="button" class="share-opt" data-act="shareCopy" data-key="${esc(r.key)}">🔗 Bağlantıyı kopyala</button>${canShareNative() ? `<button type="button" class="share-opt" data-act="shareNative" data-key="${esc(r.key)}">📱 Diğer uygulamalar</button>` : ""}${shareMsg ? `<p class="photo-msg">${esc(shareMsg)}</p>` : ""}</div>`;
 }
 function copyToClipboard(t){
   if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(() => true, () => fallbackCopy(t));
@@ -4018,7 +4032,7 @@ Yalnızca şu biçimde JSON döndür, başka hiçbir şey yazma:
 
 /* ---------- Akşam hatırlatması (takvim) ---------- */
 let remind = load("pisir-hatirlat", {saat:"17:30"}); if (!remind || typeof remind !== "object") remind = {saat:"17:30"};
-function siteURL(){ return location.origin + location.pathname.replace(/index\.html$/, ""); }
+function siteURL(){ return SITE_URL; }
 function remindTimes(){
   const [h, m] = (remind.saat || "17:30").split(":").map(Number);
   const d = new Date(); d.setHours(h, m, 0, 0); if (d < new Date()) d.setDate(d.getDate() + 1);
@@ -4035,8 +4049,26 @@ function remindICS(){
     "SUMMARY:🍲 Bugün ne pişirsem?", `DESCRIPTION:Dolabındakilere bak, akşam yemeğini seç: ${url}`, `URL:${url}`,
     "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:Bugün ne pişirsem?", "TRIGGER:PT0M", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
 }
+const REMIND_NID = 7001;
+async function scheduleRemind(){
+  const ln = CAP("LocalNotifications"); if (!ln) return false;
+  if (!(await notifyPerm())) return false;
+  const [h, m] = (remind.saat || "17:30").split(":").map(Number);
+  try { await ln.cancel({notifications:[{id:REMIND_NID}]}); } catch(e) {}
+  await ln.schedule({notifications:[{id:REMIND_NID, title:"🍲 Bugün ne pişirsem?", body:"Dolabına bir bak; akşam yemeğini birlikte seçelim.", schedule:{on:{hour:h || 0, minute:m || 0}, allowWhileIdle:true}}]});
+  return true;
+}
 function renderRemind(){
   const el = $("remind"); if (!el || el.hidden) return;
+  if (NATIVE){
+    setHTML(el, `<div class="tour-card prefs-card" role="dialog" aria-modal="true" aria-label="Akşam hatırlatması"><h2>⏰ Akşam hatırlatması</h2>
+      <p class="sub">Her gün seçtiğin saatte telefonun sana “Bugün ne pişirsem?” diye bildirim göndersin.</p>
+      <label class="rm-time">Saat <input type="time" id="remindTime" value="${esc(remind.saat)}"></label>
+      <div class="rm-acts">${remind.on ? `<button type="button" class="ai-btn" data-act="remindNative">🔔 Saati güncelle</button><button type="button" class="fav" data-act="remindOff">Hatırlatmayı kapat</button>` : `<button type="button" class="ai-btn" data-act="remindNative">🔔 Her gün hatırlat</button>`}</div>
+      ${remind.on ? `<p class="note">✓ Her gün saat <b>${esc(remind.saat)}</b>'da hatırlatılacaksın.</p>` : `<p class="note">Bildirim izni istenecek; istediğin zaman buradan kapatabilirsin.</p>`}
+      <div class="tour-acts"><span></span><button type="button" class="link-btn" data-act="remindClose">Kapat</button></div></div>`);
+    return;
+  }
   const t = remindTimes();
   const gcal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent("🍲 Bugün ne pişirsem?")}&details=${encodeURIComponent("Dolabındakilere bak, akşam yemeğini seç: " + siteURL())}&dates=${t.start}/${t.end}&recur=${encodeURIComponent("RRULE:FREQ=DAILY")}&ctz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Istanbul")}`;
   setHTML(el, `<div class="tour-card prefs-card" role="dialog" aria-modal="true" aria-label="Akşam hatırlatması"><h2>⏰ Akşam hatırlatması</h2>
@@ -4396,6 +4428,18 @@ function renderCart(){
   new MutationObserver(() => { sh.classList.remove("cta-mini"); last = 0; }).observe(sh, {attributes:true, attributeFilter:["hidden"]});
   new MutationObserver(() => { if (inner.scrollTop < 80){ sh.classList.remove("cta-mini"); last = inner.scrollTop; } }).observe($("sheetBody"), {childList:true});
 })();
+
+/* iOS uygulamasında dış bağlantılar uygulama içi tarayıcıda açılır */
+if (NATIVE){
+  const openExt = url => { const br = CAP("Browser"); if (br) br.open({url, presentationStyle:"popover"}).catch(() => {}); else location.href = url; };
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a[href]"); if (!a) return;
+    const href = a.getAttribute("href") || "";
+    if (/^https?:/i.test(href) && (a.target === "_blank" || !href.startsWith(SITE_URL))){ e.preventDefault(); e.stopPropagation(); openExt(href); }
+  }, true);
+  window.open = url => { if (url) openExt(String(url)); return null; };
+  try { const sb = CAP("StatusBar"); if (sb) sb.setStyle({style: document.documentElement.dataset.theme === "dark" ? "DARK" : "LIGHT"}).catch(() => {}); } catch(e) {}
+}
 
 /* ---------- Kayan sekme vurgusu ---------- */
 function moveTabPill(){
@@ -5690,11 +5734,21 @@ function renderCook(){
 let timers = [], tickId = null, audioCtx = null;
 function startTimer(min){
   try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume && audioCtx.resume(); } catch(e) {}
-  timers.push({id:Date.now() + Math.random(), label:`Adım ${cook.step + 1}`, end:Date.now() + min * 60000, done:false});
+  const tm = {id:Date.now() + Math.random(), label:`Adım ${cook.step + 1}`, end:Date.now() + min * 60000, done:false, nid:0};
+  timers.push(tm);
+  if (CAP("LocalNotifications")){ // uygulama arka plandayken de süre dolunca haber ver
+    const rr = REG.get(cook.key); tm.nid = 10000 + Math.floor(Math.random() * 900000);
+    notifyPerm().then(ok => { if (ok) CAP("LocalNotifications").schedule({notifications:[{id:tm.nid, title:"⏰ Süre doldu", body:`${rr ? rr.ad + " · " : ""}${tm.label} zamanlayıcısı doldu.`, schedule:{at:new Date(tm.end), allowWhileIdle:true}}]}).catch(() => {}); });
+  }
   if (!tickId) tickId = setInterval(tick, 1000);
   renderTimers();
 }
+async function notifyPerm(){
+  const ln = CAP("LocalNotifications"); if (!ln) return false;
+  try { let p = await ln.checkPermissions(); if (p.display !== "granted") p = await ln.requestPermissions(); return p.display === "granted"; } catch(e){ return false; }
+}
 function beep(){
+  try { const hp = CAP("Haptics"); if (hp) hp.notification({type:"SUCCESS"}); } catch(e) {}
   try { navigator.vibrate && navigator.vibrate([300, 150, 300, 150, 300]); } catch(e) {}
   if (!audioCtx) return;
   try {
@@ -6145,7 +6199,7 @@ document.addEventListener("click", e => {
     }
     case "shareMenu": shareOpen = shareOpen === key ? null : key; shareMsg = ""; renderSheet(); if (mode === "dish") renderDishDetail(); break;
     case "shareCopy": if (r) copyToClipboard(recipeUrl(r)).then(ok => { shareMsg = ok ? "✓ Bağlantı kopyalandı; istediğin yere yapıştırabilirsin." : recipeUrl(r); renderSheet(); }); break;
-    case "shareNative": if (r && navigator.share) navigator.share({title:`${r.ad} tarifi`, text:recipeShareText(r)}).catch(() => {}); break;
+    case "shareNative": if (r) nativeShare(`${r.ad} tarifi`, recipeShareText(r)); break;
     case "orderToggle": { const oid = el.dataset.id; orderOpen.has(oid) ? orderOpen.delete(oid) : orderOpen.add(oid); renderAll(); if (mode === "plan") renderPlan(); break; }
     case "chefToggle": cook.chef = !cook.chef; renderCook(); break;
     case "chefAsk": if (r){ const inp = el.closest(".chef-form").querySelector("input"); chefAsk(r, inp.value, el.dataset.step != null ? Number(el.dataset.step) : null); } break;
@@ -6302,6 +6356,8 @@ document.addEventListener("click", e => {
     case "loAI": runLeftoverAI(); break;
     case "remindOpen": openRemind(); break;
     case "remindClose": { const re2 = $("remind"); if (re2) re2.hidden = true; break; }
+    case "remindNative": scheduleRemind().then(ok => { if (ok){ remind.on = true; try { localStorage.setItem("pisir-hatirlat", JSON.stringify(remind)); } catch(e) {} showToast(`🔔 Her gün ${remind.saat}'da hatırlatacağım`); } else showToast("Bildirim izni verilmedi. Ayarlar → Bugün ne pişirsem? → Bildirimler'den açabilirsin."); renderRemind(); }); break;
+    case "remindOff": { const ln = CAP("LocalNotifications"); if (ln) ln.cancel({notifications:[{id:REMIND_NID}]}).catch(() => {}); remind.on = false; try { localStorage.setItem("pisir-hatirlat", JSON.stringify(remind)); } catch(e) {} showToast("Hatırlatma kapatıldı"); renderRemind(); break; }
     case "remindICS": {
       const blob = new Blob([remindICS()], {type:"text/calendar;charset=utf-8"});
       const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "aksam-hatirlatmasi.ics";
@@ -6433,7 +6489,7 @@ document.addEventListener("click", e => {
     case "noteEditCook": closeCook(); openSheet(key); noteEdit = key; renderSheet(); setTimeout(() => { const t = $("noteText"); if (t) t.focus(); }, 80); break;
     case "cookNext": cook.step += 1; renderCook(); break;
     case "timer": startTimer(Number(el.dataset.min)); break;
-    case "timerDismiss": timers = timers.filter(t => String(t.id) !== el.dataset.id); renderTimers(); break;
+    case "timerDismiss": { const gone = timers.find(t => String(t.id) === el.dataset.id); if (gone && gone.nid && !gone.done && CAP("LocalNotifications")) CAP("LocalNotifications").cancel({notifications:[{id:gone.nid}]}).catch(() => {}); timers = timers.filter(t => String(t.id) !== el.dataset.id); renderTimers(); break; }
   }
 });
 
@@ -6762,7 +6818,7 @@ function setLang(l){
 function nameHit(r, q){ return fuzzyHit(r.ad, q) || (lang === "en" && fuzzyHit(EN_NAME[r.ad] || "", q)); }
 
 /* Ana ekrana eklenebilir ve internetsiz çalışır (PWA) */
-if ("serviceWorker" in navigator){
+if (!NATIVE && "serviceWorker" in navigator){
   window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });
 }
 
