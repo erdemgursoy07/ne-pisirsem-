@@ -1723,6 +1723,50 @@ html.force-splash .splash{display:flex}
   #sheet:not([hidden]) .sheet-cta{animation:ctaIn .5s cubic-bezier(.22,1,.36,1) .15s backwards}
 }
 @media (prefers-reduced-motion: reduce){ #sheet .cta-pill,#sheet .cp-txt{transition:none} }
+/* ===================== HAFTALIK MENÜ: AJANDA ===================== */
+body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:100%}
+.ag-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:4px 0 14px}
+.ag-head small{font-size:.72rem;font-weight:900;letter-spacing:.12em;color:var(--cobalt)}
+.ag-head h2{margin:2px 0 0;font-size:1.45rem;white-space:nowrap}
+.ag-tools{display:flex;gap:6px;align-items:center}
+.ag-fill{min-height:44px}
+.ag-hint{margin:0 0 10px;font-size:.88rem;color:var(--muted)}
+.ag-list{border-top:1px solid var(--line);margin-bottom:14px}
+.ag-row{display:flex;gap:14px;padding:12px 2px;border-bottom:1px solid var(--line);align-items:flex-start}
+.ag-row.today{background:linear-gradient(90deg,color-mix(in srgb,var(--cobalt) 7%,transparent),transparent 70%);border-radius:14px}
+.ag-row.past .ag-date,.ag-row.past .ag-t{opacity:.78}
+.ag-date{width:50px;flex:0 0 50px;display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:4px}
+.ag-date small{font-size:.68rem;font-weight:900;letter-spacing:.08em;color:var(--muted)}
+.ag-date b{font-size:1.55rem;line-height:1;font-weight:900}
+.ag-date em{font-style:normal;font-size:.6rem;font-weight:900;color:#fff;background:var(--cobalt);border-radius:999px;padding:2px 7px;margin-top:4px}
+.ag-row.today .ag-date b{color:var(--cobalt)}
+.ag-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.ag-dish{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ag-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:0;border:0;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.ag-img{width:52px;height:52px;flex:0 0 52px;border-radius:14px;overflow:hidden;display:grid;place-items:center;font-size:1.6rem;background:var(--cbg,var(--bg))}
+.ag-img img{width:100%;height:100%;object-fit:cover}
+.ag-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.ag-t b{font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag-t small{font-size:.78rem;color:var(--muted)}
+.ai-btn.ag-go{min-height:38px;padding:8px 14px;font-size:.86rem}
+.ag-moreb{width:36px;height:36px;flex:0 0 36px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:1.3rem;font-weight:900;cursor:pointer;line-height:1}
+.ag-moreb[aria-expanded="true"]{background:var(--bg);color:var(--cobalt)}
+.ag-menu{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;padding:8px 0 4px 64px}
+.ag-menu > button{padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:.82rem;font-weight:700;cursor:pointer}
+.ag-menu .ag-del{color:#C92A2A}
+:root[data-theme="dark"] .ag-menu .ag-del{color:#FF8787}
+.ag-move{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-size:.8rem;color:var(--muted);font-weight:700}
+.ag-move button{padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:.76rem;cursor:pointer}
+.ag-empty{display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-height:52px}
+.ag-add{border:1.5px dashed var(--line);background:transparent;color:var(--cobalt);font:inherit;font-weight:800;border-radius:12px;padding:10px 14px;cursor:pointer}
+.ag-stats{margin:0 0 8px;font-size:.85rem;color:var(--muted)}
+@media (min-width:700px){ .ag-menu{padding-left:64px} .ag-row{padding:14px 8px} }
+@media (prefers-reduced-motion: no-preference){
+  .ag-row{animation:softIn .4s cubic-bezier(.22,1,.36,1) backwards}
+  .ag-list > :nth-child(2){animation-delay:.03s}.ag-list > :nth-child(3){animation-delay:.06s}.ag-list > :nth-child(4){animation-delay:.09s}.ag-list > :nth-child(5){animation-delay:.12s}.ag-list > :nth-child(6){animation-delay:.15s}.ag-list > :nth-child(7){animation-delay:.18s}
+  .ag-menu{animation:softIn .25s ease}
+  @media (hover:hover){ .ag-main:hover .ag-img{transform:scale(1.05)} .ag-img{transition:transform .3s ease} }
+}
 </style>
 </head>
 <body>
@@ -1839,7 +1883,7 @@ html.force-splash .splash{display:flex}
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 83</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 84</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -5872,32 +5916,38 @@ function todayHeroHTML(){
 }
 function renderPlan(){
   const total = plan.reduce((n, d) => n + d.length, 0), ti = todayIdx(), dates = weekDates();
-  const range = `${dates[0].getDate()} ${dates[0].getMonth() !== dates[6].getMonth() ? dates[0].toLocaleDateString("tr-TR", {month:"long"}) + " " : ""}– ${dates[6].toLocaleDateString("tr-TR", {day:"numeric", month:"long"})}`;
+  const sh = d => d.toLocaleDateString("tr-TR", {day:"numeric", month:"short"}).replace(".", "");
+  const empties = plan.filter(d => !d.length).length;
   let h = specialCardHTML();
-  h += `<div class="wk-head"><div><h2>Bu hafta</h2><small>${range}</small></div><div class="wk-tools"><button type="button" class="ai-btn" data-act="planAuto">🎲 ${total ? "Boşları doldur" : "Haftayı doldur"}</button>${sampleFn ? `<button type="button" class="fav icon-btn" data-act="aiPlanToggle" aria-expanded="${aiPlanOpen}" title="Yapay zekâya tarif et" aria-label="Yapay zekâya tarif et">✨</button>` : ""}${total ? `<button type="button" class="fav icon-btn" data-act="planClear" title="Menüyü temizle" aria-label="Menüyü temizle">🗑️</button>` : ""}</div></div>`;
+  h += `<div class="ag-head"><div><small>BU HAFTA</small><h2>${sh(dates[0])} – ${sh(dates[6])}</h2></div><div class="ag-tools">${empties ? `<button type="button" class="ai-btn ag-fill" data-act="planAuto">🎲 ${total ? "Boşları doldur" : "Doldur"}</button>` : ""}${sampleFn ? `<button type="button" class="fav icon-btn" data-act="aiPlanToggle" aria-expanded="${aiPlanOpen}" title="Yapay zekâya tarif et" aria-label="Yapay zekâya tarif et">✨</button>` : ""}${total ? `<button type="button" class="fav icon-btn" data-act="planClear" title="Menüyü temizle" aria-label="Menüyü temizle">🗑️</button>` : ""}</div></div>`;
   if (sampleFn && (aiPlanOpen || (aiPlan && aiPlan.state && aiPlan.state !== "idle"))) h += aiPlanHTML();
-  h += todayHeroHTML();
-  h += `<div class="wk-grid">${DAYS.map((d, i) => {
-    const items = plan[i].map((k, j) => [REG.get(k), j]).filter(([r]) => r);
-    const sel = planSel && planSel.day === i && plan[i][planSel.idx] ? REG.get(plan[i][planSel.idx]) : null;
-    return `<div class="wd${i === ti ? " is-today" : ""}${items.length ? "" : " is-empty"}${i < ti ? " is-past" : ""}" data-key="wd-${i}">
-      <div class="wd-head"><b>${DAY_S[i]}</b><span>${dates[i].getDate()}</span></div>
-      ${items.length ? items.map(([r, j]) => `<button type="button" class="wd-dish${sel && planSel.idx === j ? " on" : ""}" data-act="planSel" data-day="${i}" data-idx="${j}">${dishThumb(r, "wd-img")}<span class="wd-n">${esc(r.ad)}</span></button>`).join("") + `<button type="button" class="wd-more" data-act="planPick" data-day="${i}" aria-label="${d} için bir yemek daha ekle">＋</button>`
-        : `<button type="button" class="wd-add" data-act="planPick" data-day="${i}" aria-label="${d} için yemek ekle"><span>＋</span><small>Ekle</small></button>`}
-      ${sel ? `<div class="wd-menu" role="menu"><p class="wd-menu-t">${esc(sel.ad)}</p><button type="button" data-act="openSaved" data-key="${esc(sel.key)}">📖 Tarifi aç</button><button type="button" data-act="cook" data-key="${esc(sel.key)}">▶ Pişir</button><button type="button" data-act="planSwap" data-day="${i}" data-idx="${planSel.idx}">↻ Başkasıyla değiştir</button><div class="wd-move"><span>Taşı</span>${DAY_S.map((ds, t) => t === i ? "" : `<button type="button" data-act="planMove" data-day="${i}" data-idx="${planSel.idx}" data-to="${t}">${ds}</button>`).join("")}</div><button type="button" class="wd-del" data-act="planRemove" data-day="${i}" data-idx="${planSel.idx}">✕ Menüden çıkar</button></div>` : ""}
+  if (!total) h += `<p class="ag-hint">Günlere dokunarak yemek ekle ya da <b>🎲 Doldur</b> ile kendi tariflerimizden dengeli bir hafta oluştur.</p>`;
+  h += `<div class="ag-list">${DAYS.map((d, i) => {
+    const rs = plan[i].map((k, j) => [REG.get(k), j]).filter(([r]) => r), today = i === ti;
+    const mainR = (rs.find(([r]) => ["etli","sebze","etsiz","dunya"].includes(recipeCat(r))) || rs[0] || [])[0];
+    const dishes = rs.map(([r, j]) => {
+      const n = nutrition(r) || {}, open = planSel && planSel.day === i && planSel.idx === j;
+      return `<div class="ag-dish${open ? " open" : ""}">
+        <button type="button" class="ag-main" data-act="openSaved" data-key="${esc(r.key)}">${dishThumb(r, "ag-img")}<span class="ag-t"><b>${esc(r.ad)}</b><small>${[r.sure ? `⏱️ ${fmtDur(r.sure)}` : "", n.kcal ? `🔥 ${n.kcal} kcal` : ""].filter(Boolean).join(" · ")}</small></span></button>
+        ${today && r === mainR ? `<button type="button" class="ai-btn ag-go" data-act="cook" data-key="${esc(r.key)}">▶ Pişir</button>` : ""}
+        <button type="button" class="ag-moreb" data-act="planSel" data-day="${i}" data-idx="${j}" aria-expanded="${open}" aria-label="${esc(r.ad)} için seçenekler">⋯</button>
+        ${open ? `<div class="ag-menu"><button type="button" data-act="cook" data-key="${esc(r.key)}">▶ Pişir</button><button type="button" data-act="planSwap" data-day="${i}" data-idx="${j}">↻ Değiştir</button><button type="button" data-act="planPick" data-day="${i}">＋ Bu güne ekle</button><button type="button" class="ag-del" data-act="planRemove" data-day="${i}" data-idx="${j}">✕ Kaldır</button><div class="ag-move"><span>Taşı:</span>${DAY_S.map((ds, t) => t === i ? "" : `<button type="button" data-act="planMove" data-day="${i}" data-idx="${j}" data-to="${t}">${ds}</button>`).join("")}</div></div>` : ""}
+      </div>`;
+    }).join("");
+    const emptyToday = today && !rs.length && dailyMenu().length;
+    return `<div class="ag-row${today ? " today" : ""}${i < ti ? " past" : ""}" data-key="ag-${i}">
+      <div class="ag-date"><small>${DAY_S[i].toUpperCase()}</small><b>${dates[i].getDate()}</b>${today ? `<em>Bugün</em>` : ""}</div>
+      <div class="ag-body">${dishes || `<div class="ag-empty"><button type="button" class="ag-add" data-act="planPick" data-day="${i}">＋ Yemek ekle</button>${today ? `<button type="button" class="link-btn" data-act="planAutoToday">🎲 Öner</button>` : ""}${emptyToday ? `<button type="button" class="link-btn" data-act="dailyToToday">🌟 Günün sofrası</button>` : ""}</div>`}</div>
     </div>`;
   }).join("")}</div>`;
   if (total){
     const rs = plan.flat().map(k => REG.get(k)).filter(Boolean), kc = rs.map(r => (nutrition(r) || {}).kcal).filter(Boolean);
     const red = rs.filter(r => meatType(r) === "red").length, fish = rs.filter(r => meatType(r) === "fish").length, veg = rs.filter(r => meatType(r) === "none").length;
-    const mins = rs.reduce((a, r) => a + (totalTime(r) || 0), 0);
-    h += `<div class="wk-stats"><span><b>${rs.length}</b> yemek</span>${kc.length ? `<span>ort. <b>${Math.round(kc.reduce((a, b) => a + b, 0) / kc.length)}</b> kcal</span>` : ""}<span>🥩 <b>${red}</b></span><span>🐟 <b>${fish}</b></span><span>🥦 <b>${veg}</b></span><span>⏱️ <b>${fmtDur(mins)}</b></span></div>`;
+    h += `<p class="ag-stats">${rs.length} yemek${kc.length ? ` · ort. ${Math.round(kc.reduce((a, b) => a + b, 0) / kc.length)} kcal` : ""} · 🥩 ${red} · 🐟 ${fish} · 🥦 ${veg}</p>`;
     if (red >= 4) h += `<p class="week-tip">💡 Bu hafta kırmızı et biraz fazla; bir günü sebze ya da baklagille değiştirebilirsin.</p>`;
     else if (!fish && rs.length >= 5) h += `<p class="week-tip">💡 Haftada bir balık iyi gelir.</p>`;
     const list = planShopping(), notIn = list.filter(e => !inCart(e.ad, e.m && e.m.id));
     h += `<div class="wk-shop"><span class="wk-shop-e" aria-hidden="true">🛒</span><span class="wk-shop-t"><b>${list.length ? `${list.length} malzeme eksik` : "Malzemelerin hepsi evde"}</b><small>${list.length ? (notIn.length < list.length ? `${list.length - notIn.length} tanesi zaten sepetinde` : "Aynı malzemeler birleşir, dolabındakiler eklenmez") : "Alışverişe gerek yok 🎉"}</small></span>${notIn.length ? `<button type="button" class="ai-btn" data-act="cartAddPlan">Sepete ekle</button>` : list.length ? `<button type="button" class="fav" data-act="goCart">Sepete git</button>` : ""}</div>`;
-  } else {
-    h += `<p class="week-empty">Günlere dokunarak yemek ekle ya da <b>🎲 Haftayı doldur</b> ile dengeli bir hafta oluştur.</p>`;
   }
   setHTML($("planMode"), h);
 }
@@ -6289,7 +6339,7 @@ document.addEventListener("click", e => {
   }
 });
 
-document.addEventListener("click", e => { if (planSel && mode === "plan" && !(e.target.closest && e.target.closest(".wd-dish, .wd-menu"))){ planSel = null; renderPlan(); } }, true);
+document.addEventListener("click", e => { if (planSel && mode === "plan" && !(e.target.closest && e.target.closest(".ag-moreb, .ag-menu"))){ planSel = null; renderPlan(); } }, true);
 document.addEventListener("keydown", e => {
   if (e.key === "Enter" && e.target && e.target.id === "cartInput"){ e.preventDefault(); const b = document.querySelector('[data-act="cartAddText"]'); if (b) b.click(); }
   if (e.key === "Enter" && e.target && e.target.id === "cartJoinCode"){ e.preventDefault(); cartJoin(e.target.value); }
@@ -6426,7 +6476,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Bu hafta":"This week","Bugün ne pişiriyoruz?":"What are we cooking today?","🌟 Bu menüyü ekle":"🌟 Add this menu","🎲 Tek yemek öner":"🎲 Suggest a dish","＋ Kendim seçeyim":"＋ I'll pick","▶ Pişirmeye başla":"▶ Start cooking","Tarif":"Recipe","📖 Tarifi aç":"📖 Open recipe","↻ Başkasıyla değiştir":"↻ Swap","✕ Menüden çıkar":"✕ Remove","Taşı":"Move","Sepete ekle":"Add to basket","Sepete git":"Go to basket","Ekle":"Add","👶 Çocuk dostu":"👶 Kid-friendly","Önce malzemeleri hazırla":"Get your ingredients ready first","Atla":"Skip","← Hazırlık":"← Prep","Hepsi hazır, başla →":"All set, start →","Nasıl oldu?":"How did it go?","📅 Menüye tekrar koy":"📅 Add to menu again","❤️ Favorilerim":"❤️ Favourites","🔥 Popüler":"🔥 Popular","🏅 Rozetlerim":"🏅 Badges","✨ Yapay zekâya tarif et":"✨ Describe to AI","Temizle":"Clear","📖 Tarif":"📖 Recipe","▶ Pişir":"▶ Cook","↻ Değiştir":"↻ Swap","✕ Kaldır":"✕ Remove","Kaydet":"Save","Vazgeç":"Cancel","Not":"Note","Notum":"My note","Daha fazla: kategoriler, yardım ve rehberler":"More: categories, help and guides","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","BU HAFTA":"THIS WEEK","＋ Yemek ekle":"＋ Add a dish","＋ Bu güne ekle":"＋ Add to this day","✕ Kaldır":"✕ Remove","↻ Değiştir":"↻ Swap","🎲 Öner":"🎲 Suggest","🌟 Günün sofrası":"🌟 Today's menu","Taşı:":"Move:","Bugün":"Today","Bu hafta":"This week","Bugün ne pişiriyoruz?":"What are we cooking today?","🌟 Bu menüyü ekle":"🌟 Add this menu","🎲 Tek yemek öner":"🎲 Suggest a dish","＋ Kendim seçeyim":"＋ I'll pick","▶ Pişirmeye başla":"▶ Start cooking","Tarif":"Recipe","📖 Tarifi aç":"📖 Open recipe","↻ Başkasıyla değiştir":"↻ Swap","✕ Menüden çıkar":"✕ Remove","Taşı":"Move","Sepete ekle":"Add to basket","Sepete git":"Go to basket","Ekle":"Add","👶 Çocuk dostu":"👶 Kid-friendly","Önce malzemeleri hazırla":"Get your ingredients ready first","Atla":"Skip","← Hazırlık":"← Prep","Hepsi hazır, başla →":"All set, start →","Nasıl oldu?":"How did it go?","📅 Menüye tekrar koy":"📅 Add to menu again","❤️ Favorilerim":"❤️ Favourites","🔥 Popüler":"🔥 Popular","🏅 Rozetlerim":"🏅 Badges","✨ Yapay zekâya tarif et":"✨ Describe to AI","Temizle":"Clear","📖 Tarif":"📖 Recipe","▶ Pişir":"▶ Cook","↻ Değiştir":"↻ Swap","✕ Kaldır":"✕ Remove","Kaydet":"Save","Vazgeç":"Cancel","Not":"Note","Notum":"My note","Daha fazla: kategoriler, yardım ve rehberler":"More: categories, help and guides","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
