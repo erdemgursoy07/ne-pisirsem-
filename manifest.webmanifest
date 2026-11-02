@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Bugün ne pişirsem?",
   "short_name": "Ne pişirsem?",
-  "description": "Evdeki malzemelerden yemek önerisi, buzdolabı fotoğrafından malzeme tanıma, adım adım pişirme modu, haftalık menü, akıllı alışveriş sepeti ve 85 yöresel tarifle Türkiye mutfağı haritası.",
+  "description": "Evdeki malzemelerden yemek önerisi, buzdolabı fotoğrafından malzeme tanıma, adım adım pişirme modu, akıllı alışveriş sepeti ve 85 yöresel tarifle Türkiye mutfağı haritası.",
   "lang": "tr",
   "dir": "ltr",
   "start_url": "./",
@@ -49,17 +49,6 @@
       ]
     },
     {
-      "name": "Haftalık menü",
-      "short_name": "Menü",
-      "url": "./?sekme=menu",
-      "icons": [
-        {
-          "src": "icon-192.png?v=2",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
       "name": "En sevilenler",
       "short_name": "Sevilenler",
       "url": "./?sekme=sevilen",
@@ -71,7 +60,7 @@
       ]
     },
     {
-      "name": "Sepetim",
+      "name": "Pişireceklerim ve sepet",
       "short_name": "Sepet",
       "url": "./?sekme=sepet",
       "icons": [

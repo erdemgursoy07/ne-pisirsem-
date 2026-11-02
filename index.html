@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Evdeki malzemelerden yemek önerisi, alışveriş listesi, pişirme modu ve haftalık menü.">
+<meta name="description" content="Evdeki malzemelerden yemek önerisi, pişireceklerin ve alışveriş listesi, adım adım pişirme modu.">
 <meta name="theme-color" content="#C2410C">
 <meta name="color-scheme" content="light">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1767,6 +1767,30 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
   .ag-menu{animation:softIn .25s ease}
   @media (hover:hover){ .ag-main:hover .ag-img{transform:scale(1.05)} .ag-img{transition:transform .3s ease} }
 }
+/* ===================== 📌 PİŞİRECEKLERİM ===================== */
+.pc-box{margin:0 0 18px;padding:14px 14px 12px;border-radius:var(--r-lg,20px);background:linear-gradient(135deg,color-mix(in srgb,var(--cobalt) 9%,var(--surface)),var(--surface));border:1.5px solid color-mix(in srgb,var(--cobalt) 30%,var(--line))}
+.pc-box.pc-empty{display:flex;align-items:center;gap:12px;background:var(--surface);border:1.5px dashed var(--line)}
+.pc-e{font-size:1.6rem}
+.pc-empty span:last-child{display:flex;flex-direction:column;gap:2px}
+.pc-empty small{color:var(--muted);font-size:.84rem}
+.pc-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}
+.pc-head span{display:flex;flex-direction:column}.pc-head b{font-size:1.15rem}.pc-head small{color:var(--muted);font-size:.78rem}
+.pc-list{display:flex;flex-direction:column}
+.pc-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+.pc-row:first-child{border-top:0}
+.pc-main{flex:1;min-width:0;display:flex;align-items:center;gap:10px;padding:0;border:0;background:transparent;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.pc-img{width:46px;height:46px;flex:0 0 46px;border-radius:12px;display:grid;place-items:center;font-size:1.4rem;background:var(--cbg,var(--bg));overflow:hidden}
+.pc-img img{width:100%;height:100%;object-fit:cover}
+.pc-t{flex:1;min-width:0;display:flex;flex-direction:column}.pc-t b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pc-t small{color:var(--muted);font-size:.76rem}
+.ai-btn.pc-go{min-height:36px;padding:7px 12px;font-size:.82rem}
+.pc-x{width:32px;height:32px;flex:0 0 32px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:1rem;cursor:pointer}
+.pc-shop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;padding-top:10px;border-top:1px dashed var(--line);font-size:.9rem}
+.pc-cart-t{margin:4px 0 10px;font-size:1.1rem}
+.fr-btn.on{border-color:var(--cobalt);background:color-mix(in srgb,var(--cobalt) 10%,var(--surface))}
+.act-i[data-act="pisToggle"][aria-pressed="true"]{border-color:var(--cobalt);color:var(--cobalt)}
+@media (prefers-reduced-motion: no-preference){ .pc-row{animation:softIn .35s cubic-bezier(.22,1,.36,1) backwards} .pc-box{animation:softIn .45s cubic-bezier(.22,1,.36,1) backwards} }
+.dish-daily{margin:2px 0 14px}
+.dish-daily .daily{margin-top:10px}
 </style>
 </head>
 <body>
@@ -1784,7 +1808,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
     <div class="tabs" role="tablist" aria-label="Görünüm">
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="pantry" id="tab-pantry"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2Z"/><path d="M5 10h14"/><path d="M15 6v1.5"/><path d="M15 13v3"/></svg></span><span class="tab-t">Dolabım</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="dish" id="tab-dish"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span><span class="tab-t">Yemek ara</span></button>
-      <button type="button" role="tab" class="tab" data-act="tab" data-mode="plan" id="tab-plan"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span><span class="tab-t">Menü</span></button>
+      <button type="button" role="tab" class="tab" data-act="tab" data-mode="plan" id="tab-plan" hidden style="display:none"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span><span class="tab-t">Menü</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="fav" id="tab-fav"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></span><span class="tab-t">En sevilenler</span></button>
       <button type="button" role="tab" class="tab" data-act="tab" data-mode="cart" id="tab-cart"><span class="tab-i" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></span><span class="tab-t">Sepet</span></button>
     </div>
@@ -1801,7 +1825,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
           <label class="ai-btn hero-btn" for="fridgeInput">📸 Buzdolabının fotoğrafını çek</label>
           <button type="button" class="fav hero-btn" data-act="focusSearch">✍️ Malzemelerini seç</button>
         </div>
-        <p class="hero-ai" id="heroAi">✨ Yapay zekâ seninle: fotoğraftan malzemelerini tanır, <b>Şef'e sor</b>'da sorularını yanıtlar, <b>haftalık menünü</b> hazırlar.</p>
+        <p class="hero-ai" id="heroAi">✨ Yapay zekâ seninle: fotoğraftan malzemelerini tanır, <b>Şef'e sor</b>'da sorularını yanıtlar, <b>pişireceklerini</b> ve alışveriş listeni hazırlar.</p>
       </div>
       <ol class="flow" id="flow" aria-label="Nasıl çalışır"></ol>
       <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span><span>🍲 🥘 🍝 🌮 🍣 🥗 🍛 🍜 🥟 🍕 🥙 🧆 🍤 🥞 🍳 🍢 🍗 🥩 🍆 🥔 🍅 🧄 🌶️ 🥖 🧀 🍋 🍰 🍮 🍪 🥐</span></div></div>
@@ -1852,7 +1876,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
         <ul>
           <li><button type="button" data-act="footGo" data-mode="pantry"><span class="fe" aria-hidden="true">🧺</span> Dolabım</button></li>
           <li><button type="button" data-act="footGo" data-mode="dish"><span class="fe" aria-hidden="true">🔎</span> Yemek ara</button></li>
-          <li><button type="button" data-act="footGo" data-mode="plan"><span class="fe" aria-hidden="true">📅</span> Haftalık menü</button></li>
+          <li><button type="button" data-act="footGo" data-mode="cart"><span class="fe" aria-hidden="true">📌</span> Pişireceklerim</button></li>
           <li><button type="button" data-act="footGo" data-mode="fav"><span class="fe" aria-hidden="true">🏆</span> En sevilenler ve rozetler</button></li>
           <li><button type="button" data-act="footGo" data-mode="cart"><span class="fe" aria-hidden="true">🛒</span> Sepetim</button></li>
         </ul>
@@ -1883,7 +1907,7 @@ body[data-mode="plan"] .hero,#planMode{max-width:860px;margin-inline:auto;width:
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Bugün ne pişirsem? · Sürüm 84</span>
+      <span>© 2026 Bugün ne pişirsem? · Sürüm 85</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2414,6 +2438,7 @@ const sortRecipes = list => list.slice().sort((a, b) => ((TOP_RANK.has(a.key) ? 
 const POPULAR = new Set(["Mercimek çorbası","Ezogelin çorbası","Menemen","Karnıyarık","Kuru fasulye","Pirinç pilavı","İzmir köfte","Tavuk sote","Zeytinyağlı taze fasulye","Mercimek köftesi","Kısır","Hünkar beğendi","Tas kebabı","Sütlaç","Revani","Çoban salatası","Fırında tavuk ve patates"]);
 
 /* ---------- Yardımcılar ---------- */
+const mqMatch = q => { try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch(e){ return false; } };
 const $ = id => document.getElementById(id);
 const norm = s => String(s || "").toLocaleLowerCase("tr").trim();
 /* Bir bölümü yeniden çizerken eski ekranla yenisini karşılaştırır ve YALNIZCA değişen kısımları günceller.
@@ -2652,6 +2677,10 @@ favs = favs.filter(k => REG.has(k)); recents = recents.filter(k => REG.has(k));
 const DAYS = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
 let plan = load("pisir-plan", null);
 plan = Array.from({length:7}, (_, i) => (Array.isArray(plan) && Array.isArray(plan[i]) ? plan[i] : []).filter(k => typeof k === "string" && REG.has(k)));
+let pisList = load("pisir-pisirecek", null);
+if (!Array.isArray(pisList)) pisList = [...new Set(plan.flat())]; // eski haftalık menüdeki yemekler buraya taşınır
+pisList = pisList.filter(k => typeof k === "string" && REG.has(k));
+const inPis = k => pisList.includes(k);
 let illus = load("pisir-gorsel", {}); if (!illus || typeof illus !== "object") illus = {};
 Object.keys(illus).forEach(k => { if (typeof illus[k] !== "string" || !illus[k].trim().startsWith("<svg")) delete illus[k]; });
 const illusState = {};
@@ -2679,7 +2708,7 @@ const cookCounts = (() => { const v = load("pisir-pisirilen", {}); return v && t
 function save(){
   try {
     const keep = {};
-    new Set([...favs, ...recents, ...plan.flat()]).forEach(k => { if (k.startsWith("ai:") && REG.has(k)) keep[k] = REG.get(k); });
+    new Set([...favs, ...recents, ...plan.flat(), ...pisList]).forEach(k => { if (k.startsWith("ai:") && REG.has(k)) keep[k] = REG.get(k); });
     localStorage.setItem("pisir-secimler", JSON.stringify([...selected]));
     localStorage.setItem("pisir-ozel", JSON.stringify([...extras]));
     localStorage.setItem("pisir-fav", JSON.stringify(favs));
@@ -2688,6 +2717,7 @@ function save(){
     localStorage.setItem("pisir-elle", JSON.stringify(manual));
     localStorage.setItem("pisir-ai", JSON.stringify(keep));
     localStorage.setItem("pisir-plan", JSON.stringify(plan));
+    localStorage.setItem("pisir-pisirecek", JSON.stringify(pisList));
     localStorage.setItem("pisir-gorsel", JSON.stringify(illus));
   } catch(e) {}
 }
@@ -2766,7 +2796,7 @@ function detailHTML(r, compact){
     <button type="button" class="ai-btn cook-cta" data-act="cook" data-key="${ek}">▶ Pişirmeye başla${r.sure ? `<small>${r.sure} dk · adım adım</small>` : ""}</button>
     <div class="act-row">
       <button type="button" class="act-i" data-act="fav" data-key="${ek}" aria-pressed="${fav}"><span class="act-e" aria-hidden="true">${fav ? "♥" : "♡"}</span><span>${fav ? "Favoride" : "Favori"}</span></button>
-      ${planTarget !== null ? "" : `<label class="act-i act-plan"><span class="act-e" aria-hidden="true">📅</span><span>Menüye</span>${planCtl(r, true)}</label>`}
+      <button type="button" class="act-i" data-act="pisToggle" data-key="${ek}" aria-pressed="${inPis(r.key)}"><span class="act-e" aria-hidden="true">📌</span><span>${inPis(r.key) ? "Listede" : "Listeye"}</span></button>
       ${r.src === "b" ? `<button type="button" class="act-i" data-act="shareMenu" data-key="${ek}" aria-expanded="${shareOpen === r.key}"><span class="act-e" aria-hidden="true">📤</span><span>Paylaş</span></button>` : ""}
       <a class="act-i" href="https://www.youtube.com/results?search_query=${encodeURIComponent(r.ad + " tarifi")}" target="_blank" rel="noopener"><span class="act-e act-yt" aria-hidden="true">▶</span><span>Video</span></a>
       <button type="button" class="act-i" data-act="noteEdit" data-key="${ek}"><span class="act-e" aria-hidden="true">📝</span><span>${notes[r.key] ? "Notum" : "Not"}</span></button>
@@ -2970,7 +3000,7 @@ const HERO = {
   plan:["Haftalık menü","Günlere yemek ekle, alışveriş listen hazır."],
   fav:["En sevilenler","Türk ve dünya mutfağının en sevilenleri, senin favorilerin."],
   recent:["En sevilenler","Türk ve dünya mutfağının en sevilenleri, senin favorilerin."],
-  cart:["Sepetim","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin."]
+  cart:["Sepetim","Pişireceklerin ve alacakların bir arada; markette işaretle, dolabına geçsin."]
 };
 function greeting(){
   const h = new Date().getHours();
@@ -3462,7 +3492,7 @@ const GUIDES = [
 <li><b>Tek bir alışveriş listesi çıkar.</b> Bütün haftanın eksiklerini bir kerede al.</li>
 <li><b>Hafta sonu hazırlık yap.</b> Soğan doğramak, bakliyat haşlamak ya da sebze yıkamak gibi işleri önceden yaparsan hafta içi çok hızlanırsın.</li></ol>
 <p class="guide-tip">💡 Uygulamada “Menüyü benim için oluştur” kartına isteğini yaz (“4 kişiyiz, hafta içi pratik olsun” gibi); 7 günlük menün ve alışveriş listen hazırlansın.</p>
-<button type="button" class="ai-btn" data-act="footGo" data-mode="plan">📅 Haftalık menüme git</button>`},
+<button type="button" class="ai-btn" data-act="footGo" data-mode="cart">📌 Pişireceklerime git</button>`},
   {id:"guvenlik", emo:"🧊", title:"Artan yemekler ve gıda güvenliği", short:"Artan yemek ve gıda güvenliği",
    lead:"Artan yemekleri doğru saklamak hem israfı hem de mide rahatsızlıklarını önler. Temel kurallar şunlar:",
    body:`<ul><li><b>2 saat kuralı:</b> Pişmiş yemeği oda sıcaklığında en fazla 2 saat beklet; hava çok sıcaksa (32 °C üstü) 1 saat. Sonra buzdolabına kaldır.</li>
@@ -4035,10 +4065,10 @@ function micBarHTML(){
 function renderMic(){ const b = $("micBar"); if (b) b.outerHTML = micBarHTML() || `<div id="micBar" hidden></div>`; }
 
 /* ---------- Yenilikler ---------- */
-const WHATS_NEW_VER = 78;
+const WHATS_NEW_VER = 85;
 const WHATS_NEW = [
   ["🗺️", "Yöresel mutfaklar", "Türkiye haritasında bir bölgeye dokun; Karadeniz'den Güneydoğu'ya 85 yöresel tarif (51'i yeni).", "wn-yore"],
-  ["📅", "Yeni Menü", "Haftayı tek dokunuşla dengeli doldur, beğenmediğini ↻ ile değiştir, bugünün yemeğini hemen pişir.", "wn-menu"],
+  ["📌", "Pişireceklerim", "Haftalık menü yerine daha basit bir liste: tarifte “📌 Pişireceğim”e dokun; Sepet'in başında toplanır, eksikleri tek dokunuşla sepete at.", "wn-pis"],
   ["🏆", "Yeni En sevilenler", "Favorilerim · Popüler · Rozetlerim; favorilerden menüye ve sepete tek dokunuş, sıradaki rozet önerisi.", "wn-favs"],
   ["🧺", "Hazırlık listesi", "Pişirmeden önce malzemeleri işaretle; adımları ekranı kaydırarak geç, bitince puan ver.", "wn-prep"],
   ["🎉", "Özel gün menüleri", "Ramazan, bayramlar, yılbaşı ve piknik mevsiminde hazır menüler kendiliğinden gelir.", "wn-special"],
@@ -4213,7 +4243,7 @@ function fly(fromEl, targetSel, emoji){
     if (!t) return;
     const bump = () => { [t, t.closest(".tab") && t.closest(".tab").querySelector(".tab-badge")].forEach(x => { if (!x) return; x.classList.remove("bump"); void x.offsetWidth; x.classList.add("bump"); }); };
     const b = t.getBoundingClientRect();
-    if (!a || !a.width || !b.width || matchMedia("(prefers-reduced-motion: reduce)").matches || !document.body.animate){ bump(); return; }
+    if (!a || !a.width || !b.width || mqMatch("(prefers-reduced-motion: reduce)") || !document.body.animate){ bump(); return; }
     const dot = document.createElement("span"); dot.className = "fly-dot"; dot.textContent = emoji || "•"; dot.setAttribute("aria-hidden", "true");
     const x0 = a.left + a.width / 2, y0 = a.top + a.height / 2, dx = b.left + b.width / 2 - x0, dy = b.top + b.height / 2 - y0;
     dot.style.left = x0 + "px"; dot.style.top = y0 + "px"; document.body.appendChild(dot);
@@ -4235,12 +4265,21 @@ function fly(fromEl, targetSel, emoji){
   const end = () => { if (!st) return; const {row, dx, on} = st; st = null; row.style.transform = ""; row.classList.remove("swipe-ok"); if (on && dx > 90){ row.classList.add("leaving"); setTimeout(() => { cartSetDone(row.dataset.id, true); renderAll(); }, 240); } };
   document.addEventListener("pointerup", end); document.addEventListener("pointercancel", end);
 })();
+function pisBoxHTML(){
+  const rs = pisList.map(k => REG.get(k)).filter(Boolean);
+  if (!rs.length) return `<div class="pc-box pc-empty"><span class="pc-e" aria-hidden="true">📌</span><span><b>Pişireceklerin</b><small>Bir tarifte <b>📌 Pişireceğim</b>'e dokun; yapmayı düşündüklerin ve eksik malzemeleri burada toplansın.</small></span></div>`;
+  const list = planShopping(), notIn = list.filter(e => !inCart(e.ad, e.m && e.m.id));
+  return `<section class="pc-box" data-key="pc-box"><div class="pc-head"><span><b>📌 Pişireceklerin</b><small>${rs.length} tarif · pişirince listeden düşer</small></span></div>
+    <div class="pc-list">${rs.map(r => { const n = nutrition(r) || {}; return `<div class="pc-row" data-key="pc-${esc(r.key)}"><button type="button" class="pc-main" data-act="openSaved" data-key="${esc(r.key)}">${dishThumb(r, "pc-img")}<span class="pc-t"><b>${esc(r.ad)}</b><small>${[r.sure ? `⏱️ ${fmtDur(r.sure)}` : "", n.kcal ? `🔥 ${n.kcal} kcal` : ""].filter(Boolean).join(" · ")}</small></span></button><button type="button" class="ai-btn pc-go" data-act="cook" data-key="${esc(r.key)}">▶ Pişir</button><button type="button" class="pc-x" data-act="pisToggle" data-key="${esc(r.key)}" aria-label="${esc(r.ad)} listeden çıkar">✕</button></div>`; }).join("")}</div>
+    <div class="pc-shop">${list.length ? `<span>Bunlar için <b>${list.length}</b> malzeme eksik${notIn.length < list.length ? ` · ${list.length - notIn.length} tanesi sepette` : ""}</span>${notIn.length ? `<button type="button" class="ai-btn" data-act="cartAddPlan">🛒 Eksikleri ekle</button>` : ""}` : `<span>Hepsinin malzemesi evde 🎉</span>`}</div></section>
+    <h3 class="pc-cart-t">🛒 Alışveriş listen</h3>`;
+}
 function renderCart(){
   const el = $("cartMode"); if (!el) return;
   const live = cartLive(), todo = live.filter(x => !x.done), done = live.filter(x => x.done);
   const mk = MARKETS.find(m => m.id === cartMarket);
   const groups = AISLES.map(a => [a, todo.filter(x => cartAisle(x) === a[0])]).filter(([, l]) => l.length);
-  const planMiss = plan.some(d => d.length) ? planShopping().filter(e => !inCart(e.ad, e.m && e.m.id)) : [];
+  const planMiss = []; // eksikler artık "Pişireceklerin" kutusunda
   const row = x => `<div class="cart-row${x.done ? " is-done" : ""}" data-id="${x.id}" data-key="ci-${x.id}">
       <button type="button" class="cart-check" data-act="cartDone" data-id="${x.id}" aria-pressed="${x.done}" aria-label="${x.done ? "Alınmadı yap" : "Aldım"}">${x.done ? "✓" : ""}</button>
       <span class="cart-e" aria-hidden="true">${cartEmoji(x)}</span>
@@ -4280,14 +4319,14 @@ function renderCart(){
          <div class="cart-join"><input class="search" id="cartJoinCode" type="text" maxlength="6" placeholder="Kodun var mı? Ör. K7M2QX" aria-label="Ortak sepet kodu" autocapitalize="characters"><button type="button" class="fav" data-act="cartJoin">Katıl</button></div>`}
       ${cartSyncMsg ? `<p class="vp-msg">${esc(cartSyncMsg)}</p>` : ""}</div>`;
   }
-  setHTML(el, h);
+  setHTML(el, pisBoxHTML() + h);
 }
 /* =================== /SEPET =================== */
 
 /* Açılış ekranı: uygulama hazır olunca yumuşakça kaybolur */
 { const sp = $("splash");
   const shown = sp && getComputedStyle(sp).display !== "none";
-  const fast = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fast = mqMatch("(prefers-reduced-motion: reduce)");
   if (sp){ if (!shown) sp.remove(); else setTimeout(() => { sp.classList.add("out"); setTimeout(() => sp.remove(), 650); }, fast ? 400 : 1500); } }
 
 /* Tek "Pişirmeye başla" düğmesi: kaydırınca küçülür, yukarı çıkınca yazısı geri gelir; hiç kaybolmaz */
@@ -4295,7 +4334,7 @@ function renderCart(){
   const inner = document.querySelector("#sheet .sheet-inner"), sh = $("sheet");
   if (!inner || !sh) return;
   let last = 0, t = null;
-  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const calm = mqMatch("(prefers-reduced-motion: reduce)");
   inner.addEventListener("scroll", () => {
     const y = inner.scrollTop, dy = y - last; last = y;
     if (y < 80 || dy < -6) sh.classList.remove("cta-mini");   // en üstte ya da yukarı kaydırırken: geniş
@@ -4323,7 +4362,7 @@ window.addEventListener("resize", () => requestAnimationFrame(moveTabPill));
 
 /* ---------- İstatistik sayıları yumuşakça sayar ---------- */
 function countUp(root){
-  if (!root || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!root || mqMatch("(prefers-reduced-motion: reduce)")) return;
   root.querySelectorAll(".stat b:not([data-counted])").forEach(b => {
     const m = b.textContent.match(/^([\d.,]+)(.*)$/); b.setAttribute("data-counted", "1");
     if (!m) return;
@@ -4404,7 +4443,7 @@ const BADGES = [
   ["gezgin", "🌍", "Dünya gezgini", "5 farklı ülke mutfağından yemek pişir.", () => [new Set(cookedList().map(r => r.mutfak).filter(m => m && m !== "Türk mutfağı" && m !== "Dünya mutfağı")).size, 5]],
   ["sadik", "🔁", "Vazgeçilmez", "Aynı tarifi 3 kez pişir.", () => [Math.max(0, ...Object.values(cookCounts).map(Number).filter(n => n > 0)), 3]],
   ["koleksiyon", "❤️", "Koleksiyoncu", "10 tarifi favorilerine ekle.", () => [favs.length, 10]],
-  ["planli", "📅", "Planlı aşçı", "Haftalık menüne 5 yemek ekle.", () => [plan.reduce((n, d) => n + d.length, 0), 5]],
+  ["planli", "📌", "Planlı aşçı", "Pişireceklerine 5 tarif ekle.", () => [Math.max(pisList.length, plan.reduce((n, d) => n + d.length, 0)), 5]],
   ["dedektif", "🔎", "Dolap dedektifi", "Fotoğraftan malzemelerini tanıt.", () => [badgeStats.tara || 0, 1]],
   ["merakli", "💬", "Meraklı", "Şef'e bir soru sor.", () => [badgeStats.sef || 0, 1]],
   ["mezeci", "🫒", "Meze ustası", "3 farklı meze hazırla.", () => [catCount("meze"), 3]],
@@ -4441,14 +4480,14 @@ function kitchenBadgesHTML(){
 
 /* ---------- Verilerini taşı (aktarma kodu, 24 saat geçerli) ---------- */
 const AKTAR_URL = () => PHOTO_URL ? PHOTO_URL.replace(/\/foto$/, "/aktar") : "";
-const TRANSFER_KEYS = ["pisir-puan","pisir-notlar","pisir-sepet","pisir-fav","pisir-son","pisir-kisi","pisir-plan","pisir-pisirilen","pisir-ai","pisir-diyet","pisir-tema","pisir-dil","pisir-ses","pisir-fotolarim","pisir-yorumlarim","pisir-rozetler","pisir-rozet-veri","pisir-tur"];
+const TRANSFER_KEYS = ["pisir-pisirecek","pisir-puan","pisir-notlar","pisir-sepet","pisir-fav","pisir-son","pisir-kisi","pisir-plan","pisir-pisirilen","pisir-ai","pisir-diyet","pisir-tema","pisir-dil","pisir-ses","pisir-fotolarim","pisir-yorumlarim","pisir-rozetler","pisir-rozet-veri","pisir-tur"];
 const transfer = {code:"", state:"", msg:""};
 function renderTransfer(){
   let el = $("transfer");
   if (!el){ el = document.createElement("div"); el.id = "transfer"; el.className = "tour"; document.body.appendChild(el); }
   const busy = transfer.state === "busy";
   el.innerHTML = `<div class="tour-card transfer-card" role="dialog" aria-modal="true" aria-label="Verilerini taşı">
-    <h2>🔄 Verilerini taşı</h2><p class="tour-text">Favorilerin, haftalık menün, pişirdiklerin, rozetlerin ve tercihlerin başka bir cihaza taşınır.</p>
+    <h2>🔄 Verilerini taşı</h2><p class="tour-text">Favorilerin, pişireceklerin, pişirdiklerin, rozetlerin ve tercihlerin başka bir cihaza taşınır.</p>
     <div class="tr-sec"><b>📤 Bu cihazdan gönder</b>${transfer.code ? `<div class="tr-code" aria-label="Aktarma kodu">${transfer.code}</div><p class="sub">Diğer cihazda bu kodu gir. Kod 24 saat geçerli.</p>` : `<p class="sub">Bir kod oluştur, sonra diğer cihaza gir.</p><button type="button" class="ai-btn" data-act="trMake" ${busy ? "disabled" : ""}>Kod oluştur</button>`}</div>
     <div class="tr-sec"><b>📥 Başka cihazdan al</b><div class="chef-form"><input class="search" id="trInput" maxlength="8" placeholder="Örn: K7P9QX" autocapitalize="characters" autocomplete="off" aria-label="Aktarma kodu"><button type="button" class="ai-btn" data-act="trGet" ${busy ? "disabled" : ""}>Aktar</button></div></div>
     ${transfer.msg ? `<p class="photo-msg">${esc(transfer.msg)}</p>` : ""}
@@ -4952,6 +4991,8 @@ function renderDishList(){
     html += `<p class="dq-understood">🔎 Anladığım: ${bits.join(" · ")}</p>`;
   }
   if (!q && !filters.size && !quickOn){
+    html += specialCardHTML();
+    if (dailyMenu().length) html += `<div class="dish-daily">${dailyMiniHTML()}${dailyOpen ? dailyCardHTML() : ""}</div>`;
     const rec = recents.map(k => REG.get(k)).filter(Boolean).slice(0, 6);
     if (rec.length) html += `<div class="recent-row"><span class="rr-l">🕘 Son baktıkların</span><div class="rr-list">${rec.map(r => `<button type="button" class="rc-pill" data-act="pickDish" data-key="${esc(r.key)}"><span aria-hidden="true">${recipeEmoji(r)}</span> ${esc(r.ad)}</button>`).join("")}</div></div>`;
     html += `<div class="cat-tiles">${(specialNow() ? ["ozel", ...TILE_ORDER] : TILE_ORDER).map(id => { const c = catInfo(id); if (!c) return ""; const n = catCountOf(id); if (!n) return ""; return `<button type="button" class="cat-tile cat-${id}" data-act="filter" data-f="${id}"><span class="ct-e" aria-hidden="true">${c[2]}</span><span class="ct-t">${esc(id === "mevsim" ? "Mevsiminde" : id === "yore" ? "Yöresel" : c[1])}</span>${id === "ozel" ? `<span class="ct-new">Özel</span>` : ""}<span class="ct-n">${n} tarif</span></button>`; }).join("")}</div>`;
@@ -4959,7 +5000,7 @@ function renderDishList(){
     const c = filters.size ? catInfo([...filters][0]) : null;
     if (c) html += `<button type="button" class="back-cats" data-act="backCats" data-f="${c[0]}"><span class="back-arrow" aria-hidden="true">←</span> Kategoriler</button><div class="sec-head"><h2><span aria-hidden="true">${c[2]}</span> ${esc(c[1])}</h2></div>`;
     if (c && c[0] === "yore"){ const g = REGIONS.find(x => x.id === yoreSel); html += trMapHTML() + `<p class="sub reg-sub">${g ? `<b>${g.e} ${g.ad} mutfağı</b> · ${esc(g.sub)}` : "Haritada bir bölgeye dokun; o bölgenin yemekleri gelsin."}</p>`; }
-    if (c && c[0] === "ozel"){ const sp = specialNow(); html += `<p class="sub">${sp.sub}. Menü sekmesinden bütün menüyü tek dokunuşla ekleyebilirsin.</p>`; }
+    if (c && c[0] === "ozel"){ const sp = specialNow(); html += `<p class="sub">${sp.sub}. Bütün menüyü Yemek ara'nın başındaki karttan tek dokunuşla pişireceklerine ekleyebilirsin.</p>`; }
     if (c && c[0] === "mevsim") html += `<div class="season-chips">${seasonNow().ids.map(id => `<span class="season-chip">${ING_EMOJI[id] || "🥬"} ${LABEL[id]}</span>`).join("")}</div>`;
     html += sortHTML(list.length);
     const isSpor = filters.has("spor");
@@ -5024,7 +5065,7 @@ function favRowHTML(r){
   return `<div class="fav-row" data-key="fr-${esc(r.key)}">
     <button type="button" class="fr-main" data-act="openSaved" data-key="${esc(r.key)}"><span class="fr-img cat-${recipeCat(r)}">${wi ? `<img src="${esc(wi.s)}" alt="" loading="lazy">` : `<span aria-hidden="true">${recipeEmoji(r)}</span>`}</span><span class="fr-t"><b>${esc(r.ad)}</b><small>${[r.sure ? `⏱️ ${fmtDur(r.sure)}` : "", (nutrition(r) || {}).kcal ? `🔥 ${(nutrition(r) || {}).kcal} kcal` : ""].filter(Boolean).join(" · ")}</small>${notes[r.key] ? `<small class="fr-note">📝 ${esc(notes[r.key])}</small>` : ""}</span></button>
     <span class="fr-acts">
-      <label class="fr-btn" title="Menüye ekle">📅<span class="sr-only">Menüye ekle</span>${planCtl(r, true)}</label>
+      <button type="button" class="fr-btn${inPis(r.key) ? " on" : ""}" data-act="pisToggle" data-key="${esc(r.key)}" aria-pressed="${inPis(r.key)}" title="${inPis(r.key) ? "Pişireceklerinde" : "Pişireceklerime ekle"}">📌<span class="sr-only">Pişireceklerime ekle</span></button>
       <button type="button" class="fr-btn" data-act="favCart" data-key="${esc(r.key)}" title="Eksikleri sepete ekle" ${miss ? "" : "disabled"}>🛒${miss ? `<i>${miss}</i>` : ""}</button>
       <button type="button" class="fr-btn fr-go" data-act="cook" data-key="${esc(r.key)}" title="Pişirmeye başla">▶</button>
     </span></div>`;
@@ -5071,7 +5112,7 @@ function renderSaved(){
     <button type="button" role="tab" class="st-btn" data-act="favTab" data-v="badge" aria-selected="${favTab === "badge"}">🏅 Rozetlerim <i>${earned}/${BADGES.length}</i></button></div>`;
   if (favTab === "fav"){
     h += f.length ? `<div class="fav-list">${f.map(favRowHTML).join("")}</div>`
-      : `<div class="fav-empty"><div class="fe-big" aria-hidden="true">❤️</div><p><b>Henüz favorin yok</b></p><p class="sub">Beğendiğin bir tarifte <b>♡ Favori</b>'ye dokun; burada menüye ekleme, sepete atma ve pişirme tek dokunuşla elinin altında olsun.</p></div>`;
+      : `<div class="fav-empty"><div class="fe-big" aria-hidden="true">❤️</div><p><b>Henüz favorin yok</b></p><p class="sub">Beğendiğin bir tarifte <b>♡ Favori</b>'ye dokun; burada pişireceklerine ekleme, sepete atma ve pişirme tek dokunuşla elinin altında olsun.</p></div>`;
   } else if (favTab === "pop"){
     const app = (statsState.top || []).map(([k, n]) => [REG.get(k), n]).filter(([r]) => r);
     if (app.length >= 5){ const counts = new Map(app.map(([r, n]) => [r.key, n])); h += sec("📈 Bu uygulamada en çok pişirilenler", "Tüm kullanıcıların pişirme modunda sonuna kadar yaptığı tarifler.", app.slice(0, 12).map(([r]) => r), r => `${counts.get(r.key)} kez pişirildi`); }
@@ -5153,7 +5194,7 @@ function dailyCardHTML(){
 }
 function renderDaily(){
   const box = $("daily");
-  const show = false; // günün sofrası önerisi artık Menü'deki "Bugün" kartının içinde
+  const show = false; // günün sofrası Yemek ara listesinin içinde (arama kutusunun altında) gösteriliyor
   box.hidden = !show; if (!show) return;
   if (!dailyMenu().length){ box.hidden = true; return; }
   setHTML(box, dailyMiniHTML() + (dailyOpen ? dailyCardHTML() : ""));
@@ -5200,6 +5241,7 @@ document.addEventListener("keydown", e => {
 });
 
 function renderAll(){
+  if (mode === "plan"){ mode = "cart"; planTarget = null; } // haftalık menü kaldırıldı: Pişireceklerim artık Sepet'in içinde
   renderHero();
   renderDaily();
   if (mode === "pantry"){ renderGroups(); renderResults(); }
@@ -5367,7 +5409,7 @@ async function speak(text){
 }
 function updateVoiceLabel(){ const el = $("voiceKind"); if (el) el.textContent = voiceOn ? (voiceKind === "ai" ? "🤖 Yapay zekâ sesi" : voiceKind === "device" ? "📱 Telefonun sesi" : "") : ""; }
 function confetti(){
-  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (window.matchMedia && mqMatch("(prefers-reduced-motion: reduce)")) return;
   const box = document.createElement("div"); box.className = "confetti"; box.setAttribute("aria-hidden", "true");
   const colors = ["#E03131","#F59F00","#2B8A3E","#1C7ED6","#AE3EC9","#F76707"];
   let h = "";
@@ -5570,6 +5612,7 @@ function renderCook(){
       cookCounts[r.key] = (cookCounts[r.key] || 0) + 1;
       try { localStorage.setItem("pisir-pisirilen", JSON.stringify(cookCounts)); } catch(e) {}
       cookLog.push({k:r.key, t:Date.now()}); cookLog = cookLog.slice(-500);
+      if (inPis(r.key)){ pisList = pisList.filter(k => k !== r.key); save(); }
       try { localStorage.setItem("pisir-gunluk", JSON.stringify(cookLog)); } catch(e) {}
       if (STATS_URL && r.src === "b") fetch(STATS_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({key:r.key})}).catch(() => {});
       setTimeout(confetti, 50);
@@ -5578,7 +5621,7 @@ function renderCook(){
     h += `<div class="cook-main"><p class="cook-finish">Afiyet olsun!</p><p class="sub">${esc(r.ad)} tarifinin tüm adımlarını tamamladın.</p>
       <div class="end-rate"><p><b>Nasıl oldu?</b></p><div class="star-pick end-stars" role="group" aria-label="Puanın">${[1,2,3,4,5].map(v => `<button type="button" class="star${v <= cook.rate ? " on" : ""}" data-act="endStar" data-v="${v}" aria-label="${v} yıldız">★</button>`).join("")}</div>
         ${cook.rate ? `<p class="sub">${cook.rate >= 4 ? "Harika! 🎉" : cook.rate === 3 ? "Fena değil 👍" : "Bir dahakine daha iyi olacak 💪"} Puanın kaydedildi.</p>` : ""}</div>
-      <div class="end-acts"><button type="button" class="fav" data-act="endFav" data-key="${esc(r.key)}" aria-pressed="${fv}">${fv ? "♥ Favorilerde" : "♡ Favorilere ekle"}</button><label class="fav end-plan">📅 Menüye tekrar koy${planCtl(r, true)}</label><button type="button" class="fav" data-act="noteEditCook" data-key="${esc(r.key)}">📝 ${notes[r.key] ? "Notunu düzenle" : "Not ekle"}</button></div></div>
+      <div class="end-acts"><button type="button" class="fav" data-act="endFav" data-key="${esc(r.key)}" aria-pressed="${fv}">${fv ? "♥ Favorilerde" : "♡ Favorilere ekle"}</button><button type="button" class="fav" data-act="pisToggle" data-key="${esc(r.key)}" aria-pressed="${inPis(r.key)}">${inPis(r.key) ? "✓ Listede" : "📌 Tekrar pişireceğim"}</button><button type="button" class="fav" data-act="noteEditCook" data-key="${esc(r.key)}">📝 ${notes[r.key] ? "Notunu düzenle" : "Not ekle"}</button></div></div>
       <div class="cook-nav"><button type="button" data-act="cookPrev">Geri</button><button type="button" class="primary" id="cookNext" data-act="cookClose">Kapat</button></div>`;
   }
   h += `</div>`;
@@ -5748,7 +5791,7 @@ function renderBanner(){
 }
 function planShopping(){
   const map = new Map();
-  plan.forEach(day => day.forEach(k => {
+  [pisList].forEach(day => day.forEach(k => {
     const r = REG.get(k); if (!r) return;
     const f = getServ(r) / (r.kisi || 4);
     r.malzemeler.forEach(m => {
@@ -5825,7 +5868,7 @@ const specialRecipes = sp => [...new Set(sp.sets.flatMap(([, ns]) => ns))].map(n
 function specialCardHTML(){
   const sp = specialNow(); if (!sp) return "";
   return `<div class="special-card"><div class="sp-head"><span class="sp-e" aria-hidden="true">${sp.e}</span><span><b>${sp.t}</b><small>${sp.sub}</small></span></div>
-    ${sp.sets.map(([label, ns], i) => { const rs = ns.map(n => REG.get("b:" + n)).filter(Boolean); return rs.length ? `<div class="sp-set"><p class="sp-l">${label}</p><div class="sp-chips">${rs.map(r => `<button type="button" class="wk-chip" data-act="openSaved" data-key="${esc(r.key)}"><span aria-hidden="true">${recipeEmoji(r)}</span> ${esc(r.ad)}</button>`).join("")}</div><button type="button" class="link-btn sp-add" data-act="specialAdd" data-i="${i}">📅 Bugünün menüsüne ekle</button></div>` : ""; }).join("")}</div>`;
+    ${sp.sets.map(([label, ns], i) => { const rs = ns.map(n => REG.get("b:" + n)).filter(Boolean); return rs.length ? `<div class="sp-set"><p class="sp-l">${label}</p><div class="sp-chips">${rs.map(r => `<button type="button" class="wk-chip" data-act="openSaved" data-key="${esc(r.key)}"><span aria-hidden="true">${recipeEmoji(r)}</span> ${esc(r.ad)}</button>`).join("")}</div><button type="button" class="link-btn sp-add" data-act="specialAdd" data-i="${i}">📌 Pişireceklerime ekle</button></div>` : ""; }).join("")}</div>`;
 }
 const TAB_ICON = {"plan": "<svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"3\"/><path d=\"M16 2v4M8 2v4M3 10h18\"/><path d=\"M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01\"/></svg>", "cart": "<svg viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"21\" r=\"1\"/><circle cx=\"19\" cy=\"21\" r=\"1\"/><path d=\"M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12\"/></svg>"};
 const DAY_S = ["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
@@ -6040,7 +6083,7 @@ document.addEventListener("click", e => {
       if (!voiceOn) stopSpeech();
       if (voiceOn && cook.key && REG.get(cook.key)) ensureNarration(REG.get(cook.key)); // anlatımı hemen hazırlamaya başla
       lastSpoken = ""; renderCook(); break;
-    case "goDaily": dailyOpen = !dailyOpen; renderDaily(); break; // menü olduğu yerde açılır/kapanır
+    case "goDaily": dailyOpen = !dailyOpen; renderAll(); break; // menü olduğu yerde açılır/kapanır
     case "diet": { const dd = el.dataset.d; diets.has(dd) ? diets.delete(dd) : diets.add(dd); saveDiets(); renderAll(); break; }
     case "share": if (r) shareRecipe(r); break;
     case "shareList": if (r) shareText(`${r.ad} alışveriş listesi`, `🛒 ${r.ad} için alışveriş listesi\n${shopText(r)}\n\nTarif: ${recipeUrl(r)}`); break;
@@ -6257,10 +6300,11 @@ document.addEventListener("click", e => {
     case "whatsNew": openWhatsNew(); break;
     case "wn-mic": closeWhatsNew(); goMode("dish"); { const r = REG.get("b:Menemen") || BUILTIN[0]; openCook(r.key, false); setTimeout(() => { const b = document.querySelector('#cook [data-act="micToggle"]'); if (b){ b.scrollIntoView({block:"center"}); b.classList.add("wn-flash"); } else showToast("Sesli komut bu tarayıcıda desteklenmiyor. Chrome ya da Safari'de dene."); }, 350); } break;
     case "wn-yore": closeWhatsNew(); mode = "dish"; planTarget = null; $("dishSearch").value = ""; yoreSel = null; filters = new Set(["yore"]); renderAll(); window.scrollTo(0, 0); break;
+    case "wn-pis": closeWhatsNew(); if (!pisList.length){ pisList.push("b:Karnıyarık"); save(); } goMode("cart"); setTimeout(() => { const x = document.querySelector(".pc-box"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
     case "wn-menu": closeWhatsNew(); goMode("plan"); setTimeout(() => { const x = document.querySelector('[data-act="planAuto"]'); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
     case "wn-favs": closeWhatsNew(); favTab = "fav"; goMode("fav"); setTimeout(() => { const x = document.querySelector(".sub-tabs"); if (x) x.classList.add("wn-flash"); }, 200); break;
     case "wn-prep": closeWhatsNew(); openCook("b:Menemen", false); break;
-    case "wn-special": { closeWhatsNew(); const sp = specialNow(); if (sp){ goMode("plan"); setTimeout(() => { const x = document.querySelector(".special-card"); if (x) x.classList.add("wn-flash"); }, 200); } else { const nx = nextSpecial(); showToast(nx ? `${nx.sp.e} Sıradaki: ${nx.sp.t}, ${nx.d.toLocaleDateString("tr-TR", {day:"numeric", month:"long"})}. O zaman Menü'de hazır menüler çıkacak.` : "Özel gün menüleri takvime göre kendiliğinden gelecek."); } break; }
+    case "wn-special": { closeWhatsNew(); const sp = specialNow(); if (sp){ mode = "dish"; filters = new Set(); $("dishSearch").value = ""; renderAll(); window.scrollTo(0, 0); setTimeout(() => { const x = document.querySelector(".special-card"); if (x) x.classList.add("wn-flash"); }, 200); } else { const nx = nextSpecial(); showToast(nx ? `${nx.sp.e} Sıradaki: ${nx.sp.t}, ${nx.d.toLocaleDateString("tr-TR", {day:"numeric", month:"long"})}. O zaman Menü'de hazır menüler çıkacak.` : "Özel gün menüleri takvime göre kendiliğinden gelecek."); } break; }
     case "wn-note": closeWhatsNew(); openSheet("b:Karnıyarık"); noteEdit = "b:Karnıyarık"; renderSheet(); setTimeout(() => { const t = $("noteText"); if (t) t.focus(); }, 80); break;
     case "wn-kid": closeWhatsNew(); mode = "dish"; filters = new Set(); $("dishSearch").value = ""; dq.kid = true; renderAll(); window.scrollTo(0, 0); break;
     case "wn-cart": closeWhatsNew(); if (!cartLive().length){ addToCart({ad:"Süt", ing:"sut"}, {force:true}); addToCart({ad:"Domates", ing:"domates"}, {force:true}); } goMode("cart"); break;
@@ -6271,7 +6315,7 @@ document.addEventListener("click", e => {
     case "wn-lo": closeWhatsNew(); goMode("pantry"); setTimeout(openLeftover, 200); break;
     case "wn-skt": closeWhatsNew(); goMode("pantry"); setTimeout(() => { if (![...selected].some(id => !GROUPS[0].items.some(([b]) => b === id))){ ["domates","sogan","yumurta"].forEach(id => selected.add(id)); save(); }
       sktOpen = true; moreOpen = true; renderAll(); const x = document.querySelector(".skt-tg"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 200); break;
-    case "wn-shop": closeWhatsNew(); if (!plan.some(d => d.length)){ plan[(new Date().getDay() + 6) % 7].push("b:Karnıyarık"); save(); } goMode("plan"); setTimeout(() => { const x = document.querySelector(".shop-sum"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 300); break;
+    case "wn-shop": closeWhatsNew(); if (!pisList.length){ pisList.push("b:Karnıyarık"); save(); } goMode("cart"); setTimeout(() => { const x = document.querySelector(".pc-shop"); if (x){ x.scrollIntoView({block:"center", behavior:"smooth"}); x.classList.add("wn-flash"); } }, 300); break;
     case "wn-wait": closeWhatsNew(); openSheet("b:Tiramisu"); setTimeout(() => { const x = document.querySelector("#sheetBody .bd-wait"); if (x) x.classList.add("wn-flash"); }, 300); break;
     case "wn-remind": closeWhatsNew(); openRemind(); break;
     case "micToggle":
@@ -6285,8 +6329,8 @@ document.addEventListener("click", e => {
     case "speakAgain": { const cr = REG.get(cook.key); if (cr) speak(narrText(cr, cook.step)); break; }
     case "menuToPlan": {
       const di = (new Date().getDay() + 6) % 7;
-      dailyMenu().forEach(([, , r]) => { if (!plan[di].includes(r.key)) plan[di].push(r.key); });
-      save(); renderHero(); el.textContent = `✓ ${DAYS[di]} menüsüne eklendi`; break;
+      dailyMenu().forEach(([, , r]) => { if (!inPis(r.key)) pisList.push(r.key); });
+      save(); renderHero(); el.textContent = "✓ Pişireceklerine eklendi"; break;
     }
     case "toggleGroup": { const gi = Number(el.dataset.g); openGroups.has(gi) ? openGroups.delete(gi) : openGroups.add(gi); renderGroups(); break; }
     case "selectGroup": { const g = GROUPS[Number(el.dataset.g)]; const all = g.items.every(([id]) => selected.has(id)); g.items.forEach(([id]) => all ? selected.delete(id) : selected.add(id)); save(); renderAll(); break; }
@@ -6301,12 +6345,18 @@ document.addEventListener("click", e => {
       if (f.length){ fly(el, "#tab-plan .tab-i", "🎲"); snack(`🎲 ${f.length} güne yemek eklendi.`, "Geri al", () => { plan = before; save(); }); } else showToast("Bütün günler zaten dolu.");
       renderAll(); break; }
     case "planAutoToday": { const used = new Set(plan.flat()); const ti2 = todayIdx(); const slot = ["red","veg","chicken","legume","fish","red","world"][ti2]; const pool = mainPool(); const r2 = pickDishFrom(slotPool(slot, pool), used) || pickDishFrom(pool, used); if (r2){ plan[ti2].push(r2.key); save(); fly(el, "#tab-plan .tab-i", "🎲"); } renderAll(); break; }
-    case "dailyToToday": { const ti2 = todayIdx(); let n2 = 0; dailyMenu().forEach(([, , r2]) => { if (!plan[ti2].includes(r2.key)){ plan[ti2].push(r2.key); n2++; } }); save(); if (n2){ fly(el, "#tab-plan .tab-i", "🌟"); showToast(`🌟 ${n2} yemek bugünün menüsüne eklendi`); } renderAll(); break; }
+    case "dailyToToday": { let n2 = 0; dailyMenu().forEach(([, , r2]) => { if (!inPis(r2.key)){ pisList.push(r2.key); n2++; } }); save(); if (n2){ fly(el, "#tab-cart .tab-i", "🌟"); showToast(`🌟 ${n2} yemek pişireceklerine eklendi`); } renderAll(); break; }
     case "aiPlanToggle": aiPlanOpen = !aiPlanOpen; renderPlan(); break;
-    case "specialAdd": { const sp = specialNow(); if (!sp) break; const set = sp.sets[Number(el.dataset.i)]; if (!set) break; const ti2 = todayIdx(); let n = 0;
-      set[1].forEach(nm => { const k = "b:" + nm; if (REG.has(k) && !plan[ti2].includes(k)){ plan[ti2].push(k); n++; } }); save();
-      if (n){ fly(el, "#tab-plan .tab-i", sp.e); showToast(`${sp.e} ${n} yemek bugünün menüsüne eklendi`); } renderAll(); break; }
+    case "specialAdd": { const sp = specialNow(); if (!sp) break; const set = sp.sets[Number(el.dataset.i)]; if (!set) break; let n = 0;
+      set[1].forEach(nm => { const k = "b:" + nm; if (REG.has(k) && !inPis(k)){ pisList.push(k); n++; } }); save();
+      if (n){ fly(el, "#tab-cart .tab-i", sp.e); showToast(`${sp.e} ${n} yemek pişireceklerine eklendi`); } renderAll(); break; }
     case "yorePick": { const rg = el.dataset.r; yoreSel = yoreSel === rg ? null : rg; mode = "dish"; filters = new Set(["yore"]); renderDishList(); break; }
+    case "pisToggle": {
+      if (!key || !REG.has(key)) break; const r2 = REG.get(key);
+      if (inPis(key)){ const at = pisList.indexOf(key); pisList = pisList.filter(k => k !== key); save(); snack(`${r2.ad} listeden çıkarıldı.`, "Geri al", () => { pisList.splice(at, 0, key); save(); }); }
+      else { pisList.push(key); save(); fly(el, "#tab-cart .tab-i", "📌"); showToast(`📌 ${r2.ad} pişireceklerine eklendi`); }
+      renderAll(); break;
+    }
     case "favTab": favTab = el.dataset.v; renderSaved(); window.scrollTo({top:0, behavior:"smooth"}); break;
     case "favCart": { if (!r) break; let n = 0; r.malzemeler.filter(m => !owned(m) && !inCartFor(m.ad, m.id, r.ad)).forEach(m => { addRecipeIngToCart(r, m); n++; }); if (n){ fly(el, "#tab-cart .tab-i", "🛒"); snack(`🛒 ${r.ad}: ${n} eksik sepete eklendi.`, "Sepete git", () => { mode = "cart"; window.scrollTo(0, 0); }); } renderAll(); break; }
     case "noteEdit": noteEdit = key; renderSheet(); setTimeout(() => { const t = $("noteText"); if (t) t.focus(); }, 50); break;
@@ -6476,7 +6526,7 @@ const EN_EXACT = {
   "Kolay":"Easy","Orta":"Medium","Zor":"Hard","kcal":"kcal","protein":"protein","karbonhidrat":"carbs","yağ":"fat","yaklaşık":"approx.","Besin değerleri":"Nutrition","1 porsiyon":"1 serving",
   "Temel malzemeler":"Basics","Sebze ve yeşillik":"Vegetables & greens","Meyve":"Fruit","Et, tavuk ve balık":"Meat, chicken & fish","Bakliyat, tahıl ve hamur":"Legumes, grains & dough","Süt ürünleri ve yumurta":"Dairy & eggs","Kahve":"Coffee","Tatlı malzemeleri":"Baking & sweets","Dolap":"Pantry",
   "Malzeme ara":"Search ingredients","Malzeme ya da yemek ara: “patlıcan”, “mantı”…":"Search ingredients or dishes: “eggplant”, “pasta”…","Yemek ara: “çor”, “et”, “karnıyarık”…":"Search dishes: “soup”, “chicken”, “pasta”…","Yemek adı":"Dish name",
-  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","BU HAFTA":"THIS WEEK","＋ Yemek ekle":"＋ Add a dish","＋ Bu güne ekle":"＋ Add to this day","✕ Kaldır":"✕ Remove","↻ Değiştir":"↻ Swap","🎲 Öner":"🎲 Suggest","🌟 Günün sofrası":"🌟 Today's menu","Taşı:":"Move:","Bugün":"Today","Bu hafta":"This week","Bugün ne pişiriyoruz?":"What are we cooking today?","🌟 Bu menüyü ekle":"🌟 Add this menu","🎲 Tek yemek öner":"🎲 Suggest a dish","＋ Kendim seçeyim":"＋ I'll pick","▶ Pişirmeye başla":"▶ Start cooking","Tarif":"Recipe","📖 Tarifi aç":"📖 Open recipe","↻ Başkasıyla değiştir":"↻ Swap","✕ Menüden çıkar":"✕ Remove","Taşı":"Move","Sepete ekle":"Add to basket","Sepete git":"Go to basket","Ekle":"Add","👶 Çocuk dostu":"👶 Kid-friendly","Önce malzemeleri hazırla":"Get your ingredients ready first","Atla":"Skip","← Hazırlık":"← Prep","Hepsi hazır, başla →":"All set, start →","Nasıl oldu?":"How did it go?","📅 Menüye tekrar koy":"📅 Add to menu again","❤️ Favorilerim":"❤️ Favourites","🔥 Popüler":"🔥 Popular","🏅 Rozetlerim":"🏅 Badges","✨ Yapay zekâya tarif et":"✨ Describe to AI","Temizle":"Clear","📖 Tarif":"📖 Recipe","▶ Pişir":"▶ Cook","↻ Değiştir":"↻ Swap","✕ Kaldır":"✕ Remove","Kaydet":"Save","Vazgeç":"Cancel","Not":"Note","Notum":"My note","Daha fazla: kategoriler, yardım ve rehberler":"More: categories, help and guides","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
+  "Seçimleri temizle":"Clear selection","🧺 Dolabındakiler":"🧺 In your kitchen","Henüz malzeme seçmedin. Aşağıdan seç ya da yukarıdan ara.":"You haven't picked any ingredients yet. Choose below or search above.","⭐ En çok kullanılanlar":"⭐ Most used","Tüm malzemeler":"All ingredients","Tüm kategoriler":"All categories","Favori":"Save","Pişireceğim":"I'll cook","Listeye":"To list","Sepetim":"My basket","Pişireceklerin ve alacakların bir arada; markette işaretle, dolabına geçsin.":"What you'll cook and what you'll buy, together; tick off in the store and it moves to your kitchen.","Listede":"Listed","📌 Pişireceklerin":"📌 To cook","🛒 Eksikleri ekle":"🛒 Add missing","🛒 Alışveriş listen":"🛒 Shopping list","📌 Tekrar pişireceğim":"📌 Cook again","✓ Listede":"✓ Listed","Pişireceklerim":"To cook","📌 Pişireceklerime ekle":"📌 Add to my list","Pişireceklerim ve sepetim":"To cook & basket","BU HAFTA":"THIS WEEK","＋ Yemek ekle":"＋ Add a dish","＋ Bu güne ekle":"＋ Add to this day","✕ Kaldır":"✕ Remove","↻ Değiştir":"↻ Swap","🎲 Öner":"🎲 Suggest","🌟 Günün sofrası":"🌟 Today's menu","Taşı:":"Move:","Bugün":"Today","Bu hafta":"This week","Bugün ne pişiriyoruz?":"What are we cooking today?","🌟 Bu menüyü ekle":"🌟 Add this menu","🎲 Tek yemek öner":"🎲 Suggest a dish","＋ Kendim seçeyim":"＋ I'll pick","▶ Pişirmeye başla":"▶ Start cooking","Tarif":"Recipe","📖 Tarifi aç":"📖 Open recipe","↻ Başkasıyla değiştir":"↻ Swap","✕ Menüden çıkar":"✕ Remove","Taşı":"Move","Sepete ekle":"Add to basket","Sepete git":"Go to basket","Ekle":"Add","👶 Çocuk dostu":"👶 Kid-friendly","Önce malzemeleri hazırla":"Get your ingredients ready first","Atla":"Skip","← Hazırlık":"← Prep","Hepsi hazır, başla →":"All set, start →","Nasıl oldu?":"How did it go?","📅 Menüye tekrar koy":"📅 Add to menu again","❤️ Favorilerim":"❤️ Favourites","🔥 Popüler":"🔥 Popular","🏅 Rozetlerim":"🏅 Badges","✨ Yapay zekâya tarif et":"✨ Describe to AI","Temizle":"Clear","📖 Tarif":"📖 Recipe","▶ Pişir":"▶ Cook","↻ Değiştir":"↻ Swap","✕ Kaldır":"✕ Remove","Kaydet":"Save","Vazgeç":"Cancel","Not":"Note","Notum":"My note","Daha fazla: kategoriler, yardım ve rehberler":"More: categories, help and guides","🔎 Örn: 30 dakikada tavuk, etsiz çorba, karnıyarık…":"🔎 e.g. chicken in 30 minutes, meat-free soup…","⏱️ 30 dk altı":"⏱️ Under 30 min","🔥 Hafif":"🔥 Light","⭐ Kolay":"⭐ Easy","🧺 Dolabımdakiyle":"🧺 With my kitchen","🕘 Son baktıkların":"🕘 Recently viewed","Kategoriler":"Categories","Sırala":"Sort","En sevilen":"Most loved","En hızlı":"Fastest","En hafif":"Lightest","Mevsiminde":"In season","🔎 Örn: domates, soğan, yumurta…":"🔎 e.g. tomato, onion, eggs…","Akşam hatırlatması":"Evening reminder","Yenilikler":"What's new","Hata bildirimleri":"Error reports","Yemek görselleri":"Dish images","Elindeki malzemeleri seç ya da fotoğrafını çek; ne pişirebileceğini hemen gösterelim.":"Pick what you have or snap a photo; we'll show what you can cook right away.","Alacakların reyonlara göre hazır; markette işaretle, dolabına geçsin.":"Your shopping, sorted by aisle; tick items off and they move to your kitchen.","Sepetin boş":"Your basket is empty","🛒 Menünün alışverişi":"🛒 Shopping for your menu","Sepet":"Basket","🛒 Sepetim":"🛒 My basket","Sepetim":"My basket","🛍️ Market modu":"🛍️ Store mode","✓ Market modundan çık":"✓ Exit store mode","⚡ Sık alınanlar":"⚡ Frequent","Ekle":"Add","📋 Listeyi kopyala":"📋 Copy list","Sepeti boşalt":"Empty basket","🏪 Sipariş ver":"🏪 Order","👨‍👩‍👧 Ortak sepet":"👨‍👩‍👧 Shared basket","🔗 Sepeti paylaş":"🔗 Share basket","Katıl":"Join","⚙️ Daha fazla ▼":"⚙️ More ▼","⚙️ Daha fazla ▲":"⚙️ More ▲","＋ Tüm malzemeler":"＋ All ingredients","− Daha az göster":"− Show less","⚡ Sık kullandıkların":"⚡ Your frequent","Tüm malzemeler":"All ingredients","🆕 Yenilikler":"🆕 What's new","Göster":"Show","Tamam":"OK"," bekleme":" resting","🎙️ Sesli komut":"🎙️ Voice commands","🎙️ Sesli komut açık":"🎙️ Voice commands on","📋 Listeyi kopyala":"📋 Copy list","💬 WhatsApp'ta gönder":"💬 Send on WhatsApp","🥬 Manav":"🥬 Produce","🥩 Kasap ve balıkçı":"🥩 Butcher & fish","🍞 Fırın":"🍞 Bakery","🌾 Bakliyat, tahıl ve makarna":"🌾 Grains & pasta","🥫 Bakkal ve baharat":"🥫 Pantry & spices","Dünden artan mı var?":"Got leftovers?","Artanları değerlendir, israf etme":"Use up leftovers, waste nothing","⏰ Son kullanma tarihleri ▼":"⏰ Expiry dates ▼","⏰ Son kullanma tarihleri ▲":"⏰ Expiry dates ▲","⏰ Bozulmadan değerlendir":"⏰ Use before it spoils","🍚 Artanları değerlendir":"🍚 Use up leftovers","⏰ Akşam hatırlatması":"⏰ Evening reminder","⏰ Her akşam bana hatırlat":"⏰ Remind me every evening","📅 Telefonumun takvimine ekle":"📅 Add to my phone calendar","Google Takvim'e ekle":"Add to Google Calendar","Bugün":"Today","Yarın":"Tomorrow","3 gün":"3 days","1 hafta":"1 week","Favoride":"Saved","Menüye":"Plan","Paylaş":"Share","Video":"Video","Bugün":"Today","▶ Pişirmeye başla":"▶ Start cooking","Hepsini seç":"Select all","Hiçbirini seçme":"Select none",
   "🥕 Malzemeler":"🥕 Ingredients","🍽️ Yemekler":"🍽️ Dishes","Yemekler":"Dishes","Aradığın malzeme listede yoksa kendin ekleyebilirsin.":"If the ingredient isn't listed, you can add it yourself.",
   "👇 Dolabındaki malzemeleri seç, sana uygun yemekleri bulalım.":"👇 Pick what's in your kitchen and we'll find dishes for you.","Seçtiklerinle":"With your picks,","hemen yapılır.":"can be made right away.","Henüz tam eşleşme yok, ama":"No exact match yet, but you're very close to","çok yakınsın.":".",
   "Listemizde eşleşen yemek yok; aşağıdan yapay zekâya sorabilirsin.":"No matching dish in our list; you can ask the AI below.","Eşleşen yemek yok; birkaç malzeme daha ekle ya da bir filtreyi kaldır.":"No matching dish; add a few more ingredients or remove a filter.",
@@ -6673,7 +6723,7 @@ renderAll();
 { const mt = location.hash.match(/^#t=([a-z0-9-]+)/); if (mt && BY_SLUG.has(mt[1])) openSheet(BY_SLUG.get(mt[1]), {root:true}); }
 { const mg = location.hash.match(/^#rehber-([a-z]+)/); if (mg && GUIDE_BY.has(mg[1])) openGuide(mg[1], {root:true}); }
 // Ana ekran kısayolu ile gelindiyse ilgili sekmeyi aç (?sekme=ara / menu / sevilen)
-{ const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"plan", sevilen:"fav", gecmis:"fav", sepet:"cart"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
+{ const sk = new URLSearchParams(location.search).get("sekme"); const m = {dolap:"pantry", ara:"dish", menu:"cart", sevilen:"fav", gecmis:"fav", sepet:"cart"}[sk]; if (m && m !== mode){ mode = m; renderAll(); } }
 { const fb = $("footBugs"); if (fb) fb.hidden = !adminKey; const fi = $("footImg"); if (fi) fi.hidden = !adminKey; } // hata bildirimleri yalnızca yöneticiye görünür
 // İlk kez gelen kişiye kısa tanıtım
 try { if (!localStorage.getItem("pisir-tur") && !/^#(t=|rehber-)/.test(location.hash)) renderTour(); } catch(e) {}
