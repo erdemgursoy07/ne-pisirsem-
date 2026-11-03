@@ -1813,6 +1813,20 @@ button,a,label,select,input,textarea,[data-act],.tab{touch-action:manipulation}
 .clr-wrap > input:placeholder-shown + .clr-btn{display:none}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
 @media (prefers-reduced-motion: no-preference){ .clr-btn{animation:scaleIn .15s ease} }
+/* ===================== TELEFONDA İNCE BAŞLIK: daha az kaydırma, odak içerikte ===================== */
+@media (max-width:760px){
+  .hero{margin:0 0 10px!important;padding:0!important}
+  .hero-card{margin-top:4px!important;padding:12px 16px!important;min-height:0!important;border-radius:20px!important;display:flex!important;flex-wrap:wrap;align-items:center;gap:6px 10px;text-align:left!important}
+  .hero-card #greet{margin:0!important;font-size:.76rem!important;padding:3px 10px;border-radius:999px;background:color-mix(in srgb,var(--surface) 80%,transparent);color:var(--cobalt)!important;font-weight:800;line-height:1.4}
+  .hero-card h1{flex-basis:100%;margin:0!important;font-size:1.65rem!important;line-height:1.12!important}
+  .hero-card #heroText{display:none!important}
+  .hero-float{transform:scale(.82);transform-origin:right center}
+  .cat-tiles{gap:8px}
+  .cat-tile{min-height:80px;padding:7px 4px;gap:2px;border-radius:16px}
+  .ct-e{font-size:1.55rem}
+  .ct-t{font-size:.8rem}
+  .ct-n{font-size:.66rem}
+}
 </style>
 </head>
 <body>
@@ -1929,7 +1943,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appeara
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Ne Pişti? · Sürüm 101</span>
+      <span>© 2026 Ne Pişti? · Sürüm 102</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
