@@ -1,5 +1,5 @@
 /* Ne Pişti? çevrimdışı önbellek. Büyük bir güncellemede sürüm numarasını artır. */
-const CACHE = "pisir-v100";
+const CACHE = "pisir-v101";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png"];
 
 self.addEventListener("install", e => {

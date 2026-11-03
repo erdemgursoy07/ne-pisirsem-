@@ -1334,7 +1334,8 @@ body.market-mode .cart-aisle h3{font-size:1.15rem}
   .cart-empty-e{display:inline-block;animation:bob 2.6s ease-in-out infinite}
 }
 /* ===== Sade Dolabım: tek sütun, ortada büyük arama ===== */
-#pantryMode.layout{display:flex;flex-direction:column;gap:18px;max-width:760px;margin-inline:auto;width:100%}
+#pantryMode.layout{display:flex;flex-direction:column;align-items:stretch;gap:18px;max-width:760px;margin-inline:auto;width:100%}
+#pantryMode.layout > .pantry,#pantryMode.layout > .results{width:100%;box-sizing:border-box}
 #pantryMode .results{position:static;max-height:none;overflow:visible}
 #pantryMode .results:empty{display:none}
 #pantryMode .suggest-strip{display:none}
@@ -1928,7 +1929,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appeara
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Ne Pişti? · Sürüm 100</span>
+      <span>© 2026 Ne Pişti? · Sürüm 101</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
