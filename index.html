@@ -1827,6 +1827,8 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appeara
   .ct-t{font-size:.8rem}
   .ct-n{font-size:.66rem}
 }
+/* Uygulama modunda hiçbir öğe çift dokunmayla büyütmesin */
+.app-mode, .app-mode body{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </style>
 </head>
 <body>
@@ -1943,7 +1945,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appeara
       </nav>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 Ne Pişti? · Sürüm 103</span>
+      <span>© 2026 Ne Pişti? · Sürüm 104</span>
       <span>Yemek görselleri Vikipedi’nin özgür lisanslı arşivi Wikimedia Commons’tan alınır; yazar ve lisans bilgisi her tarif sayfasında yer alır.</span>
     </div>
   </footer>
@@ -2517,6 +2519,19 @@ const POPULAR = new Set(["Mercimek çorbası","Ezogelin çorbası","Menemen","Ka
 /* ---------- Yardımcılar ---------- */
 /* ---------- iOS uygulaması (Capacitor) içinde mi çalışıyoruz? Sitede hepsi kapalı kalır ---------- */
 const NATIVE = !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === "function" && window.Capacitor.isNativePlatform());
+/* Uygulama olarak açıldığında (iOS uygulaması ya da ana ekrana eklenmiş site) yakınlaştırma tamamen kapalı:
+   iki parmakla büyütme ve çift dokunmayla büyütme olmaz. Tarayıcıda erişilebilirlik için açık kalır. */
+(function(){
+  let standalone = NATIVE || navigator.standalone === true;
+  try { standalone = standalone || matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: fullscreen)").matches; } catch(e) {}
+  if (!standalone) return;
+  const vp = document.querySelector('meta[name="viewport"]');
+  if (vp) vp.setAttribute("content", "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover");
+  const stop = e => { e.preventDefault(); };
+  ["gesturestart", "gesturechange", "gestureend"].forEach(t => document.addEventListener(t, stop, {passive:false}));
+  document.addEventListener("touchmove", e => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, {passive:false});
+  document.documentElement.classList.add("app-mode");
+})();
 const CAP = name => (NATIVE && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
 if (NATIVE) document.documentElement.classList.add("native", "force-splash");
 const mqMatch = q => { try { return !!(window.matchMedia && window.matchMedia(q).matches); } catch(e){ return false; } };
