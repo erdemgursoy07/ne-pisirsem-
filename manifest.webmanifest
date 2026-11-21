@@ -1,0 +1,74 @@
+{
+  "id": "./",
+  "name": "Ne Pişti?",
+  "short_name": "Ne Pişti?",
+  "description": "Dolabındaki malzemelerle ne pişirebileceğini bul: 445 tarif, buzdolabı fotoğrafından malzeme tanıma, adım adım pişirme modu, akıllı alışveriş sepeti ve 7 bölgeden 125 yöresel tarif.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFFFF",
+  "theme_color": "#C2410C",
+  "categories": [
+    "food",
+    "lifestyle",
+    "health"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png?v=2",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Yemek ara",
+      "short_name": "Ara",
+      "url": "./?sekme=ara",
+      "icons": [
+        {
+          "src": "icon-192.png?v=2",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "En sevilenler",
+      "short_name": "Sevilenler",
+      "url": "./?sekme=sevilen",
+      "icons": [
+        {
+          "src": "icon-192.png?v=2",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Pişireceklerim ve sepet",
+      "short_name": "Sepet",
+      "url": "./?sekme=sepet",
+      "icons": [
+        {
+          "src": "icon-192.png?v=2",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
